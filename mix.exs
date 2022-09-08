@@ -15,7 +15,6 @@ defmodule Kadena.MixProject do
       description: description(),
       source_url: @github_url,
       package: package(),
-      docs: docs(),
       dialyzer: [
         plt_add_apps: [:kadena, :ex_unit],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
@@ -55,43 +54,6 @@ defmodule Kadena.MixProject do
         "GitHub" => @github_url,
         "Sponsor" => "https://github.com/sponsors/kommitters"
       }
-    ]
-  end
-
-  defp docs do
-    [
-      main: "readme",
-      name: "Elixir Kadena",
-      source_ref: "v#{@version}",
-      source_url: @github_url,
-      canonical: "http://hexdocs.pm/kadena",
-      extras: extras(),
-      groups_for_extras: groups_for_extras(),
-      groups_for_modules: groups_for_modules()
-    ]
-  end
-
-  defp extras() do
-    [
-      "README.md",
-      "CHANGELOG.md",
-      "CONTRIBUTING.md",
-      "docs/examples.md",
-      "docs/examples/kadena.md"
-    ]
-  end
-
-  defp groups_for_extras do
-    [
-      Examples: ~r/docs\/examples\/.?/
-    ]
-  end
-
-  defp groups_for_modules do
-    [
-      "Initial release": [
-        Kadena
-      ]
     ]
   end
 end
