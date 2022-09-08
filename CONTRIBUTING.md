@@ -6,7 +6,7 @@ We want to make it as easy as possible to contribute changes that help the [Kade
 
 ## Getting started
 
-* Make sure you have a [GitHub account](https://github.com/signup/free).
+* Make sure you have a [GitHub account][github-signup].
 * Create a GitHub issue for your contribution, assuming one does not already exist.
   * Clearly describe the issue including steps to reproduce if it is a bug.
 * Fork the repository on GitHub.
@@ -28,7 +28,7 @@ Of course, feel free to create a new issue if you think something needs to be ad
 
 ## Making changes
 
-* Create a topic branch from where you want to base your work.
+* Create a topic branch from where you want to base your work `git checkout -b my-branch-name`.
   * This is usually the main branch.
   * Please avoid working directly on the `main` branch.
 * Make sure you have added the necessary tests for your changes and make sure all tests pass.
@@ -48,16 +48,25 @@ At this point, you're waiting on us. We like to at least comment on pull request
 business days (typically, one business day). We may suggest some changes, improvements or
 alternatives.
 
-## Additional resources
+## Resources
 
-* Explore the Kadena API
-* #get in touch: [oss@kommit.co](mailto:oss@kommit.co) | [@kommitters_oss](https://twitter.com/kommitters_oss) on twitter.
+- [How to Contribute to Open Source][oss-how-to]
+- [Using Pull Requests][github-help-pr]
+- [GitHub Help][github-help]
+
+## Contact
+
+Get in touch: [oss@kommit.co][mail-to] | [@kommitters_oss][twitter] on Twitter.
 
 ## Acknowledgements
 
 This document is inspired by:
 * https://github.com/kommitters/stellar_sdk/blob/main/CONTRIBUTING.md
 
+[twitter]: https://twitter.com/kommitters_oss
+[mail-to]: mailto:oss@kommit.co
+[github-signup]: https://github.com/signup/free
+[oss-how-to]: https://opensource.guide/how-to-contribute
 [repo]: https://github.com/kommitters/kadena
 [coc]: https://github.com/kommitters/kadena/blob/main/CODE_OF_CONDUCT.md
 [commit-msg]: https://github.com/erlang/otp/wiki/Writing-good-commit-messages
