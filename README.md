@@ -1,6 +1,6 @@
 # Kadena
 
-**TODO: Add description**
+Elixir library to interact with the Kadena blockchain.
 
 ## Installation
 
