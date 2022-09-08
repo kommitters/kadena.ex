@@ -29,7 +29,7 @@ Of course, feel free to create a new issue if you think something needs to be ad
 ## Making changes
 
 * Create a topic branch from where you want to base your work `git checkout -b my-branch-name`.
-  * This is usually the main branch.
+  * This is usually the `main` branch.
   * Please avoid working directly on the `main` branch.
 * Make sure you have added the necessary tests for your changes and make sure all tests pass.
 * Make sure your code is properly formatted by running `mix format`.
@@ -66,6 +66,8 @@ This document is inspired by:
 [twitter]: https://twitter.com/kommitters_oss
 [mail-to]: mailto:oss@kommit.co
 [github-signup]: https://github.com/signup/free
+[github-help]: https://help.github.com
+[github-help-pr]: https://help.github.com/articles/about-pull-requests
 [oss-how-to]: https://opensource.guide/how-to-contribute
 [repo]: https://github.com/kommitters/kadena
 [coc]: https://github.com/kommitters/kadena/blob/main/CODE_OF_CONDUCT.md
