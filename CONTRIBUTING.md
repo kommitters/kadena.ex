@@ -1,4 +1,4 @@
-# How to contribute
+# Contributing 🎉
 
 First off, thanks for taking the time to contribute, it is encouraging! 🎉🙌
 
@@ -57,11 +57,6 @@ alternatives.
 ## Contact
 
 Get in touch: [oss@kommit.co][mail-to] | [@kommitters_oss][twitter] on Twitter.
-
-## Acknowledgements
-
-This document is inspired by:
-* https://github.com/kommitters/stellar_sdk/blob/main/CONTRIBUTING.md
 
 [twitter]: https://twitter.com/kommitters_oss
 [mail-to]: mailto:oss@kommit.co

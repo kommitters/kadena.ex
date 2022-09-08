@@ -14,17 +14,6 @@ def deps do
 end
 ```
 
-## Configuration
-```elixir
-config :kadena, network: :test # Default is `:test`. To use the public network, set it to `:public`
-
-```
-
-The default HTTP Client is `:hackney`. Options to `:hackney` can be passed through configuration params.
-```elixir
-config :kadena, hackney_opts: [{:connect_timeout, 1000}, {:recv_timeout, 5000}]
-```
-
 ## Changelog
 
 Features and bug fixes are listed in the [CHANGELOG][changelog] file.
