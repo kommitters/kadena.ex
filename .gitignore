@@ -24,3 +24,6 @@ kadena-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Dialyzer plt files
+/priv/plts
