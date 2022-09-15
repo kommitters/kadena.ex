@@ -7,8 +7,8 @@ defmodule Kadena.Types.Base64UrlTest do
 
   alias Kadena.Types.Base64Url
 
-  test "new/1 with valid params" do
-    %Base64Url{url: "valid_param"} = Base64Url.new("valid_param")
+  test "new/1 with valid url" do
+    %Base64Url{url: "valid_url"} = Base64Url.new("valid_url")
   end
 
   test "new/1 with invalid params" do
