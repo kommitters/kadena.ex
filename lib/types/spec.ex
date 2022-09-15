@@ -1,6 +1,6 @@
 defmodule Kadena.Types.Spec do
   @moduledoc """
-  Defines base types constructions
+  Defines base types constructions.
   """
 
   @type error :: {:error, atom()}

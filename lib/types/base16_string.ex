@@ -1,6 +1,6 @@
 defmodule Kadena.Types.Base16String do
   @moduledoc """
-  `Base16String` struct definition
+  `Base16String` struct definition.
   """
 
   @behaviour Kadena.Types.Spec
