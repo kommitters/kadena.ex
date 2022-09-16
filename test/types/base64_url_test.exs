@@ -7,12 +7,17 @@ defmodule Kadena.Types.Base64UrlTest do
 
   alias Kadena.Types.Base64Url
 
-  test "new/1 with valid url" do
-    %Base64Url{url: "valid_url"} = Base64Url.new("valid_url")
-  end
+  describe "new/1" do
+    test "With valid url" do
+      %Base64Url{url: "valid_url"} = Base64Url.new("valid_url")
+    end
 
-  test "new/1 with invalid params" do
-    {:error, :invalid_string} = Base64Url.new(:atom)
-    {:error, :invalid_string} = Base64Url.new(nil)
+    test "With invalid url" do
+      {:error, :invalid_string} = Base64Url.new(:atom)
+    end
+
+    test "With nil url" do
+      {:error, :invalid_string} = Base64Url.new(nil)
+    end
   end
 end
