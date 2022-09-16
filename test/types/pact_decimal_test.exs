@@ -9,8 +9,8 @@ defmodule Kadena.Types.PactDecimalTest do
 
   describe "new/1" do
     test "With valid value" do
-      %PactDecimal{value: decimal, raw_value: "4.3333333"} = PactDecimal.new("4.3333333")
-      assert Decimal.equal?(decimal, Decimal.new("4.3333333"))
+      expected_value = Decimal.new("4.3333333")
+      %PactDecimal{value: ^expected_value, raw_value: "4.3333333"} = PactDecimal.new("4.3333333")
     end
 
     test "With nil value" do
