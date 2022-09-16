@@ -8,8 +8,8 @@ defmodule Kadena.Types.PactIntTest do
   alias Kadena.Types.PactInt
 
   describe "new/1" do
-    test "With valid params" do
-      %PactInt{value: "500"} = PactInt.new("500")
+    test "With valid integer" do
+      %PactInt{value: 500, raw_value: "500"} = PactInt.new(500)
     end
 
     test "With nil value" do
@@ -25,7 +25,7 @@ defmodule Kadena.Types.PactIntTest do
     end
 
     test "With one list item with valid value" do
-      {:error, :invalid_int} = PactInt.new(["2333", nil, true])
+      {:error, :invalid_int} = PactInt.new([2333, nil, true])
     end
 
     test "With each list item with invalid value" do

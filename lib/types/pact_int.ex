@@ -5,11 +5,13 @@ defmodule Kadena.Types.PactInt do
 
   @behaviour Kadena.Types.Spec
 
-  @type t :: %__MODULE__{value: String.t()}
+  @type t :: %__MODULE__{value: integer(), raw_value: String.t()}
 
-  defstruct [:value]
+  defstruct [:value, :raw_value]
 
   @impl true
-  def new(value) when is_binary(value), do: %__MODULE__{value: value}
+  def new(value) when is_integer(value),
+    do: %__MODULE__{value: value, raw_value: to_string(value)}
+
   def new(_value), do: {:error, :invalid_int}
 end
