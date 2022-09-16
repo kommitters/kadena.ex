@@ -7,10 +7,7 @@ defmodule Kadena.Types.PactDecimal do
 
   @behaviour Kadena.Types.Spec
 
-  @type t :: %__MODULE__{
-          value: Decimal.t(),
-          raw_value: String.t()
-        }
+  @type t :: %__MODULE__{value: Decimal.t(), raw_value: String.t()}
 
   defstruct [:value, :raw_value]
 

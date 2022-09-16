@@ -2,28 +2,18 @@ defmodule Kadena.Types.PactValue do
   @moduledoc """
   `PactValue` structure definition.
   """
-
-  import Kadena.Types.PactLiteral
+  alias Kadena.Types.{PactLiteral, PactLiteralsList}
 
   @behaviour Kadena.Types.Spec
 
-  @type t :: %__MODULE__{
-          value: PactLiteral.t() | list(PactLiteral.t())
-        }
+  @type pact_value :: PactLiteral.t() | PactLiteralsList.t()
+
+  @type t :: %__MODULE__{value: pact_value()}
 
   defstruct [:value]
 
   @impl true
-  def new(value) when is_literal(value), do: %__MODULE__{value: value}
-
-  def new(value) when is_list(value) and length(value) > 0 do
-    value_length = length(value)
-
-    value
-    |> Enum.filter(fn val -> is_literal(val) end)
-    |> length()
-    |> (&if(value_length == &1, do: %__MODULE__{value: value}, else: {:error, :invalid_value})).()
-  end
-
+  def new(%PactLiteral{} = literal), do: %__MODULE__{value: literal}
+  def new(%PactLiteralsList{} = literal_list), do: %__MODULE__{value: literal_list}
   def new(_value), do: {:error, :invalid_value}
 end

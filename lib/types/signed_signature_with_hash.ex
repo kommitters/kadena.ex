@@ -2,26 +2,32 @@ defmodule Kadena.Types.SignedSignatureWithHash do
   @moduledoc """
   `SignedSignatureWithHash` struct definition.
   """
+  alias Kadena.Types.Signature
 
   @behaviour Kadena.Types.Spec
 
+  @type sig :: Signature.t()
+
   @type t :: %__MODULE__{
           hash: String.t(),
-          sig: Signature.t(),
-          pubKey: String.t()
+          sig: sig(),
+          pub_key: String.t()
         }
 
-  defstruct [:hash, :sig, :pubKey]
+  defstruct [:hash, :sig, :pub_key]
 
   @impl true
-  def new(hash: hash, sig: sig, pubKey: pub_key) when is_binary(hash) and is_binary(pub_key),
-    do: %__MODULE__{hash: hash, sig: sig, pubKey: pub_key}
+  def new(args) do
+    hash = Keyword.get(args, :hash)
+    sig = Keyword.get(args, :sig)
+    pub_key = Keyword.get(args, :pub_key)
 
-  def new(hash: hash, sig: _sig, pubKey: _pub_key) when not is_binary(hash),
-    do: {:error, :invalid_hash}
-
-  def new(hash: _hash, sig: _sig, pubKey: pub_key) when not is_binary(pub_key),
-    do: {:error, :invalid_public_key}
-
-  def new(_signature), do: {:error, :invalid_signature}
+    with hash when is_binary(hash) <- hash,
+         pub_key when is_binary(pub_key) <- pub_key,
+         %Signature{} <- sig do
+      %__MODULE__{hash: hash, sig: sig, pub_key: pub_key}
+    else
+      _error -> {:error, :invalid_signature}
+    end
+  end
 end
