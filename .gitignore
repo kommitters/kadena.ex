@@ -27,3 +27,5 @@ kadena-*.tar
 
 # Dialyzer plt files
 /priv/plts
+
+/.elixir_ls

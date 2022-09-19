@@ -13,11 +13,11 @@ defmodule Kadena.Types.SignedSignatureWithHashTest do
     end
 
     test "with a valid signature keys", %{sig: sig} do
-      %SignedSignatureWithHash{hash: "valid_hash", sig: ^sig, pub_key: "valid_pubic_key"} =
+      %SignedSignatureWithHash{hash: "valid_hash", sig: ^sig, pub_key: "valid_public_key"} =
         SignedSignatureWithHash.new(
           hash: "valid_hash",
           sig: sig,
-          pub_key: "valid_pubic_key"
+          pub_key: "valid_public_key"
         )
     end
 
@@ -41,7 +41,7 @@ defmodule Kadena.Types.SignedSignatureWithHashTest do
         SignedSignatureWithHash.new(
           hash: 123,
           sig: sig,
-          pub_key: "valid_pubic_key"
+          pub_key: "valid_public_key"
         )
     end
 
@@ -50,7 +50,7 @@ defmodule Kadena.Types.SignedSignatureWithHashTest do
         SignedSignatureWithHash.new(
           hash: "valid_hash",
           sig: 123,
-          pub_key: "valid_pubic_key"
+          pub_key: "valid_public_key"
         )
     end
 
@@ -69,7 +69,7 @@ defmodule Kadena.Types.SignedSignatureWithHashTest do
 
     test "with an incomplete list" do
       {:error, :invalid_signed_signature} =
-        SignedSignatureWithHash.new(hash: "valid_hash", pub_key: "valid_pubic_key")
+        SignedSignatureWithHash.new(hash: "valid_hash", pub_key: "valid_public_key")
     end
   end
 end
