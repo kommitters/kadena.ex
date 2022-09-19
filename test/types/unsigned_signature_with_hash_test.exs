@@ -5,7 +5,7 @@ defmodule Kadena.Types.UnsignedSignatureWithHashTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{UnsignedSignatureWithHash, Signature}
+  alias Kadena.Types.{Signature, UnsignedSignatureWithHash}
 
   describe "new/1" do
     setup do
