@@ -16,8 +16,11 @@ defmodule Kadena.Types.SignatureWithHashTest do
     test "with a valid SignedSignatureWithHash" do
       signed_signature =
         SignedSignatureWithHash.new(
-          hash: "valid_hash",
-          sig: Signature.new("valid signature"),
+          hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
+          sig:
+            Signature.new(
+              "13a8c30a12077831a4e458f653850bcee75aec442075d24bfb6d5c54c0e5bd59deaa2b2301a99f26d15ec32ad3a581352430f163cf9401d07ce132f7b38df00e"
+            ),
           pub_key: "public_key"
         )
 
@@ -25,7 +28,11 @@ defmodule Kadena.Types.SignatureWithHashTest do
     end
 
     test "with a valid UnsignedSignatureWithHash" do
-      unsigned_signature = UnsignedSignatureWithHash.new(hash: "valid_hash", sig: Signature.new())
+      unsigned_signature =
+        UnsignedSignatureWithHash.new(
+          hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
+          sig: Signature.new()
+        )
 
       %SignatureWithHash{signature: ^unsigned_signature} =
         SignatureWithHash.new(unsigned_signature)

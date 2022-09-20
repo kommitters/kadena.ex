@@ -13,9 +13,13 @@ defmodule Kadena.Types.SignedCommandTest do
       signature2 = Signature.new("valid signature2")
       signatures_list = SignaturesList.new([signature1, signature2])
 
-      %SignedCommand{hash: "valid_hash", sigs: ^signatures_list, cmd: "valid_command"} =
+      %SignedCommand{
+        hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
+        sigs: ^signatures_list,
+        cmd: "valid_command"
+      } =
         SignedCommand.new(
-          hash: "valid_hash",
+          hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
           sigs: signatures_list,
           cmd: "valid_command"
         )
@@ -24,7 +28,7 @@ defmodule Kadena.Types.SignedCommandTest do
     test "with a nil signatures list" do
       {:error, :invalid_signed_command} =
         SignedCommand.new(
-          hash: "valid_hash",
+          hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
           sigs: nil,
           cmd: "valid_command"
         )
@@ -46,7 +50,7 @@ defmodule Kadena.Types.SignedCommandTest do
     test "with an invalid sig" do
       {:error, :invalid_signed_command} =
         SignedCommand.new(
-          hash: "valid_hash",
+          hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
           sigs: 123,
           cmd: "valid_command"
         )
@@ -59,7 +63,7 @@ defmodule Kadena.Types.SignedCommandTest do
     test "with an empty sigs list" do
       {:error, :invalid_signed_command} =
         SignedCommand.new(
-          hash: "valid_hash",
+          hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
           sigs: [],
           cmd: "valid_command"
         )
@@ -67,7 +71,10 @@ defmodule Kadena.Types.SignedCommandTest do
 
     test "with an incomplete list" do
       {:error, :invalid_signed_command} =
-        SignedCommand.new(hash: "valid_hash", cmd: "valid_command")
+        SignedCommand.new(
+          hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
+          cmd: "valid_command"
+        )
     end
   end
 end

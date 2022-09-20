@@ -9,7 +9,13 @@ defmodule Kadena.Types.SignatureTest do
 
   describe "new/1" do
     test "with a valid sig" do
-      %Signature{sig: "valid_signature"} = Signature.new("valid_signature")
+      %Signature{
+        sig:
+          "13a8c30a12077831a4e458f653850bcee75aec442075d24bfb6d5c54c0e5bd59deaa2b2301a99f26d15ec32ad3a581352430f163cf9401d07ce132f7b38df00e"
+      } =
+        Signature.new(
+          "13a8c30a12077831a4e458f653850bcee75aec442075d24bfb6d5c54c0e5bd59deaa2b2301a99f26d15ec32ad3a581352430f163cf9401d07ce132f7b38df00e"
+        )
     end
 
     test "with a nil sig" do
