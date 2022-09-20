@@ -21,7 +21,7 @@ defmodule Kadena.Types.SignatureWithHashTest do
             Signature.new(
               "13a8c30a12077831a4e458f653850bcee75aec442075d24bfb6d5c54c0e5bd59deaa2b2301a99f26d15ec32ad3a581352430f163cf9401d07ce132f7b38df00e"
             ),
-          pub_key: "public_key"
+          pub_key: "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"
         )
 
       %SignatureWithHash{signature: ^signed_signature} = SignatureWithHash.new(signed_signature)
