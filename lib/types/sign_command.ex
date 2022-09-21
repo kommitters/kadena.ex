@@ -2,43 +2,32 @@ defmodule Kadena.Types.SignCommand do
   @moduledoc """
   `SignCommand` struct definition.
   """
-
-  alias Kadena.Types.{
-    Signature,
-    SignatureWithHash,
-    SignedSignatureWithHash,
-    UnsignedSignatureWithHash
-  }
+  alias Kadena.Types.SignatureWithHash
 
   @behaviour Kadena.Types.Spec
 
-  @type command :: SignatureWithHash.t()
+  @type hash :: String.t()
+  @type sig :: String.t()
+  @type pub_key :: String.t() | nil
+  @type sig_type :: :unsigned_signature | :signed_signature
+  @type sig_with_hash :: SignatureWithHash.t()
 
-  @type t :: %__MODULE__{command: command()}
+  @type t :: %__MODULE__{hash: hash(), sig: sig(), pub_key: pub_key(), type: sig_type()}
 
-  defstruct [:command]
+  defstruct [:hash, :sig, :pub_key, :type]
 
   @impl true
-  def new(%SignatureWithHash{} = signature), do: %__MODULE__{command: signature}
-
-  def new(args) when is_list(args) do
-    hash = Keyword.get(args, :hash)
-    sig = Keyword.get(args, :sig)
-    pub_key = Keyword.get(args, :pub_key)
-
-    case set_signature_type(hash, sig, pub_key) do
-      {:error, _error} -> {:error, :invalid_sign_command}
-      signature -> %__MODULE__{command: SignatureWithHash.new(signature)}
-    end
+  def new(args) do
+    args
+    |> SignatureWithHash.new()
+    |> build_sign_command()
   end
 
-  def new(_args), do: {:error, :invalid_sign_command}
+  @spec build_sign_command(signature :: sig_with_hash()) :: t()
+  defp build_sign_command(%SignatureWithHash{} = signature) do
+    attrs = Map.from_struct(signature)
+    struct(%__MODULE__{}, attrs)
+  end
 
-  @spec set_signature_type(hash :: String.t(), sig :: Signature.t(), pub_key :: String.t()) ::
-          SignedSignatureWithHash.t() | UnsignedSignatureWithHash.t() | {:error, atom()}
-  defp set_signature_type(hash, sig, nil),
-    do: UnsignedSignatureWithHash.new(hash: hash, sig: sig, pub_key: nil)
-
-  defp set_signature_type(hash, sig, pub_key),
-    do: SignedSignatureWithHash.new(hash: hash, sig: sig, pub_key: pub_key)
+  defp build_sign_command(error), do: error
 end
