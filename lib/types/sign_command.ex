@@ -22,11 +22,11 @@ defmodule Kadena.Types.SignCommand do
   def new(%SignatureWithHash{} = signature), do: %__MODULE__{command: signature}
 
   def new(args) when is_list(args) do
-    hash = Keyword.get(args, :hash, nil)
-    sig = Keyword.get(args, :sig, nil)
-    pub_key = Keyword.get(args, :pub_key, nil)
+    hash = Keyword.get(args, :hash)
+    sig = Keyword.get(args, :sig)
+    pub_key = Keyword.get(args, :pub_key)
 
-    case validate(hash, sig, pub_key) do
+    case set_signature_type(hash, sig, pub_key) do
       {:error, _error} -> {:error, :invalid_sign_command}
       signature -> %__MODULE__{command: SignatureWithHash.new(signature)}
     end
@@ -34,11 +34,11 @@ defmodule Kadena.Types.SignCommand do
 
   def new(_args), do: {:error, :invalid_sign_command}
 
-  @spec validate(hash :: String.t(), sig :: Signature.t(), pub_key :: String.t()) ::
+  @spec set_signature_type(hash :: String.t(), sig :: Signature.t(), pub_key :: String.t()) ::
           SignedSignatureWithHash.t() | UnsignedSignatureWithHash.t() | {:error, atom()}
-  defp validate(hash, sig, nil),
+  defp set_signature_type(hash, sig, nil),
     do: UnsignedSignatureWithHash.new(hash: hash, sig: sig, pub_key: nil)
 
-  defp validate(hash, sig, pub_key),
+  defp set_signature_type(hash, sig, pub_key),
     do: SignedSignatureWithHash.new(hash: hash, sig: sig, pub_key: pub_key)
 end
