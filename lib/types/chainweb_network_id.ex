@@ -1,6 +1,6 @@
-defmodule Kadena.Types.NetworkId do
+defmodule Kadena.Types.ChainwebNetworkID do
   @moduledoc """
-  `NetworkId` struct definition.
+  `ChainwebNetworkID` struct definition.
   """
 
   @behaviour Kadena.Types.Spec
@@ -14,5 +14,5 @@ defmodule Kadena.Types.NetworkId do
 
   @impl true
   def new(id) when id in @networks_id, do: %__MODULE__{id: id}
-  def new(_value), do: {:error, :invalid_network_id}
+  def new(_value), do: {:error, :invalid_chainweb_network_id}
 end

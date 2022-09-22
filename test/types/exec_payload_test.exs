@@ -1,0 +1,30 @@
+defmodule Kadena.Types.ExecPayloadTest do
+  @moduledoc """
+  `ExecPayload` struct definition tests.
+  """
+
+  use ExUnit.Case
+
+  alias Kadena.Types.{ExecPayload, EnvData, PactCode}
+
+  describe "new/1" do
+    setup do
+      %{
+        data: EnvData.new(%{}),
+        code: PactCode.new("(format \"hello {}\" [\"world\"])")
+      }
+    end
+
+    test "with valid param list", %{data: data, code: code} do
+      %ExecPayload{data: ^data, code: ^code} = ExecPayload.new(data: data, code: code)
+    end
+
+    test "with invalid env data", %{code: code} do
+      {:error, :invalid_data} = ExecPayload.new(data: "invalid", code: code)
+    end
+
+    test "with invalid pact code", %{data: data} do
+      {:error, :invalid_code} = ExecPayload.new(data: data, code: "invalid")
+    end
+  end
+end
