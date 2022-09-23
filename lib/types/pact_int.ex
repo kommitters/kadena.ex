@@ -5,13 +5,26 @@ defmodule Kadena.Types.PactInt do
 
   @behaviour Kadena.Types.Spec
 
-  @type t :: %__MODULE__{value: integer(), raw_value: String.t()}
+  @type value :: integer()
+  @type validation :: {:ok, any()} | {:error, list()}
+
+  @type t :: %__MODULE__{value: value(), raw_value: String.t()}
 
   defstruct [:value, :raw_value]
 
   @impl true
-  def new(value) when is_integer(value),
-    do: %__MODULE__{value: value, raw_value: to_string(value)}
+  def new(value) when is_integer(value) do
+    case validate_range(value) do
+      {:ok, value} -> %__MODULE__{value: value, raw_value: to_string(value)}
+      error -> error
+    end
+  end
 
-  def new(_value), do: {:error, :invalid_int}
+  def new(_value), do: {:error, [value: :invalid_int]}
+
+  @spec validate_range(value :: value()) :: validation()
+  defp validate_range(value) when -9_007_199_254_740_991 > value or value > 9_007_199_254_740_991,
+    do: {:ok, value}
+
+  defp validate_range(_value), do: {:error, [value: :invalid_range]}
 end

@@ -5,66 +5,51 @@ defmodule Kadena.Types.PactValueTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{PactDecimal, PactInt, PactLiteral, PactLiteralsList, PactValue}
+  alias Kadena.Types.{PactDecimal, PactInt, PactValue, PactValuesList}
 
   describe "new/1" do
-    setup do
-      literal_string = PactLiteral.new("string")
-      literal_int = 123 |> PactInt.new() |> PactLiteral.new()
-      literal_decimal = "2.3333" |> PactDecimal.new() |> PactLiteral.new()
-      literal_boolean = PactLiteral.new(true)
-
-      literal_list =
-        PactLiteralsList.new([literal_string, literal_int, literal_decimal, literal_boolean])
-
-      %{
-        literal_string: literal_string,
-        literal_int: literal_int,
-        literal_decimal: literal_decimal,
-        literal_boolean: literal_boolean,
-        literal_list: literal_list
-      }
+    test "with a valid string" do
+      %PactValue{value: "string"} = PactValue.new("string")
     end
 
-    test "with a valid string", %{literal_string: literal_string} do
-      %PactValue{value: ^literal_string} = PactValue.new(literal_string)
+    test "with a valid PactInt" do
+      %PactValue{value: %PactInt{value: 9_007_199_254_740_992, raw_value: "9007199254740992"}} =
+        PactValue.new(9_007_199_254_740_992)
     end
 
-    test "with a valid PactInt", %{literal_int: literal_int} do
-      %PactValue{value: ^literal_int} = PactValue.new(literal_int)
+    test "with a valid PactDecimal" do
+      %PactValue{value: %PactDecimal{raw_value: "9.007199254740992e15"}} =
+        PactValue.new(9_007_199_254_740_992.553)
     end
 
-    test "with a valid PactDecimal", %{literal_decimal: literal_decimal} do
-      %PactValue{value: ^literal_decimal} = PactValue.new(literal_decimal)
+    test "with a valid boolean" do
+      %PactValue{value: true} = PactValue.new(true)
     end
 
-    test "with a valid boolean", %{literal_boolean: literal_boolean} do
-      %PactValue{value: ^literal_boolean} = PactValue.new(literal_boolean)
-    end
-
-    test "with a valid PactLiteralList", %{literal_list: literal_list} do
-      %PactValue{value: ^literal_list} = PactValue.new(literal_list)
+    test "with a valid PactLiteralList" do
+      %PactValue{
+        value: %PactValuesList{list: [%PactValue{value: 0.01}, %PactValue{value: "COIN.gas"}]}
+      } = PactValue.new(["COIN.gas", 1.0e-2])
     end
 
     test "with an invalid list" do
-      {:error, :invalid_value} =
-        ["string", :atom, true] |> PactLiteralsList.new() |> PactValue.new()
+      {:error, [value: :invalid_type]} = PactValue.new(["string", :atom, true])
     end
 
     test "with a nil value" do
-      {:error, :invalid_value} = PactValue.new(nil)
+      {:error, [value: :invalid_type]} = PactValue.new(nil)
     end
 
     test "with an atom value" do
-      {:error, :invalid_value} = PactValue.new(:atom)
+      {:error, [value: :invalid_type]} = PactValue.new(:atom)
     end
 
     test "with a list of nil" do
-      {:error, :invalid_value} = PactValue.new([nil])
+      {:error, [value: :invalid_type]} = PactValue.new([nil])
     end
 
     test "with empty list value" do
-      {:error, :invalid_value} = PactValue.new([])
+      {:error, [value: :invalid_type]} = PactValue.new([])
     end
   end
 end
