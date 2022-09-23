@@ -10,16 +10,16 @@ defmodule Kadena.Types.ContPayloadTest do
   describe "new/1" do
     setup do
       %{
-        data: EnvData.new(%{}),
-        pact_id: PactTransactionHash.new("yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4"),
-        step: Step.new(2),
-        proof: Proof.new("valid_proof"),
-        rollback: Rollback.new(true)
+        data: %{},
+        pact_id: "yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4",
+        step: 2,
+        proof: "valid_proof",
+        rollback: true
       }
     end
 
     test "with valid param list", %{data: data, pact_id: pact_id, step: step, proof: proof, rollback: rollback} do
-      %ContPayload{data: ^data, pact_id: ^pact_id, step: ^step, proof: ^proof, rollback: ^rollback} = ContPayload.new(data: data, pact_id: pact_id, step: step, proof: proof, rollback: rollback)
+      %ContPayload{data: %EnvData{data: ^data}, pact_id: %PactTransactionHash{url: ^pact_id}, step: %Step{number: ^step}, proof: %Proof{url: ^proof}, rollback: %Rollback{value: ^rollback} = ContPayload.new(data: data, pact_id: pact_id, step: step, proof: proof, rollback: rollback)
     end
 
     test "with invalid data", %{pact_id: pact_id, step: step, proof: proof, rollback: rollback} do

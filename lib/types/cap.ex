@@ -7,21 +7,35 @@ defmodule Kadena.Types.Cap do
 
   @behaviour Kadena.Types.Spec
 
+  @type name :: String.t()
   @type args :: PactValuesList.t()
-  @type t :: %__MODULE__{name: String.t(), args: args()}
+  @type validation :: {:ok, any()} | {:error, atom()}
+  @type t :: %__MODULE__{name: name(), args: args()}
 
   defstruct [:name, :args]
 
   @impl true
   def new(args) do
     name = Keyword.get(args, :name)
-    args_list = Keyword.get(args, :args)
+    args = Keyword.get(args, :args)
 
-    with name when is_binary(name) <- name,
-         %PactValuesList{} <- args_list do
-      %__MODULE__{name: name, args: args_list}
-    else
-      _error -> {:error, :invalid_cap}
+    with {:ok, name} <- validate_name(name),
+         {:ok, args} <- validate_args(args) do
+      %__MODULE__{name: name, args: args}
     end
   end
+
+  @spec validate_name(name :: name()) :: validation()
+  def validate_name(name) when is_binary(name), do: {:ok, name}
+  def validate_name(_name), do: {:error, [:name, :invalid]}
+
+  @spec validate_args(args :: list()) :: validation()
+  def validate_args(args) when is_list(args) do
+    case PactValuesList.new(args) do
+      %PactValuesList{} = args -> {:ok, args}
+      _error -> {:error, [:args, :invalid]}
+    end
+  end
+
+  def validate_args(_args), do: {:error, [:args, :invalid]}
 end

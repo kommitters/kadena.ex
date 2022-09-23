@@ -10,13 +10,13 @@ defmodule Kadena.Types.ExecPayloadTest do
   describe "new/1" do
     setup do
       %{
-        data: EnvData.new(%{}),
-        code: PactCode.new("(format \"hello {}\" [\"world\"])")
+        data: %{},
+        code: "(format \"hello {}\" [\"world\"])"
       }
     end
 
     test "with valid param list", %{data: data, code: code} do
-      %ExecPayload{data: ^data, code: ^code} = ExecPayload.new(data: data, code: code)
+      %ExecPayload{data: %EnvData{data: ^data}, code: %PactCode{code: ^code}} = ExecPayload.new(data: data, code: code)
     end
 
     test "with invalid env data", %{code: code} do

@@ -9,12 +9,12 @@ defmodule Kadena.Types.PactPayloadTest do
 
   describe "new/1" do
     setup do
-      data = EnvData.new(%{}),
-      code = PactCode.new("(format \"hello {}\" [\"world\"])")
-      pact_id = PactTransactionHash.new("yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4"),
-      step = Step.new(2),
-      proof = Proof.new("valid_proof"),
-      rollback = Rollback.new(true)
+      data = %{},
+      code = "(format \"hello {}\" [\"world\"])"
+      pact_id = "yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4",
+      step = 2,
+      proof = "valid_proof",
+      rollback = true
 
       %{
         exec: ContPayload.new(data: data, pact_id: pact_id, step: step, proof: proof, rollback: rollback),

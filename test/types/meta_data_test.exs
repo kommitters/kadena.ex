@@ -28,10 +28,10 @@ defmodule Kadena.Types.MetaDataTest do
     end
 
     test "with an invalid empty list" do
-      {:error, :invalid_creation_time} =  MetaData.new([])
+      {:error, [cration_time: :invalid]} =  MetaData.new([])
     end
     test "with an invalid cration_time" do
-      {:error, :invalid_creation_time} =
+      {:error, [cration_time: :invalid]} =
         MetaData.new(
           creation_time: "0",
           ttl: 0,
@@ -42,7 +42,7 @@ defmodule Kadena.Types.MetaDataTest do
         )
     end
     test "with an invalid ttl" do
-      {:error, :invalid_ttl} =
+      {:error, [ttl: :invalid]} =
         MetaData.new(
           creation_time: 0,
           ttl: "0",
@@ -53,7 +53,7 @@ defmodule Kadena.Types.MetaDataTest do
         )
     end
     test "with an invalid gas_limit" do
-      {:error, :invalid_gas_limit} =
+      {:error, [gas_limit: :invalid]} =
         MetaData.new(
           creation_time: 0,
           ttl: 0,
@@ -64,7 +64,7 @@ defmodule Kadena.Types.MetaDataTest do
         )
     end
     test "with an invalid gas_price" do
-      {:error, :invalid_gas_price} =
+      {:error, [gas_price: :invalid]} =
         MetaData.new(
           creation_time: 0,
           ttl: 0,
@@ -75,7 +75,7 @@ defmodule Kadena.Types.MetaDataTest do
         )
     end
     test "with an invalid sender" do
-      {:error, :invalid_sender} =
+      {:error, [sender: :invalid]} =
         MetaData.new(
           creation_time: 0,
           ttl: 0,
@@ -86,7 +86,7 @@ defmodule Kadena.Types.MetaDataTest do
         )
     end
     test "with an invalid chain_id" do
-      {:error, :invalid_chain_id} =
+      {:error, [chain_id: :invalid]} =
         MetaData.new(
           creation_time: 0,
           ttl: 0,

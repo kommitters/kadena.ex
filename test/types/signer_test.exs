@@ -5,26 +5,28 @@ defmodule Kadena.Types.SignerTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{Base16String, Cap, Signer}
+  alias Kadena.Types.{Base16String, Cap, CapsList, CapsList, Signer}
 
   describe "new/1" do
     setup do
-      value = "valid_value" |> PactLiteral.new() |> PactValue.new()
-      values_list = PactValuesList.new([value, value, value])
+      cap_value = {"valid_name", ["valid_value", "valid_value", "valid_value"]}
+      cap_list_value = [cap_value, cap_value, cap_value]
+      cap_list_struct = CapsList.new(cap_list_value)
 
       %{
         base16string: "64617373646164617364617364616473616461736461736464",
         signer_scheme: :ED25519,
-        clist: [Cap.new(name: "valid_name", args: values_list), Cap.new(name: "valid_name2", args: values_list)]
+        clist: cap_list_value,
+        cap_list_struct: cap_list_struct
       }
     end
 
-    test "with valid params", %{base16string: base16string, signer_scheme: signer_scheme, clist: clist} do
-      %Signer{pub_key: %Base16String{value: ^base16string}, scheme: ^signer_scheme, addr: %Base16String{value: ^base16string}, clist: ^clist} = Signer.new(pub_key: base16string, scheme: signer_scheme, addr: base16string, clist: clist)
+    test "with valid params", %{base16string: base16string, signer_scheme: signer_scheme, clist: clist, cap_list_struct: cap_list_struct} do
+      %Signer{pub_key: %Base16String{value: ^base16string}, scheme: ^signer_scheme, addr: %Base16String{value: ^base16string}, clist: ^cap_list_struct} = Signer.new(pub_key: base16string, scheme: signer_scheme, addr: base16string, clist: clist)
     end
 
     test "with only the required valid params", %{base16string: base16string} do
-      %Signer{pub_key: %Base16String{value: ^base16string}, scheme: nil, addr: nil, clist: []} = Signer.new(pub_key: base16string)
+      %Signer{pub_key: %Base16String{value: ^base16string}, scheme: nil, addr: nil, clist: %CapsList{list: []}} = Signer.new(pub_key: base16string)
     end
 
     test "with invalid pub key", %{base16string: base16string, signer_scheme: signer_scheme, clist: clist} do
