@@ -11,5 +11,5 @@ defmodule Kadena.Types.EnvData do
 
   @impl true
   def new(data) when is_map(data), do: %__MODULE__{data: data}
-  def new(_data), do: {:error, :invalid_env_data}
+  def new(_data), do: {:error, [env_data: :invalid]}
 end

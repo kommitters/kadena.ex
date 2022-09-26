@@ -16,15 +16,16 @@ defmodule Kadena.Types.ExecPayloadTest do
     end
 
     test "with valid param list", %{data: data, code: code} do
-      %ExecPayload{data: %EnvData{data: ^data}, code: %PactCode{code: ^code}} = ExecPayload.new(data: data, code: code)
+      %ExecPayload{data: %EnvData{data: ^data}, code: %PactCode{code: ^code}} =
+        ExecPayload.new(data: data, code: code)
     end
 
     test "with invalid env data", %{code: code} do
-      {:error, :invalid_data} = ExecPayload.new(data: "invalid", code: code)
+      {:error, [data: :invalid]} = ExecPayload.new(data: "invalid", code: code)
     end
 
     test "with invalid pact code", %{data: data} do
-      {:error, :invalid_code} = ExecPayload.new(data: data, code: "invalid")
+      {:error, [code: :invalid]} = ExecPayload.new(data: data, code: 12345)
     end
   end
 end

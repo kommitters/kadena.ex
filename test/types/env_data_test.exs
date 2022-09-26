@@ -13,15 +13,15 @@ defmodule Kadena.Types.EnvDataTest do
     end
 
     test "with nil env data" do
-      {:error, :invalid_env_data} = EnvData.new(nil)
+      {:error, [env_data: :invalid]} = EnvData.new(nil)
     end
 
     test "with number env data" do
-      {:error, :invalid_env_data} = EnvData.new(12345)
+      {:error, [env_data: :invalid]} = EnvData.new(12345)
     end
 
     test "with atom env data" do
-      {:error, :invalid_env_data} = EnvData.new(:atom)
+      {:error, [env_data: :invalid]} = EnvData.new(:atom)
     end
   end
 end

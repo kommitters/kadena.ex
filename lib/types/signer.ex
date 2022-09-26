@@ -40,24 +40,22 @@ defmodule Kadena.Types.Signer do
 
   @spec validate_pub_key(pub_key :: String.t()) :: validation()
   defp validate_pub_key(pub_key) when is_binary(pub_key), do: {:ok, Base16String.new(pub_key)}
-  defp validate_pub_key(_pub_key), do: {:error, :invalid_pub_key}
+  defp validate_pub_key(_pub_key), do: {:error, [pub_key: :invalid]}
 
   @spec validate_scheme(scheme :: String.t() | nil) :: validation()
   defp validate_scheme(scheme) when scheme in @valid_schemes, do: {:ok, scheme}
-  defp validate_scheme(_code), do: {:error, :invalid_scheme}
+  defp validate_scheme(_code), do: {:error, [scheme: :invalid]}
 
   @spec validate_addr(addr :: String.t() | nil) :: validation()
   defp validate_addr(nil), do: {:ok, nil}
   defp validate_addr(addr) when is_binary(addr), do: {:ok, Base16String.new(addr)}
-  defp validate_addr(_addr), do: {:error, :invalid_addr}
+  defp validate_addr(_addr), do: {:error, [addr: :invalid]}
 
   @spec validate_clist(clist :: list(Cap.t())) :: validation()
-  defp validate_clist(clist) when is_list(clist) do
+  defp validate_clist(clist) do
     case CapsList.new(clist) do
       %CapsList{} = clist -> {:ok, clist}
-      _error -> {:error, :invalid_cap_list}
+      _error -> {:error, [cap_list: :invalid]}
     end
   end
-
-  defp validate_clist(_clist), do: {:error, :invalid_cap_list}
 end

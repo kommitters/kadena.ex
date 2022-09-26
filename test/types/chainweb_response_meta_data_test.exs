@@ -22,10 +22,11 @@ defmodule Kadena.Types.ChainwebResponseMetaDataTest do
           prev_block_hash: "LD_o60RB4xnMgLyzkedNV6v-hbCCnx6WXRQy9WDKTgs"
         )
     end
+
     test "with an invalid empty list" do
-      {:error, :invalid_block_hash} =
-        ChainwebResponseMetaData.new([])
+      {:error, :invalid_block_hash} = ChainwebResponseMetaData.new([])
     end
+
     test "with an invalid block_hash" do
       {:error, :invalid_block_hash} =
         ChainwebResponseMetaData.new(
@@ -64,10 +65,6 @@ defmodule Kadena.Types.ChainwebResponseMetaDataTest do
           block_height: 2708,
           prev_block_hash: 1_656_709_048_955_370
         )
-    end
-
-    test "with an invalid nil value" do
-      {:error, :invalid_block_hash} = ChainwebResponseMetaData.new(nil)
     end
   end
 end

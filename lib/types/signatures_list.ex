@@ -15,11 +15,11 @@ defmodule Kadena.Types.SignaturesList do
   @impl true
   def new(signatures), do: build_list(%__MODULE__{}, signatures)
 
-  @spec build_list(list :: t(), signatures :: signatures()) :: t()
+  @spec build_list(list :: t(), signatures :: signatures()) :: t() | {:error, list()}
   defp build_list(list, []), do: list
 
   defp build_list(%__MODULE__{list: list}, [%Signature{} = signature | rest]),
     do: build_list(%__MODULE__{list: [signature | list]}, rest)
 
-  defp build_list(_list, _signatures), do: {:error, :invalid_signature}
+  defp build_list(_list, _signatures), do: {:error, [signatures: :invalid]}
 end

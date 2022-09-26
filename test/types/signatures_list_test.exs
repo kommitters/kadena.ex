@@ -26,15 +26,15 @@ defmodule Kadena.Types.SignaturesListTest do
     end
 
     test "with a nil value" do
-      {:error, :invalid_signature} = SignaturesList.new(nil)
+      {:error, [signatures: :invalid]} = SignaturesList.new(nil)
     end
 
     test "with an atom value" do
-      {:error, :invalid_signature} = SignaturesList.new(:atom)
+      {:error, [signatures: :invalid]} = SignaturesList.new(:atom)
     end
 
     test "with a list of nil" do
-      {:error, :invalid_signature} = SignaturesList.new([nil])
+      {:error, [signatures: :invalid]} = SignaturesList.new([nil])
     end
 
     test "when the list has invalid values" do
@@ -46,7 +46,7 @@ defmodule Kadena.Types.SignaturesListTest do
           "8c8932a6459945afb87dbce6f625d07d4bbaafcc01f570b279d41a3d0f51f18ac5f05c017581aab23459e0437b4715774dea80a67da41f3b1b3988b2d59c3c0a"
         )
 
-      {:error, :invalid_signature} = SignaturesList.new([signature1, nil, signature2])
+      {:error, [signatures: :invalid]} = SignaturesList.new([signature1, nil, signature2])
     end
   end
 end
