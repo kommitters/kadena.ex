@@ -18,8 +18,10 @@ defmodule Kadena.Types.PactValueTest do
     end
 
     test "with a valid PactDecimal" do
-      %PactValue{value: %PactDecimal{raw_value: "9.007199254740992e15"}} =
-        PactValue.new(9_007_199_254_740_992.553)
+      decimal = Decimal.new("9007199254740992.553")
+
+      %PactValue{value: %PactDecimal{value: ^decimal, raw_value: "9007199254740992.553"}} =
+        PactValue.new("9007199254740992.553")
     end
 
     test "with a valid boolean" do

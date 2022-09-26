@@ -20,9 +20,8 @@ defmodule Kadena.Types.PactValuesList do
   defp build_list(list, []), do: list
 
   defp build_list(%__MODULE__{list: list}, [value | rest]) do
-    case PactValue.new(value) do
-      %PactValue{} = pact_value -> build_list(%__MODULE__{list: [pact_value | list]}, rest)
-      {:error, error} -> {:error, error}
+    with %PactValue{} = pact_value <- PactValue.new(value) do
+      build_list(%__MODULE__{list: [pact_value | list]}, rest)
     end
   end
 

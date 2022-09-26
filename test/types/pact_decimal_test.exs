@@ -9,7 +9,10 @@ defmodule Kadena.Types.PactDecimalTest do
 
   describe "new/1" do
     test "with a valid value" do
-      %PactDecimal{raw_value: "9.007199254740992e15"} = PactDecimal.new(9_007_199_254_740_992.553)
+      decimal = Decimal.new("9007199254740992.553")
+
+      %PactDecimal{value: ^decimal, raw_value: "9007199254740992.553"} =
+        PactDecimal.new("9007199254740992.553")
     end
 
     test "with an invalid integer value" do
@@ -17,7 +20,7 @@ defmodule Kadena.Types.PactDecimalTest do
     end
 
     test "with an invalid value" do
-      {:error, [value: :invalid_range]} = PactDecimal.new(4.3333333)
+      {:error, [value: :invalid_decimal]} = PactDecimal.new(4.3333333)
     end
 
     test "with a nil value" do

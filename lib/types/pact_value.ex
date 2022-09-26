@@ -16,41 +16,33 @@ defmodule Kadena.Types.PactValue do
 
   @impl true
   def new(literal) do
-    case set_type(literal) do
-      {:ok, literal} -> %__MODULE__{value: literal}
-      {:error, error} -> {:error, error}
+    with {:ok, literal} <- set_type(literal) do
+      %__MODULE__{value: literal}
     end
   end
 
   @spec set_type(literal :: literal() | list()) :: validation()
-  defp set_type(decimal) when is_float(decimal) do
-    case PactDecimal.new(decimal) do
-      %PactDecimal{} = pact_decimal -> {:ok, pact_decimal}
-      {:error, [value: :invalid_range]} -> {:ok, decimal}
-      error -> error
-    end
-  end
-
-  defp set_type(int) when is_integer(int) do
+  defp set_type(int) when is_number(int) do
     case PactInt.new(int) do
       %PactInt{} = pact_int -> {:ok, pact_int}
-      {:error, [value: :invalid_range]} -> {:ok, int}
-      {:error, error} -> {:error, error}
+      _error -> {:ok, int}
     end
   end
 
   defp set_type(boolean) when is_boolean(boolean), do: {:ok, boolean}
 
-  defp set_type(number) when is_number(number), do: {:ok, number}
-
   defp set_type([_head | _tail] = list) do
-    case PactValuesList.new(list) do
-      %PactValuesList{} = pact_list -> {:ok, pact_list}
-      {:error, error} -> {:error, error}
+    with %PactValuesList{} = pact_list <- PactValuesList.new(list) do
+      {:ok, pact_list}
     end
   end
 
-  defp set_type(str) when is_binary(str), do: {:ok, str}
+  defp set_type(value) when is_binary(value) do
+    case PactDecimal.new(value) do
+      %PactDecimal{} = decimal -> {:ok, decimal}
+      _error -> {:ok, value}
+    end
+  end
 
   defp set_type(_other_type), do: {:error, [value: :invalid_type]}
 end

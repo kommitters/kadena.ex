@@ -13,20 +13,23 @@ defmodule Kadena.Types.PactDecimal do
   defstruct [:value, :raw_value]
 
   @impl true
-  def new(decimal) when is_float(decimal) do
-    case validate_float(decimal) do
-      {:ok, value} ->
-        %__MODULE__{value: Decimal.new(value), raw_value: value}
-
-      error ->
-        error
+  def new(str) when is_binary(str) do
+    with {:ok, value} <- validate_float(str) do
+      %__MODULE__{value: Decimal.new(value), raw_value: value}
     end
   end
 
   def new(_str), do: {:error, [value: :invalid_decimal]}
 
-  defp validate_float(value) when -9_007_199_254_740_991 > value or value > 9_007_199_254_740_991,
-    do: {:ok, to_string(value)}
-
-  defp validate_float(_value), do: {:error, [value: :invalid_range]}
+  defp validate_float(value) do
+    with {_val, ""} <- Float.parse(value),
+         decimal <- Decimal.new(value),
+         true <-
+           Decimal.gt?(decimal, 9_007_199_254_740_991) or
+             Decimal.lt?(decimal, -9_007_199_254_740_991) do
+      {:ok, value}
+    else
+      _error -> {:error, [value: :invalid_range]}
+    end
+  end
 end

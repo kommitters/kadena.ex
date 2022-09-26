@@ -14,9 +14,8 @@ defmodule Kadena.Types.PactInt do
 
   @impl true
   def new(value) when is_integer(value) do
-    case validate_range(value) do
-      {:ok, value} -> %__MODULE__{value: value, raw_value: to_string(value)}
-      error -> error
+    with {:ok, value} <- validate_range(value) do
+      %__MODULE__{value: value, raw_value: to_string(value)}
     end
   end
 
