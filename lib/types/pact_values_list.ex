@@ -7,23 +7,29 @@ defmodule Kadena.Types.PactValuesList do
   @behaviour Kadena.Types.Spec
 
   @type literal :: String.t() | number() | boolean()
-  @type values :: list(PactValue.t())
+  @type literals :: list(literal())
+  @type error_list :: Keyword.t()
+  @type pact_values :: list(PactValue.t())
 
-  @type t :: %__MODULE__{list: values()}
+  @type t :: %__MODULE__{pact_values: pact_values()}
 
-  defstruct list: []
+  defstruct pact_values: []
 
   @impl true
-  def new(values), do: build_list(%__MODULE__{}, values)
+  def new(literals), do: build_list(%__MODULE__{}, literals)
 
-  @spec build_list(list :: t(), values :: list(literal())) :: t() | {:error, list()}
-  defp build_list(list, []), do: list
+  @spec build_list(struct :: t(), literals :: literals()) :: t() | {:error, error_list()}
+  defp build_list(struct, []), do: struct
 
-  defp build_list(%__MODULE__{list: list}, [value | rest]) do
-    with %PactValue{} = pact_value <- PactValue.new(value) do
-      build_list(%__MODULE__{list: [pact_value | list]}, rest)
+  defp build_list(%__MODULE__{pact_values: list}, [value | rest]) do
+    case PactValue.new(value) do
+      %PactValue{} = pact_value ->
+        build_list(%__MODULE__{pact_values: list ++ [pact_value]}, rest)
+
+      {:error, _reason} ->
+        {:error, [pact_values: :invalid]}
     end
   end
 
-  defp build_list(_list, _rest), do: {:error, [list: :invalid_type]}
+  defp build_list(_struct, _literals), do: {:error, [pact_values: :not_a_literals_list]}
 end

@@ -5,25 +5,28 @@ defmodule Kadena.Types.PactInt do
 
   @behaviour Kadena.Types.Spec
 
-  @type value :: integer()
-  @type validation :: {:ok, any()} | {:error, list()}
+  @type value :: String.t()
+  @type raw_value :: integer()
+  @type errors :: Keyword.t()
+  @type validation :: {:ok, raw_value()} | {:error, errors()}
 
-  @type t :: %__MODULE__{value: value(), raw_value: String.t()}
+  @type t :: %__MODULE__{value: value(), raw_value: raw_value()}
 
   defstruct [:value, :raw_value]
 
+  @int_range -9_007_199_254_740_991..9_007_199_254_740_991
+
   @impl true
   def new(value) when is_integer(value) do
-    with {:ok, value} <- validate_range(value) do
-      %__MODULE__{value: value, raw_value: to_string(value)}
+    case validate_int_range(value) do
+      {:ok, int} -> %__MODULE__{value: to_string(int), raw_value: int}
+      error -> error
     end
   end
 
-  def new(_value), do: {:error, [value: :invalid_int]}
+  def new(_value), do: {:error, [value: :invalid]}
 
-  @spec validate_range(value :: value()) :: validation()
-  defp validate_range(value) when -9_007_199_254_740_991 > value or value > 9_007_199_254_740_991,
-    do: {:ok, value}
-
-  defp validate_range(_value), do: {:error, [value: :invalid_range]}
+  @spec validate_int_range(raw_value :: raw_value()) :: validation()
+  defp validate_int_range(raw_value) when raw_value not in @int_range, do: {:ok, raw_value}
+  defp validate_int_range(_raw_value), do: {:error, [value: :not_in_range]}
 end

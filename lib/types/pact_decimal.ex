@@ -7,29 +7,38 @@ defmodule Kadena.Types.PactDecimal do
 
   @behaviour Kadena.Types.Spec
 
-  @type value :: Decimal.t()
-  @type t :: %__MODULE__{value: value(), raw_value: String.t()}
+  @type decimal :: Decimal.t()
+  @type value :: String.t()
+  @type errors :: Keyword.t()
+  @type validation :: {:ok, decimal()} | {:error, errors()}
+
+  @type t :: %__MODULE__{value: value(), raw_value: decimal()}
 
   defstruct [:value, :raw_value]
 
+  @lower_decimal_range -9_007_199_254_740_991
+  @upper_decimal_range 9_007_199_254_740_991
+
   @impl true
-  def new(str) when is_binary(str) do
-    with {:ok, value} <- validate_float(str) do
-      %__MODULE__{value: Decimal.new(value), raw_value: value}
+  def new(value) do
+    with {:ok, decimal} <- parse_decimal(value),
+         {:ok, decimal} <- validate_decimal_range(decimal) do
+      %__MODULE__{value: value, raw_value: decimal}
     end
   end
 
-  def new(_str), do: {:error, [value: :invalid_decimal]}
-
-  defp validate_float(value) do
-    with {_val, ""} <- Float.parse(value),
-         decimal <- Decimal.new(value),
-         true <-
-           Decimal.gt?(decimal, 9_007_199_254_740_991) or
-             Decimal.lt?(decimal, -9_007_199_254_740_991) do
-      {:ok, value}
-    else
-      _error -> {:error, [value: :invalid_range]}
+  @spec parse_decimal(value :: value()) :: validation()
+  defp parse_decimal(value) when is_binary(value) do
+    case Decimal.cast(value) do
+      {:ok, decimal} -> {:ok, decimal}
+      :error -> {:error, [value: :invalid]}
     end
+  end
+
+  @spec validate_decimal_range(decimal :: decimal()) :: validation()
+  defp validate_decimal_range(decimal) do
+    if Decimal.gt?(decimal, @upper_decimal_range) || Decimal.lt?(decimal, @lower_decimal_range),
+      do: {:ok, decimal},
+      else: {:error, [value: :not_in_range]}
   end
 end
