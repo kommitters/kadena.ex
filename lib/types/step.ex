@@ -11,5 +11,5 @@ defmodule Kadena.Types.Step do
 
   @impl true
   def new(number) when is_integer(number), do: %__MODULE__{number: number}
-  def new(_number), do: {:error, :invalid_step}
+  def new(_number), do: {:error, [step: :invalid]}
 end

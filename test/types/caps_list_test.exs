@@ -5,16 +5,30 @@ defmodule Kadena.Types.CapsListTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{Cap, CapsList, PactLiteral, PactValue, PactValuesList}
+  alias Kadena.Types.{Cap, CapsList, PactValue, PactValuesList}
 
   describe "new/1" do
     test "with a valid list" do
-      value = "valid_value" |> PactLiteral.new() |> PactValue.new()
-      values_list = PactValuesList.new([value, value, value])
-      cap = Cap.new(name: "valid_name", args: values_list)
-
-      caps_list = [cap, cap, cap]
-      %CapsList{list: ^caps_list} = CapsList.new(caps_list)
+      %CapsList{
+        list: [
+          %Cap{
+            name: "transfer",
+            args: %PactValuesList{
+              list: [
+                %PactValue{value: "key_2"},
+                %PactValue{value: 50},
+                %PactValue{value: "key_1"},
+                %PactValue{value: "COIN.transfer"}
+              ]
+            }
+          },
+          %Cap{}
+        ]
+      } =
+        CapsList.new([
+          [name: "gas", args: ["COIN.gas", 0.02]],
+          [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
+        ])
     end
 
     test "with an empty list value" do
@@ -22,24 +36,24 @@ defmodule Kadena.Types.CapsListTest do
     end
 
     test "with a nil value" do
-      {:error, :invalid_cap} = CapsList.new(nil)
+      {:error, [list: :invalid_cap]} = CapsList.new(nil)
     end
 
     test "with an atom value" do
-      {:error, :invalid_cap} = CapsList.new(:atom)
+      {:error, [list: :invalid_cap]} = CapsList.new(:atom)
     end
 
     test "with a list of nil" do
-      {:error, :invalid_cap} = CapsList.new([nil])
+      {:error, [list: :invalid_cap]} = CapsList.new([nil])
     end
 
     test "when the list has invalid values" do
-      value = "valid_value" |> PactLiteral.new() |> PactValue.new()
-      values_list = PactValuesList.new([value, value, value])
-      cap = Cap.new(name: "valid_name", args: values_list)
-
-      invalid_caps_list = [cap, :atom, cap]
-      {:error, :invalid_cap} = CapsList.new(invalid_caps_list)
+      {:error, [list: :invalid_cap]} =
+        CapsList.new([
+          [name: "gas", args: ["COIN.gas", 0.02]],
+          :atom,
+          [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
+        ])
     end
   end
 end

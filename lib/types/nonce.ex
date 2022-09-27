@@ -11,5 +11,5 @@ defmodule Kadena.Types.Nonce do
 
   @impl true
   def new(str) when is_binary(str), do: %__MODULE__{value: str}
-  def new(_value), do: {:error, :invalid_nonce}
+  def new(_value), do: {:error, [nonce: :invalid]}
 end

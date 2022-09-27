@@ -14,5 +14,5 @@ defmodule Kadena.Types.ChainwebNetworkID do
 
   @impl true
   def new(id) when id in @networks_id, do: %__MODULE__{id: id}
-  def new(_value), do: {:error, :invalid_chainweb_network_id}
+  def new(_value), do: {:error, [id: :invalid]}
 end

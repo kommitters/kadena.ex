@@ -25,11 +25,11 @@ defmodule Kadena.Types.ChainwebNetworkIDTest do
     end
 
     test "with an invalid atom" do
-      {:error, :invalid_chainweb_network_id} = ChainwebNetworkID.new(:atom)
+      {:error, [id: :invalid]} = ChainwebNetworkID.new(:atom)
     end
 
     test "with an invalid string" do
-      {:error, :invalid_chainweb_network_id} = ChainwebNetworkID.new("mainnet01")
+      {:error, [id: :invalid]} = ChainwebNetworkID.new("mainnet01")
     end
   end
 end

@@ -13,14 +13,16 @@ defmodule Kadena.Types.CapsList do
   defstruct list: []
 
   @impl true
-  def new(_caps), do: %__MODULE__{}
-  # build_list(%__MODULE__{}, caps)
+  def new(caps), do: build_list(%__MODULE__{}, caps)
 
-  # @spec build_list(list :: t(), caps :: caps()) :: t() | {:error, list()}
-  # defp build_list(list, []), do: list
+  @spec build_list(list :: t(), caps :: caps()) :: t() | {:error, list()}
+  defp build_list(list, []), do: list
 
-  # defp build_list(%__MODULE__{list: list}, [%Cap{} = cap | rest]),
-  #   do: build_list(%__MODULE__{list: [cap | list]}, rest)
+  defp build_list(%__MODULE__{list: list}, [value | rest]) do
+    with %Cap{} = cap <- Cap.new(value) do
+      build_list(%__MODULE__{list: [cap | list]}, rest)
+    end
+  end
 
-  # defp build_list(_list, _caps), do: {:error, [:caps, :invalid]}
+  defp build_list(_list, _rest), do: {:error, [list: :invalid_cap]}
 end

@@ -31,9 +31,8 @@ defmodule Kadena.Types.Cap do
 
   @spec validate_args(args :: list()) :: validation()
   def validate_args(args) when is_list(args) do
-    case PactValuesList.new(args) do
-      %PactValuesList{} = args -> {:ok, args}
-      _error -> {:error, [:args, :invalid]}
+    with %PactValuesList{} = args <- PactValuesList.new(args) do
+      {:ok, args}
     end
   end
 

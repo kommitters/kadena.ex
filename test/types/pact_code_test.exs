@@ -9,19 +9,20 @@ defmodule Kadena.Types.PactCodeTest do
 
   describe "new/1" do
     test "with a valid pact code" do
-      %PactCode{code: "(format \"hello {}\" [\"world\"])"} = PactCode.new("(format \"hello {}\" [\"world\"])")
+      %PactCode{code: "(format \"hello {}\" [\"world\"])"} =
+        PactCode.new("(format \"hello {}\" [\"world\"])")
     end
 
     test "with a number pact code" do
-      {:error, :invalid_pact_code} = PactCode.new(12345)
+      {:error, [pact_code: :invalid]} = PactCode.new(12345)
     end
 
     test "with a atom pact code" do
-      {:error, :invalid_pact_code} = PactCode.new(:atom)
+      {:error, [pact_code: :invalid]} = PactCode.new(:atom)
     end
 
     test "with a nil pact code" do
-      {:error, :invalid_pact_code} = PactCode.new(nil)
+      {:error, [pact_code: :invalid]} = PactCode.new(nil)
     end
   end
 end

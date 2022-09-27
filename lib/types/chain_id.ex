@@ -11,5 +11,5 @@ defmodule Kadena.Types.ChainID do
 
   @impl true
   def new(id) when is_binary(id), do: %__MODULE__{id: id}
-  def new(_id), do: {:error, :invalid_chain_id}
+  def new(_id), do: {:error, [id: :invalid]}
 end

@@ -11,5 +11,5 @@ defmodule Kadena.Types.Rollback do
 
   @impl true
   def new(bool) when is_boolean(bool), do: %__MODULE__{value: bool}
-  def new(_value), do: {:error, :invalid_rollback}
+  def new(_value), do: {:error, [rollback: :invalid]}
 end

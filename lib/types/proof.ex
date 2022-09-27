@@ -13,5 +13,5 @@ defmodule Kadena.Types.Proof do
   @impl true
   def new(nil), do: %__MODULE__{url: nil}
   def new(url) when is_binary(url), do: %__MODULE__{url: url}
-  def new(_proof), do: {:error, :invalid_proof}
+  def new(_proof), do: {:error, [proof: :invalid]}
 end

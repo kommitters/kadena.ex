@@ -11,5 +11,5 @@ defmodule Kadena.Types.PactResultError do
 
   @impl true
   def new(%{} = errors), do: %__MODULE__{status: :failure, error: errors}
-  def new(_errors), do: {:error, :invalid_pact_result}
+  def new(_errors), do: {:error, [pact_result: :invalid]}
 end

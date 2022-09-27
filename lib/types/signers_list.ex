@@ -18,8 +18,11 @@ defmodule Kadena.Types.SignersList do
   @spec build_list(list :: t(), signers :: signers()) :: t() | {:error, list()}
   defp build_list(list, []), do: list
 
-  defp build_list(%__MODULE__{list: list}, [%Signer{} = signer | rest]),
-    do: build_list(%__MODULE__{list: [signer | list]}, rest)
+  defp build_list(%__MODULE__{list: list}, [value | rest]) do
+    with %Signer{} = signer <- Signer.new(value) do
+      build_list(%__MODULE__{list: [signer | list]}, rest)
+    end
+  end
 
-  defp build_list(_list, _signers), do: {:error, [signers: :invalid]}
+  defp build_list(_list, _rest), do: {:error, [list: :invalid_type]}
 end

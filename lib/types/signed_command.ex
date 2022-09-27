@@ -27,7 +27,7 @@ defmodule Kadena.Types.SignedCommand do
          %SignaturesList{} <- sigs do
       %__MODULE__{hash: hash, sigs: sigs, cmd: cmd}
     else
-      _error -> {:error, :invalid_signed_command}
+      _error -> {:error, [signed_command: :invalid]}
     end
   end
 end

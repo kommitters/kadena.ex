@@ -3,32 +3,28 @@ defmodule Kadena.Types.CapTest do
   `Cap` struct definition tests.
   """
 
-  alias Kadena.Types.{Cap, PactLiteral, PactValue, PactValuesList}
+  alias Kadena.Types.{Cap, PactValue, PactValuesList}
 
   use ExUnit.Case
 
   describe "new/1" do
     test "with valid arguments" do
-      value = "valid_value" |> PactLiteral.new() |> PactValue.new()
-      values_list = PactValuesList.new([value, value, value])
-
-      %Cap{name: "valid_name", args: ^values_list} =
-        Cap.new(name: "valid_name", args: values_list)
+      %Cap{
+        name: "gas",
+        args: %PactValuesList{list: [%PactValue{value: 0.01}, %PactValue{value: "COIN.gas"}]}
+      } = Cap.new(name: "has", args: ["COIN.gas", 1.0e-2])
     end
 
     test "with an invalid name" do
-      value = "valid_value" |> PactLiteral.new() |> PactValue.new()
-      values_list = PactValuesList.new([value, value, value])
-
-      {:error, :invalid_cap} = Cap.new(name: 123, args: values_list)
+      {:error, [:name, :invalid]} = Cap.new(name: 123, args: ["COIN.gas", 20])
     end
 
     test "with an invalid values" do
-      {:error, :invalid_cap} = Cap.new(name: 123, args: [:atom, nil])
+      {:error, [:name, :invalid]} = Cap.new(name: 123, args: [true, :atom, nil, "COIN.gas"])
     end
 
     test "with an empty list values" do
-      {:error, :invalid_cap} = Cap.new(name: 123, args: [])
+      {:error, [:name, :invalid]} = Cap.new(name: 123, args: [])
     end
   end
 end

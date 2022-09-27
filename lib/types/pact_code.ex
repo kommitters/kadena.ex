@@ -11,5 +11,5 @@ defmodule Kadena.Types.PactCode do
 
   @impl true
   def new(code) when is_binary(code), do: %__MODULE__{code: code}
-  def new(_code), do: {:error, :invalid_pact_code}
+  def new(_code), do: {:error, [pact_code: :invalid]}
 end

@@ -14,5 +14,5 @@ defmodule Kadena.Types.PactResultSuccess do
 
   @impl true
   def new(%PactValue{} = data), do: %__MODULE__{status: :success, data: data}
-  def new(_data), do: {:error, :invalid_pact_result}
+  def new(_data), do: {:error, [pact_result: :invalid]}
 end

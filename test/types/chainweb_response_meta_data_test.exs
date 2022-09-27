@@ -24,11 +24,11 @@ defmodule Kadena.Types.ChainwebResponseMetaDataTest do
     end
 
     test "with an invalid empty list" do
-      {:error, :invalid_block_hash} = ChainwebResponseMetaData.new([])
+      {:error, [block_hash: :invalid]} = ChainwebResponseMetaData.new([])
     end
 
     test "with an invalid block_hash" do
-      {:error, :invalid_block_hash} =
+      {:error, [block_hash: :invalid]} =
         ChainwebResponseMetaData.new(
           block_hash: 1_656_709_048_955_370,
           block_time: 1_656_709_048_955_370,
@@ -38,7 +38,7 @@ defmodule Kadena.Types.ChainwebResponseMetaDataTest do
     end
 
     test "with an invalid block_time" do
-      {:error, :invalid_block_time} =
+      {:error, [block_time: :invalid]} =
         ChainwebResponseMetaData.new(
           block_hash: "kZCKTbL3ubONngiGQsJh4fGtP1xrhAoUvcTsqi3uCGg",
           block_time: "1_656_709_048_955_370",
@@ -48,7 +48,7 @@ defmodule Kadena.Types.ChainwebResponseMetaDataTest do
     end
 
     test "with an invalid block_height" do
-      {:error, :invalid_block_height} =
+      {:error, [block_height: :invalid]} =
         ChainwebResponseMetaData.new(
           block_hash: "kZCKTbL3ubONngiGQsJh4fGtP1xrhAoUvcTsqi3uCGg",
           block_time: 1_656_709_048_955_370,
@@ -58,7 +58,7 @@ defmodule Kadena.Types.ChainwebResponseMetaDataTest do
     end
 
     test "with an invalid prev_block_hash" do
-      {:error, :invalid_prev_block_hash} =
+      {:error, [prev_block_hash: :invalid]} =
         ChainwebResponseMetaData.new(
           block_hash: "kZCKTbL3ubONngiGQsJh4fGtP1xrhAoUvcTsqi3uCGg",
           block_time: 1_656_709_048_955_370,

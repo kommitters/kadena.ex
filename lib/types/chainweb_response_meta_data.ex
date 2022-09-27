@@ -49,24 +49,24 @@ defmodule Kadena.Types.ChainwebResponseMetaData do
 
   @spec validate_block_hash(block_hash :: block_hash()) :: validation()
   defp validate_block_hash(block_hash) when is_binary(block_hash), do: {:ok, block_hash}
-  defp validate_block_hash(_block_hash), do: {:error, :invalid_block_hash}
+  defp validate_block_hash(_block_hash), do: {:error, [block_hash: :invalid]}
 
   @spec validate_block_time(block_time :: block_time()) :: validation()
   defp validate_block_time(block_time) when is_number(block_time), do: {:ok, block_time}
-  defp validate_block_time(_block_time), do: {:error, :invalid_block_time}
+  defp validate_block_time(_block_time), do: {:error, [block_time: :invalid]}
 
   @spec validate_block_height(block_height :: block_height()) :: validation()
   defp validate_block_height(block_height) when is_number(block_height), do: {:ok, block_height}
-  defp validate_block_height(_block_height), do: {:error, :invalid_block_height}
+  defp validate_block_height(_block_height), do: {:error, [block_height: :invalid]}
 
   @spec validate_prev_block_hash(prev_block_hash :: prev_block_hash()) :: validation()
   defp validate_prev_block_hash(prev_block_hash) when is_binary(prev_block_hash),
     do: {:ok, prev_block_hash}
 
-  defp validate_prev_block_hash(_prev_block_hash), do: {:error, :invalid_prev_block_hash}
+  defp validate_prev_block_hash(_prev_block_hash), do: {:error, [prev_block_hash: :invalid]}
 
   @spec validate_public_meta(public_meta :: public_meta()) :: validation()
   defp validate_public_meta(%MetaData{} = public_meta), do: {:ok, public_meta}
   defp validate_public_meta(nil), do: {:ok, nil}
-  defp validate_public_meta(_public_meta), do: {:error, :invalid_public_meta}
+  defp validate_public_meta(_public_meta), do: {:error, [public_meta: :invalid]}
 end

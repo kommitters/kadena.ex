@@ -15,7 +15,7 @@ defmodule Kadena.Types.PactPayload do
   defstruct [:payload]
 
   @impl true
-  def new(%ContPayload{} = cont),  do: %__MODULE__{payload: cont}
-  def new(%ExecPayload{} = exec),  do: %__MODULE__{payload: exec}
-  def new(_args),  do: {:error, :invalid_payload}
+  def new(%ContPayload{} = cont), do: %__MODULE__{payload: cont}
+  def new(%ExecPayload{} = exec), do: %__MODULE__{payload: exec}
+  def new(_args), do: {:error, [payload: :invalid]}
 end

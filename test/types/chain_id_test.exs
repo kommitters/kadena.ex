@@ -13,11 +13,11 @@ defmodule Kadena.Types.ChainIDTest do
     end
 
     test "with an invalid value " do
-      {:error, :invalid_chain_id} = ChainID.new(2)
+      {:error, [id: :invalid]} = ChainID.new(2)
     end
 
     test "with an invalid nil value " do
-      {:error, :invalid_chain_id} = ChainID.new(nil)
+      {:error, [id: :invalid]} = ChainID.new(nil)
     end
   end
 end
