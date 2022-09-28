@@ -27,7 +27,7 @@ defmodule Kadena.Types.Cap do
     end
   end
 
-  def new(_args), do: {:error, [args: :invalids]}
+  def new(_args), do: {:error, [args: :invalid]}
 
   @spec validate_name(name :: name()) :: validation()
   defp validate_name(name) when is_binary(name), do: {:ok, name}
