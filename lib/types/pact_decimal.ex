@@ -35,6 +35,8 @@ defmodule Kadena.Types.PactDecimal do
     end
   end
 
+  defp parse_decimal(_value), do: {:error, [value: :invalid]}
+
   @spec validate_decimal_range(decimal :: decimal()) :: validation()
   defp validate_decimal_range(decimal) do
     if Decimal.gt?(decimal, @upper_decimal_range) || Decimal.lt?(decimal, @lower_decimal_range),

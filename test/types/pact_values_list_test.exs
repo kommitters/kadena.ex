@@ -10,28 +10,28 @@ defmodule Kadena.Types.PactValuesListTest do
   describe "new/1" do
     test "with a valid list" do
       %PactValuesList{
-        list: [%PactValue{value: 20}, %PactValue{value: "COIN.transfer"}]
+        pact_values: [%PactValue{literal: "COIN.transfer"}, %PactValue{literal: 20}]
       } = PactValuesList.new(["COIN.transfer", 20])
     end
 
     test "with an empty list value" do
-      %PactValuesList{list: []} = PactValuesList.new([])
+      %PactValuesList{pact_values: []} = PactValuesList.new([])
     end
 
     test "with a nil value" do
-      {:error, [list: :invalid_type]} = PactValuesList.new(nil)
+      {:error, [pact_values: :not_a_literals_list]} = PactValuesList.new(nil)
     end
 
     test "with an atom value" do
-      {:error, [list: :invalid_type]} = PactValuesList.new(:atom)
+      {:error, [pact_values: :not_a_literals_list]} = PactValuesList.new(:atom)
     end
 
     test "with a list of nil" do
-      {:error, [value: :invalid_type]} = PactValuesList.new([nil])
+      {:error, [pact_values: :invalid]} = PactValuesList.new([nil])
     end
 
     test "when the list has invalid values" do
-      {:error, [value: :invalid_type]} = PactValuesList.new(["string", 20, :atom, true])
+      {:error, [pact_values: :invalid]} = PactValuesList.new(["string", 20, :atom, true])
     end
   end
 end

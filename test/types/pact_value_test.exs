@@ -9,49 +9,53 @@ defmodule Kadena.Types.PactValueTest do
 
   describe "new/1" do
     test "with a valid string" do
-      %PactValue{value: "string"} = PactValue.new("string")
+      %PactValue{literal: "string"} = PactValue.new("string")
     end
 
     test "with a valid PactInt" do
-      %PactValue{value: %PactInt{value: 9_007_199_254_740_992, raw_value: "9007199254740992"}} =
+      %PactValue{literal: %PactInt{value: "9007199254740992", raw_value: 9_007_199_254_740_992}} =
         PactValue.new(9_007_199_254_740_992)
     end
 
     test "with a valid PactDecimal" do
       decimal = Decimal.new("9007199254740992.553")
 
-      %PactValue{value: %PactDecimal{value: ^decimal, raw_value: "9007199254740992.553"}} =
+      %PactValue{literal: %PactDecimal{value: "9007199254740992.553", raw_value: ^decimal}} =
         PactValue.new("9007199254740992.553")
     end
 
     test "with a valid boolean" do
-      %PactValue{value: true} = PactValue.new(true)
+      %PactValue{literal: true} = PactValue.new(true)
     end
 
     test "with a valid PactLiteralList" do
+      decimal = Decimal.new("0.01")
+
       %PactValue{
-        value: %PactValuesList{list: [%PactValue{value: 0.01}, %PactValue{value: "COIN.gas"}]}
+        literal: %PactValuesList{
+          pact_values: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
+        }
       } = PactValue.new(["COIN.gas", 1.0e-2])
     end
 
+    test "with empty list value" do
+      %PactValue{literal: %PactValuesList{pact_values: []}} = PactValue.new([])
+    end
+
     test "with an invalid list" do
-      {:error, [value: :invalid_type]} = PactValue.new(["string", :atom, true])
+      {:error, [literal: :invalid]} = PactValue.new(["string", :atom, true])
     end
 
     test "with a nil value" do
-      {:error, [value: :invalid_type]} = PactValue.new(nil)
+      {:error, [literal: :invalid]} = PactValue.new(nil)
     end
 
     test "with an atom value" do
-      {:error, [value: :invalid_type]} = PactValue.new(:atom)
+      {:error, [literal: :invalid]} = PactValue.new(:atom)
     end
 
     test "with a list of nil" do
-      {:error, [value: :invalid_type]} = PactValue.new([nil])
-    end
-
-    test "with empty list value" do
-      {:error, [value: :invalid_type]} = PactValue.new([])
+      {:error, [literal: :invalid]} = PactValue.new([nil])
     end
   end
 end
