@@ -9,20 +9,34 @@ defmodule Kadena.Types.PactDecimalTest do
 
   describe "new/1" do
     test "with a valid value" do
-      expected_value = Decimal.new("4.3333333")
-      %PactDecimal{value: ^expected_value, raw_value: "4.3333333"} = PactDecimal.new("4.3333333")
+      decimal = Decimal.new("9007199254740992.553")
+
+      %PactDecimal{value: "9007199254740992.553", raw_value: ^decimal} =
+        PactDecimal.new("9007199254740992.553")
+    end
+
+    test "with valid out of range" do
+      {:error, [value: :not_in_range]} = PactDecimal.new("4.3333333")
+    end
+
+    test "with an invalid integer value" do
+      {:error, [value: :invalid]} = PactDecimal.new(9_007_199_254_740_992)
+    end
+
+    test "with an invalid value" do
+      {:error, [value: :invalid]} = PactDecimal.new(4.3333333)
     end
 
     test "with a nil value" do
-      {:error, :invalid_decimal} = PactDecimal.new(nil)
+      {:error, [value: :invalid]} = PactDecimal.new(nil)
     end
 
     test "with an atom value" do
-      {:error, :invalid_decimal} = PactDecimal.new(:atom)
+      {:error, [value: :invalid]} = PactDecimal.new(:atom)
     end
 
     test "with an empty list" do
-      {:error, :invalid_decimal} = PactDecimal.new([])
+      {:error, [value: :invalid]} = PactDecimal.new([])
     end
   end
 end
