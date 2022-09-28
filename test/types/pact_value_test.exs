@@ -38,6 +38,11 @@ defmodule Kadena.Types.PactValueTest do
       } = PactValue.new(["COIN.gas", 1.0e-2])
     end
 
+    test "with a valid list of pact values" do
+      pact_value_list = PactValuesList.new(["COIN.gas", 1.0e-2])
+      %PactValue{literal: ^pact_value_list} = PactValue.new(pact_value_list)
+    end
+
     test "with empty list value" do
       %PactValue{literal: %PactValuesList{pact_values: []}} = PactValue.new([])
     end
