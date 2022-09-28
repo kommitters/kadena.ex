@@ -27,11 +27,7 @@ defmodule Kadena.Types.Cap do
     end
   end
 
-<<<<<<< HEAD
   def new(_args), do: {:error, [args: :invalid]}
-=======
-  def new(_args), do: {:error, [args: :invalids]}
->>>>>>> a72e387 (Add Cap types)
 
   @spec validate_name(name :: name()) :: validation()
   defp validate_name(name) when is_binary(name), do: {:ok, name}
