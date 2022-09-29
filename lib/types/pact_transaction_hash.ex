@@ -9,6 +9,7 @@ defmodule Kadena.Types.PactTransactionHash do
 
   @type hash :: String.t()
   @type base64_url :: Base64Url.t()
+  @type errors :: {:error, Keyword.t()}
 
   @type t :: %__MODULE__{hash: hash()}
 
@@ -21,7 +22,7 @@ defmodule Kadena.Types.PactTransactionHash do
     |> build_transaction_hash()
   end
 
-  @spec build_transaction_hash(hash :: base64_url()) :: t()
+  @spec build_transaction_hash(hash :: base64_url() | errors()) :: t()
   defp build_transaction_hash(%Base64Url{url: url}), do: %__MODULE__{hash: url}
-  defp build_transaction_hash(error), do: error
+  defp build_transaction_hash(_error), do: {:error, {:hash, :invalid}}
 end
