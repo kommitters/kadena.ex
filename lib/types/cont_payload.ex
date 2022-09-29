@@ -44,26 +44,46 @@ defmodule Kadena.Types.ContPayload do
   end
 
   @spec validate_data(data :: map()) :: validation()
-  defp validate_data(data) when is_map(data), do: {:ok, EnvData.new(data)}
   defp validate_data(nil), do: {:ok, nil}
-  defp validate_data(_data), do: {:error, [data: :invalid]}
+
+  defp validate_data(data) do
+    case EnvData.new(data) do
+      %EnvData{} = data -> {:ok, data}
+      _error -> {:error, [data: :invalid]}
+    end
+  end
 
   @spec validate_pact_id(pact_id :: str()) :: validation()
-  defp validate_pact_id(pact_id) when is_binary(pact_id),
-    do: {:ok, PactTransactionHash.new(pact_id)}
-
-  defp validate_pact_id(_pact_id), do: {:error, [pact_id: :invalid]}
+  defp validate_pact_id(pact_id) do
+    case PactTransactionHash.new(pact_id) do
+      %PactTransactionHash{} = pact_id -> {:ok, pact_id}
+      _error -> {:error, [pact_id: :invalid]}
+    end
+  end
 
   @spec validate_proof(proof :: str()) :: validation()
-  defp validate_proof(proof) when is_binary(proof), do: {:ok, Proof.new(proof)}
   defp validate_proof(nil), do: {:ok, nil}
-  defp validate_proof(_proof), do: {:error, [proof: :invalid]}
+
+  defp validate_proof(proof) do
+    case Proof.new(proof) do
+      %Proof{} = proof -> {:ok, proof}
+      _error -> {:error, [proof: :invalid]}
+    end
+  end
 
   @spec validate_rollback(rollback :: boolean()) :: validation()
-  defp validate_rollback(rollback) when is_boolean(rollback), do: {:ok, Rollback.new(rollback)}
-  defp validate_rollback(_rollback), do: {:error, [rollback: :invalid]}
+  defp validate_rollback(rollback) do
+    case Rollback.new(rollback) do
+      %Rollback{} = rollback -> {:ok, rollback}
+      _error -> {:error, [rollback: :invalid]}
+    end
+  end
 
   @spec validate_step(step :: integer()) :: validation()
-  defp validate_step(step) when is_integer(step), do: {:ok, Step.new(step)}
-  defp validate_step(_step), do: {:error, [step: :invalid]}
+  defp validate_step(step) do
+    case Step.new(step) do
+      %Step{} = step -> {:ok, step}
+      _error -> {:error, [step: :invalid]}
+    end
+  end
 end

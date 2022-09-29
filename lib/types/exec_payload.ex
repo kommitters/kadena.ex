@@ -30,11 +30,20 @@ defmodule Kadena.Types.ExecPayload do
   end
 
   @spec validate_data(data :: map()) :: validation()
-  defp validate_data(data) when is_map(data), do: {:ok, EnvData.new(data)}
   defp validate_data(nil), do: {:ok, nil}
-  defp validate_data(_data), do: {:error, [data: :invalid]}
+
+  defp validate_data(data) do
+    case EnvData.new(data) do
+      %EnvData{} = data -> {:ok, data}
+      _error -> {:error, [data: :invalid]}
+    end
+  end
 
   @spec validate_code(code :: String.t()) :: validation()
-  defp validate_code(code) when is_binary(code), do: {:ok, PactCode.new(code)}
-  defp validate_code(_code), do: {:error, [code: :invalid]}
+  defp validate_code(code) do
+    case PactCode.new(code) do
+      %PactCode{} = code -> {:ok, code}
+      _error -> {:error, [code: :invalid]}
+    end
+  end
 end
