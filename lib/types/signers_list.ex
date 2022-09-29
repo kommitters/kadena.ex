@@ -9,9 +9,9 @@ defmodule Kadena.Types.SignersList do
   @type signer :: Signer.t()
   @type signers :: list(signer())
 
-  @type t :: %__MODULE__{list: signers()}
+  @type t :: %__MODULE__{signers: signers()}
 
-  defstruct list: []
+  defstruct signers: []
 
   @impl true
   def new(signers), do: build_list(%__MODULE__{}, signers)
@@ -19,11 +19,12 @@ defmodule Kadena.Types.SignersList do
   @spec build_list(list :: t(), signers :: signers()) :: t() | {:error, Keyword.t()}
   defp build_list(list, []), do: list
 
-  defp build_list(%__MODULE__{list: list}, [value | rest]) do
-    with %Signer{} = signer <- Signer.new(value) do
-      build_list(%__MODULE__{list: [signer | list]}, rest)
+  defp build_list(%__MODULE__{signers: list}, [value | rest]) do
+    case Signer.new(value) do
+      %Signer{} = signer -> build_list(%__MODULE__{signers: [signer | list]}, rest)
+      {:error, _reason} -> {:error, [signers: :invalid]}
     end
   end
 
-  defp build_list(_list, _rest), do: {:error, [list: :invalid_type]}
+  defp build_list(_list, _rest), do: {:error, [signers: :invalid_type]}
 end

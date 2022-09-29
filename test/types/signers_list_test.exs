@@ -26,7 +26,7 @@ defmodule Kadena.Types.SignersListTest do
       ]
 
       %SignersList{
-        list: [
+        signers: [
           %Signer{
             pub_key: %Base16String{value: ^pub_key},
             scheme: :ed25519,
@@ -38,15 +38,15 @@ defmodule Kadena.Types.SignersListTest do
     end
 
     test "with valid params and empty list" do
-      %SignersList{list: []} = SignersList.new([])
+      %SignersList{signers: []} = SignersList.new([])
     end
 
     test "with invalid signers list" do
-      {:error, [pub_key: :invalid]} = SignersList.new([["invalid_signer"]])
+      {:error, [signers: :invalid]} = SignersList.new([["invalid_signer"]])
     end
 
     test "with invalid list" do
-      {:error, [list: :invalid_type]} = SignersList.new("invalid_signers_list")
+      {:error, [signers: :invalid_type]} = SignersList.new("invalid_signers_list")
     end
   end
 end
