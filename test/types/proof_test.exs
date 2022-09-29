@@ -13,7 +13,7 @@ defmodule Kadena.Types.ProofTest do
     end
 
     test "with a nil value" do
-      %Proof{value: nil} = Proof.new(nil)
+      {:error, [value: :invalid]} = Proof.new(nil)
     end
 
     test "with an invalid atom" do

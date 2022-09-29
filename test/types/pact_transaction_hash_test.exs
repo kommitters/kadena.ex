@@ -14,11 +14,11 @@ defmodule KadenaTypes.PactTransactionHashTest do
     end
 
     test "with an invalid hash" do
-      {:error, {:hash, :invalid}} = PactTransactionHash.new(:invalid_hash)
+      {:error, [hash: :invalid]} = PactTransactionHash.new(:invalid_hash)
     end
 
     test "with a nil value" do
-      {:error, {:hash, :invalid}} = PactTransactionHash.new(nil)
+      {:error, [hash: :invalid]} = PactTransactionHash.new(nil)
     end
   end
 end
