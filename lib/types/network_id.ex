@@ -11,9 +11,10 @@ defmodule Kadena.Types.NetworkID do
   defstruct [:id]
 
   @impl true
+  def new(id \\ nil)
   def new(nil), do: %__MODULE__{}
-  def new(:mainnet01), do: %__MODULE__{id: "Mainnet01"}
-  def new(:testnet04), do: %__MODULE__{id: "Testnet04"}
-  def new(:development), do: %__MODULE__{id: "Development"}
+  def new(:mainnet01), do: %__MODULE__{id: "mainnet01"}
+  def new(:testnet04), do: %__MODULE__{id: "testnet04"}
+  def new(:development), do: %__MODULE__{id: "development"}
   def new(_id), do: {:error, [id: :invalid]}
 end

@@ -1,8 +1,8 @@
 defmodule Kadena.Types.CommandPayload do
   @moduledoc """
-
+  `CommandPayload` struct definition.
   """
-  alias Kadena.Types.{NetworkID, MetaData, PactPayload, SignersList}
+  alias Kadena.Types.{MetaData, NetworkID, Nonce, PactPayload, SignersList}
 
   @behaviour Kadena.Types.Spec
 
@@ -11,7 +11,8 @@ defmodule Kadena.Types.CommandPayload do
   @type signers :: SignersList.t()
   @type meta :: MetaData.t()
   @type nonce :: String.t()
-  @type validation :: {:ok, any()} | {:error, list(atom())}
+  @type value :: network_id() | payload() | signers() | meta() | nonce()
+  @type validation :: {:ok, value()} | {:error, Keyword.t()}
   @type t :: %__MODULE__{
           network_id: network_id(),
           payload: payload(),
@@ -62,6 +63,8 @@ defmodule Kadena.Types.CommandPayload do
   end
 
   @spec validate_signers(signers :: list()) :: validation()
+  defp validate_signers(%SignersList{} = signers), do: {:ok, signers}
+
   defp validate_signers(signers) do
     case SignersList.new(signers) do
       %SignersList{} = signers -> {:ok, signers}
@@ -74,6 +77,10 @@ defmodule Kadena.Types.CommandPayload do
   defp validate_meta(_meta), do: {:error, [:meta, :invalid]}
 
   @spec validate_nonce(nonce :: nonce()) :: validation()
-  defp validate_nonce(nonce) when is_binary(nonce), do: {:ok, nonce}
-  defp validate_nonce(_nonce), do: {:error, [:nonce, :invalid]}
+  defp validate_nonce(nonce) do
+    case Nonce.new(nonce) do
+      %Nonce{} -> {:ok, nonce}
+      {:error, _reason} -> {:error, [:nonce, :invalid]}
+    end
+  end
 end

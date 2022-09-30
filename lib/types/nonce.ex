@@ -5,11 +5,13 @@ defmodule Kadena.Types.Nonce do
 
   @behaviour Kadena.Types.Spec
 
-  @type t :: %__MODULE__{value: String.t()}
+  @type value :: String.t()
+
+  @type t :: %__MODULE__{value: value()}
 
   defstruct [:value]
 
   @impl true
   def new(str) when is_binary(str), do: %__MODULE__{value: str}
-  def new(_value), do: {:error, [nonce: :invalid]}
+  def new(_value), do: {:error, [value: :invalid]}
 end

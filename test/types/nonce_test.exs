@@ -14,11 +14,11 @@ defmodule Kadena.Types.NonceTest do
     end
 
     test "with an invalid value" do
-      {:error, [nonce: :invalid]} = Nonce.new(:atom)
+      {:error, [value: :invalid]} = Nonce.new(:atom)
     end
 
     test "with a nil value" do
-      {:error, [nonce: :invalid]} = Nonce.new(nil)
+      {:error, [value: :invalid]} = Nonce.new(nil)
     end
   end
 end

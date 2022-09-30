@@ -7,13 +7,12 @@ defmodule Kadena.Types.CommandPayloadTest do
 
   alias Kadena.Types.{
     CommandPayload,
-    NetworkID,
     ContPayload,
     ExecPayload,
+    MetaData,
+    NetworkID,
     PactPayload,
-    Signer,
-    SignersList,
-    MetaData
+    SignersList
   }
 
   describe "new/1" do
@@ -32,6 +31,12 @@ defmodule Kadena.Types.CommandPayloadTest do
       base16string = "64617373646164617364617364616473616461736461736464"
       signer_scheme = :ed25519
 
+      signers_list_value = [
+        [pub_key: base16string, scheme: signer_scheme, addr: base16string, clist: clist]
+      ]
+
+      signer_list_struct = SignersList.new(signers_list_value)
+
       # MetaData args
       creation_time = 0
       ttl = 0
@@ -42,6 +47,7 @@ defmodule Kadena.Types.CommandPayloadTest do
 
       %{
         network_id: :mainnet01,
+        network_id_str: "mainnet01",
         exec_payload:
           ContPayload.new(
             data: data,
@@ -51,9 +57,8 @@ defmodule Kadena.Types.CommandPayloadTest do
             rollback: rollback
           ),
         cont_payload: ExecPayload.new(data: data, code: code),
-        signers: [
-          [pub_key: base16string, scheme: signer_scheme, addr: base16string, clist: clist]
-        ],
+        signers: signers_list_value,
+        signers_list_struct: signer_list_struct,
         meta:
           MetaData.new(
             creation_time: creation_time,
@@ -69,15 +74,17 @@ defmodule Kadena.Types.CommandPayloadTest do
 
     test "with valid params with exec payload", %{
       network_id: network_id,
+      network_id_str: network_id_str,
       exec_payload: exec_payload,
       signers: signers,
+      signers_list_struct: signers_list_struct,
       meta: meta,
       nonce: nonce
     } do
       %CommandPayload{
-        network_id: %NetworkID{id: "Mainnet01"},
+        network_id: %NetworkID{id: ^network_id_str},
         payload: %PactPayload{payload: ^exec_payload},
-        signers: %SignersList{signers: ^signers},
+        signers: ^signers_list_struct,
         meta: ^meta,
         nonce: ^nonce
       } =
@@ -92,15 +99,17 @@ defmodule Kadena.Types.CommandPayloadTest do
 
     test "with valid params with cont payload", %{
       network_id: network_id,
+      network_id_str: network_id_str,
       cont_payload: cont_payload,
       signers: signers,
+      signers_list_struct: signers_list_struct,
       meta: meta,
       nonce: nonce
     } do
       %CommandPayload{
-        network_id: %NetworkID{id: "Mainnet01"},
+        network_id: %NetworkID{id: ^network_id_str},
         payload: %PactPayload{payload: ^cont_payload},
-        signers: %SignersList{signers: ^signers},
+        signers: ^signers_list_struct,
         meta: ^meta,
         nonce: ^nonce
       } =
@@ -108,6 +117,30 @@ defmodule Kadena.Types.CommandPayloadTest do
           network_id: network_id,
           payload: cont_payload,
           signers: signers,
+          meta: meta,
+          nonce: nonce
+        )
+    end
+
+    test "with valid params and signer list struct", %{
+      network_id: network_id,
+      network_id_str: network_id_str,
+      cont_payload: cont_payload,
+      signers_list_struct: signers_list_struct,
+      meta: meta,
+      nonce: nonce
+    } do
+      %CommandPayload{
+        network_id: %NetworkID{id: ^network_id_str},
+        payload: %PactPayload{payload: ^cont_payload},
+        signers: ^signers_list_struct,
+        meta: ^meta,
+        nonce: ^nonce
+      } =
+        CommandPayload.new(
+          network_id: network_id,
+          payload: cont_payload,
+          signers: signers_list_struct,
           meta: meta,
           nonce: nonce
         )
@@ -156,7 +189,7 @@ defmodule Kadena.Types.CommandPayloadTest do
         CommandPayload.new(
           network_id: network_id,
           payload: cont_payload,
-          signers: signers ++ ["invalid_signer"],
+          signers: signers ++ [["invalid_signer_args"]],
           meta: meta,
           nonce: nonce
         )
@@ -190,7 +223,7 @@ defmodule Kadena.Types.CommandPayloadTest do
           payload: cont_payload,
           signers: signers,
           meta: meta,
-          nonce: 12345
+          nonce: 12_345
         )
     end
   end
