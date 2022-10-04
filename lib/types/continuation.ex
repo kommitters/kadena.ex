@@ -7,13 +7,13 @@ defmodule Kadena.Types.Continuation do
 
   @behaviour Kadena.Types.Spec
 
-  @type def :: String.t()
+  @type continuation_def :: String.t()
   @type args :: PactValue.t()
-  @type value :: def() | args()
+  @type value :: continuation_def() | args()
   @type validation :: {:ok, value()} | {:error, Keyword.t()}
 
   @type t :: %__MODULE__{
-          def: def(),
+          def: continuation_def(),
           args: args()
         }
 
@@ -21,18 +21,18 @@ defmodule Kadena.Types.Continuation do
 
   @impl true
   def new(args) do
-    def = Keyword.get(args, :def)
+    continuation_def = Keyword.get(args, :def)
     args = Keyword.get(args, :args)
 
-    with {:ok, def} <- validate_def(def),
+    with {:ok, continuation_def} <- validate_def(continuation_def),
          {:ok, args} <- validate_args(args) do
-      %__MODULE__{def: def, args: args}
+      %__MODULE__{def: continuation_def, args: args}
     end
   end
 
-  @spec validate_def(def :: def()) :: validation()
-  def validate_def(def) when is_binary(def), do: {:ok, def}
-  def validate_def(_def), do: {:error, [def: :invalid]}
+  @spec validate_def(continuation_def :: continuation_def()) :: validation()
+  def validate_def(continuation_def) when is_binary(continuation_def), do: {:ok, continuation_def}
+  def validate_def(_continuation_def), do: {:error, [def: :invalid]}
 
   @spec validate_args(args :: args()) :: validation()
   def validate_args(%PactValue{} = args), do: {:ok, args}
