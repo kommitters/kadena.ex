@@ -2,7 +2,7 @@ defmodule Kadena.MixProject do
   use Mix.Project
 
   @version "0.1.0"
-  @github_url "https://github.com/kommitters/kadena"
+  @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
     [

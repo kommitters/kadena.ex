@@ -59,9 +59,9 @@ Get in touch: [oss@kommit.co][mail-to] | [@kommitters_oss][twitter] on Twitter.
 [github-help]: https://help.github.com
 [github-help-pr]: https://help.github.com/articles/about-pull-requests
 [oss-how-to]: https://opensource.guide/how-to-contribute
-[repo]: https://github.com/kommitters/kadena
-[coc]: https://github.com/kommitters/kadena/blob/main/CODE_OF_CONDUCT.md
+[repo]: https://github.com/kommitters/kadena.ex
+[coc]: https://github.com/kommitters/kadena.ex/blob/main/CODE_OF_CONDUCT.md
 [commit-msg]: https://github.com/erlang/otp/wiki/Writing-good-commit-messages
-[good-first-issue]: https://github.com/kommitters/kadena/issues?q=is%3Aopen+is%3Aissue+label%3A%22%F0%9F%91%8B+Good+first+issue%22
-[help-wanted]: https://github.com/kommitters/kadena/issues?q=is%3Aopen+is%3Aissue+label%3A%22%F0%9F%86%98+Help+wanted%22
+[good-first-issue]: https://github.com/kommitters/kadena.ex/issues?q=is%3Aopen+is%3Aissue+label%3A%22%F0%9F%91%8B+Good+first+issue%22
+[help-wanted]: https://github.com/kommitters/kadena.ex/issues?q=is%3Aopen+is%3Aissue+label%3A%22%F0%9F%86%98+Help+wanted%22
 [contributions-under-repo]: https://help.github.com/articles/github-terms-of-service/#6-contributions-under-repository-license
