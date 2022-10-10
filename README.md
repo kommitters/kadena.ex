@@ -1,6 +1,6 @@
 # Kadena.ex
 
-**Kadena.ex** is an Open-Source library for Elixir that allows developers to interact with Kadena, Chainweb, and PACT.
+**Kadena.ex** is an open source library for Elixir that allows developers to interact with the Kadena Chainweb.
 
 ## What can you do with Kadena.ex?
 
