@@ -1,12 +1,12 @@
 # Kadena.ex
 
-**Kadena.ex** is an Open-Source library for Elixir that allows developers to interact with Kadena and its Chainweb.
+**Kadena.ex** is an Open-Source library for Elixir that allows developers to interact with Kadena, Chainweb, and PACT.
 
-## What can I do with Kadena.ex? 
+## What can you do with Kadena.ex?
 
 * Construct commands for transactions.
 * Implement cryptography required by the network.
-* Interact with public network endpoints: 
+* Interact with public network endpoints:
     - listen, local, poll, send, spv, cut.
 * Send, test and update smart contracts on the network.
 
@@ -26,15 +26,15 @@ end
 
 The latest updated branch to target a PR is `v0.2`
 
-You can see a big picture of the roadmap here: [ROADMAP][roadmap]
+You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
-### Short term - what we're working on now 🎉
+### What we're working on now 🎉
 
 - [PactCommand types](https://github.com/kommitters/kadena.ex/issues/13)
 - [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
 - [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
 
-### Medium term - what we're working on next! 🍰
+### What we're working on next! 🍰
 
 - [Kadena crypto](https://github.com/kommitters/kadena.ex/issues/51)
 - [Kadena PACT](https://github.com/kommitters/kadena.ex/issues/55)
@@ -42,6 +42,9 @@ You can see a big picture of the roadmap here: [ROADMAP][roadmap]
 - [Kadena chainweb](https://github.com/kommitters/kadena.ex/issues/57)
 
 ### Done - What we've already developed! 🚀
+
+<details>
+<summary>Click to expand!</summary>
 
 - [Base types](https://github.com/kommitters/kadena.ex/issues/11)
 - [Keypair types](https://github.com/kommitters/kadena.ex/issues/12)
@@ -57,7 +60,19 @@ You can see a big picture of the roadmap here: [ROADMAP][roadmap]
 - [PactEvents types](https://github.com/kommitters/kadena.ex/issues/41)
 - [CommandResult types](https://github.com/kommitters/kadena.ex/issues/43)
 
+</details>
+
 ---
+
+## Development
+
+- Install any Elixir version above 1.13.
+- Compile dependencies: `mix deps.get`
+- Run tests: `mix test`.
+
+## Want to jump in?
+
+Check out our [Good first issues][good-first-issues], this is a great place to start contributing if you're new to the project!
 
 ## Changelog
 
@@ -84,3 +99,4 @@ Made with 💙 by [kommitters Open Source](https://kommit.co)
 [changelog]: https://github.com/kommitters/kadena.ex/blob/main/CHANGELOG.md
 [contributing]: https://github.com/kommitters/kadena.ex/blob/main/CONTRIBUTING.md
 [roadmap]: https://github.com/orgs/kommitters/projects/5/views/3
+[good-first-issues]: https://github.com/kommitters/kadena.ex/labels/%F0%9F%91%8B%20Good%20first%20issue
