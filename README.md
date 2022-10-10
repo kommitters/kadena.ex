@@ -6,7 +6,7 @@
 
 * Construct commands for transactions.
 * Implement cryptography required by the network.
-* Interact with public network endpoints:
+* Interact with p2p api endpoints:
     - listen, local, poll, send, spv, cut.
 * Send, test and update smart contracts on the network.
 
@@ -73,6 +73,8 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 ## Want to jump in?
 
 Check out our [Good first issues][good-first-issues], this is a great place to start contributing if you're new to the project!
+
+We welcome contributions from anyone! Check out our [contributing guide][contributing] for more information.
 
 ## Changelog
 
