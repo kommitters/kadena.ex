@@ -11,5 +11,5 @@ defmodule Kadena.Types.Base16String do
 
   @impl true
   def new(str) when is_binary(str), do: %__MODULE__{value: str}
-  def new(_str), do: {:error, :invalid_string}
+  def new(_str), do: {:error, [value: :invalid]}
 end
