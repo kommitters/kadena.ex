@@ -71,12 +71,9 @@ defmodule Kadena.Types.PactValue do
 
   @spec cast_to_decimal(float :: float()) :: validation()
   defp cast_to_decimal(float) do
-    float_str = to_string(float)
-
-    case Decimal.cast(float_str) do
-      {:ok, decimal} -> {:ok, decimal}
-      :error -> {:error, [literal: :invalid]}
-    end
+    float
+    |> to_string()
+    |> Decimal.cast()
   end
 
   @spec validate_decimal_range(decimal :: decimal()) :: validation()

@@ -47,6 +47,10 @@ defmodule Kadena.Types.PactValueTest do
       %PactValue{literal: %PactValuesList{pact_values: []}} = PactValue.new([])
     end
 
+    test "with an invalid PactDecimal" do
+      {:error, [literal: :not_in_range]} = PactValue.new("992.553")
+    end
+
     test "with an invalid list" do
       {:error, [literal: :invalid]} = PactValue.new(["string", :atom, true])
     end
