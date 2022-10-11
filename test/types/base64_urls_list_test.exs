@@ -9,17 +9,31 @@ defmodule Kadena.Types.Base64UrlsListTest do
 
   describe "new/1" do
     test "with a valid urls list" do
-      base_url = Base64Url.new("valid_url")
-      %Base64UrlsList{list: [base_url, base_url]} = Base64UrlsList.new([base_url, base_url])
+      base64_urls_list = [
+        "zaqnRQ0RYzxTccjtYoBvQsDo5K9mxr4TEF-HIYTi5Joaa",
+        "zaqnRQ0RYzxTccjtYoBvQsDo5K9mxr4TEF-HIYTi5Jo"
+      ]
+
+      %Base64UrlsList{
+        urls: [
+          %Base64Url{url: "zaqnRQ0RYzxTccjtYoBvQsDo5K9mxr4TEF-HIYTi5Joaa"},
+          %Base64Url{url: "zaqnRQ0RYzxTccjtYoBvQsDo5K9mxr4TEF-HIYTi5Jo"}
+        ]
+      } = Base64UrlsList.new(base64_urls_list)
     end
 
     test "with an invalid urls list" do
-      base_url = Base64Url.new("valid_url")
-      {:error, :invalid_urls} = Base64UrlsList.new([base_url, :atom, base_url])
+      base64_urls_list = [
+        "zaqnRQ0RYzxTccjtYoBvQsDo5K9mxr4TEF-HIYTi5Joaa",
+        :atom,
+        "zaqnRQ0RYzxTccjtYoBvQsDo5K9mxr4TEF-HIYTi5Jo"
+      ]
+
+      {:error, [urls: :invalid, url: :invalid]} = Base64UrlsList.new(base64_urls_list)
     end
 
-    test "with a list of nil" do
-      {:error, :invalid_urls} = Base64UrlsList.new([nil])
+    test "with an invalid nil param" do
+      {:error, [urls: :not_a_list]} = Base64UrlsList.new(nil)
     end
   end
 end

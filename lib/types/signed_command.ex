@@ -37,7 +37,7 @@ defmodule Kadena.Types.SignedCommand do
 
   @spec validate_str(field :: atom(), value :: str()) :: validation()
   defp validate_str(_field, value) when is_binary(value), do: {:ok, value}
-  defp validate_str(field, _value), do: {:error, {field, :invalid}}
+  defp validate_str(field, _value), do: {:error, [{field, :invalid}]}
 
   @spec validate_sigs(sigs :: raw_sigs()) :: validation()
   defp validate_sigs(sigs) do

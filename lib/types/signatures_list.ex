@@ -21,12 +21,12 @@ defmodule Kadena.Types.SignaturesList do
   defp build_list(list, []), do: list
 
   defp build_list(%__MODULE__{signatures: list}, [%Signature{} = signature | rest]) do
-    build_list(%__MODULE__{signatures: [signature | list]}, rest)
+    build_list(%__MODULE__{signatures: list ++ [signature]}, rest)
   end
 
   defp build_list(%__MODULE__{signatures: list}, [signature | rest]) do
     case Signature.new(signature) do
-      %Signature{} = signature -> build_list(%__MODULE__{signatures: [signature | list]}, rest)
+      %Signature{} = signature -> build_list(%__MODULE__{signatures: list ++ [signature]}, rest)
       {:error, reason} -> {:error, [signatures: :invalid] ++ reason}
     end
   end

@@ -22,7 +22,7 @@ defmodule Kadena.Types.Base64UrlsList do
 
   defp build_list(%__MODULE__{urls: list}, [url | rest]) do
     case Base64Url.new(url) do
-      %Base64Url{} = url -> build_list(%__MODULE__{urls: [url | list]}, rest)
+      %Base64Url{} = url -> build_list(%__MODULE__{urls: list ++ [url]}, rest)
       {:error, reason} -> {:error, [urls: :invalid] ++ reason}
     end
   end
