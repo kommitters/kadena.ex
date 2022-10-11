@@ -1,8 +1,9 @@
 name: Kadena CI
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    types: [closed, review_requested, ready_for_review, synchronize, opened]
 
 jobs:
   tests:
