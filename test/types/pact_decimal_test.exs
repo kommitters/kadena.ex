@@ -20,7 +20,7 @@ defmodule Kadena.Types.PactDecimalTest do
     end
 
     test "with an invalid string" do
-      {:error, [value: :not_in_range]} = PactDecimal.new("4.3333.333")
+      {:error, [value: :invalid]} = PactDecimal.new("4.3333.333")
     end
 
     test "with an invalid integer value" do
