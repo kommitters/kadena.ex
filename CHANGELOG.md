@@ -2,7 +2,7 @@
 
 ## 0.2.0 (11.10.2022)
 
-We started the implementation of initial types on the Kadena.Types boundary
+We started the implementation of initial types on the `Kadena.Types` boundary.
 
 * Added [Base types](https://github.com/kommitters/kadena.ex/issues/11)
 * Added [PactValue types](https://github.com/kommitters/kadena.ex/issues/15)
