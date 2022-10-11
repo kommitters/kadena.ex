@@ -40,10 +40,10 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on next! 🍰
 
-- [Kadena crypto](https://github.com/kommitters/kadena.ex/issues/51)
+- [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 - [Kadena PACT](https://github.com/kommitters/kadena.ex/issues/55)
 - [Kadena API](https://github.com/kommitters/kadena.ex/issues/56)
-- [Kadena chainweb](https://github.com/kommitters/kadena.ex/issues/57)
+- [Kadena Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
 
 ### Done - What we've already developed! 🚀
 
