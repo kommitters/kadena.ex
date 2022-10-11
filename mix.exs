@@ -1,8 +1,8 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
-  @github_url "https://github.com/kommitters/kadena"
+  @version "0.2.0"
+  @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
     [
@@ -33,6 +33,7 @@ defmodule Kadena.MixProject do
   defp deps do
     [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:decimal, "~> 2.0"},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false}
     ]

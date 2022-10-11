@@ -1,6 +1,18 @@
-# Kadena
+# Kadena.ex
+![Build Badge](https://img.shields.io/github/workflow/status/kommitters/kadena.ex/Kadena%20CI/main?style=for-the-badge)
+[![Version Badge](https://img.shields.io/hexpm/v/kadena?style=for-the-badge)](https://hexdocs.pm/kadena)
+![Downloads Badge](https://img.shields.io/hexpm/dt/kadena?style=for-the-badge)
+[![License badge](https://img.shields.io/hexpm/l/kadena?style=for-the-badge)](https://github.com/kommitters/kadena.ex/blob/main/LICENSE)
 
-Elixir library to interact with the Kadena blockchain.
+**Kadena.ex** is an open source library for Elixir that allows developers to interact with the Kadena Chainweb.
+
+## What can you do with Kadena.ex?
+
+* Construct commands for transactions.
+* Implement cryptography required by the network.
+* Interact with p2p api endpoints:
+    - listen, local, poll, send, spv, cut.
+* Send, test and update smart contracts on the network.
 
 ## Installation
 
@@ -9,10 +21,64 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.1.0"}
+    {:kadena, "~> 0.2.0"}
   ]
 end
 ```
+
+## Roadmap
+
+The latest updated branch to target a PR is `v0.2`
+
+You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
+
+### What we're working on now 🎉
+
+- [PactCommand types](https://github.com/kommitters/kadena.ex/issues/13)
+- [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
+- [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
+
+### What we're working on next! 🍰
+
+- [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
+- [Kadena PACT](https://github.com/kommitters/kadena.ex/issues/55)
+- [Kadena API](https://github.com/kommitters/kadena.ex/issues/56)
+- [Kadena Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
+
+### Done - What we've already developed! 🚀
+
+<details>
+<summary>Click to expand!</summary>
+
+- [Base types](https://github.com/kommitters/kadena.ex/issues/11)
+- [Keypair types](https://github.com/kommitters/kadena.ex/issues/12)
+- [PactValue types](https://github.com/kommitters/kadena.ex/issues/15)
+- [SignCommand types](https://github.com/kommitters/kadena.ex/issues/16)
+- [ContPayload types](https://github.com/kommitters/kadena.ex/issues/28)
+- [Cap types](https://github.com/kommitters/kadena.ex/issues/30)
+- [ExecPayload types](https://github.com/kommitters/kadena.ex/issues/32)
+- [PactPayload types](https://github.com/kommitters/kadena.ex/issues/34)
+- [MetaData and Signer types](https://github.com/kommitters/kadena.ex/issues/35)
+- [CommandPayload types](https://github.com/kommitters/kadena.ex/issues/36)
+- [PactExec types](https://github.com/kommitters/kadena.ex/issues/40)
+- [PactEvents types](https://github.com/kommitters/kadena.ex/issues/41)
+- [CommandResult types](https://github.com/kommitters/kadena.ex/issues/43)
+
+</details>
+
+---
+
+## Development
+
+- Install any Elixir version above 1.13.
+- Compile dependencies: `mix deps.get`
+- Run tests: `mix test`.
+
+## Want to jump in?
+
+Check out our [Good first issues][good-first-issues], this is a great place to start contributing if you're new to the project!
+
+We welcome contributions from anyone! Check out our [contributing guide][contributing] for more information.
 
 ## Changelog
 
@@ -34,7 +100,9 @@ This library is licensed under an MIT license. See [LICENSE][license] for detail
 
 Made with 💙 by [kommitters Open Source](https://kommit.co)
 
-[license]: https://github.com/kommitters/kadena/blob/main/LICENSE
-[coc]: https://github.com/kommitters/kadena/blob/main/CODE_OF_CONDUCT.md
-[changelog]: https://github.com/kommitters/kadena/blob/main/CHANGELOG.md
-[contributing]: https://github.com/kommitters/kadena/blob/main/CONTRIBUTING.md
+[license]: https://github.com/kommitters/kadena.ex/blob/main/LICENSE
+[coc]: https://github.com/kommitters/kadena.ex/blob/main/CODE_OF_CONDUCT.md
+[changelog]: https://github.com/kommitters/kadena.ex/blob/main/CHANGELOG.md
+[contributing]: https://github.com/kommitters/kadena.ex/blob/main/CONTRIBUTING.md
+[roadmap]: https://github.com/orgs/kommitters/projects/5/views/3
+[good-first-issues]: https://github.com/kommitters/kadena.ex/labels/%F0%9F%91%8B%20Good%20first%20issue

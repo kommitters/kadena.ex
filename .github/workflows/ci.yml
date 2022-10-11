@@ -1,8 +1,11 @@
 name: Kadena CI
 
 on:
+  push:
+    branches:
+      - main
+      - "v*.[0-9]"
   pull_request:
-    types: [closed, review_requested, ready_for_review, synchronize, opened]
 
 jobs:
   tests:
@@ -11,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        otp: ['24']
-        elixir: ['1.13.4']
+        otp: ["24"]
+        elixir: ["1.13.4"]
     env:
       MIX_ENV: test
     steps:
@@ -20,8 +23,8 @@ jobs:
       - uses: erlef/setup-beam@v1
         id: beam
         with:
-          otp-version: '24'
-          elixir-version: '1.13.4'
+          otp-version: "24"
+          elixir-version: "1.13.4"
       - uses: actions/cache@v2
         with:
           path: deps
