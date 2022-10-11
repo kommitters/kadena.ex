@@ -11,5 +11,5 @@ defmodule Kadena.Types.Base64Url do
 
   @impl true
   def new(str) when is_binary(str), do: %__MODULE__{url: str}
-  def new(_str), do: {:error, :invalid_url}
+  def new(_str), do: {:error, [url: :invalid]}
 end

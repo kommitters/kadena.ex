@@ -28,15 +28,15 @@ defmodule Kadena.Types.SignatureWithHashTest do
     end
 
     test "with an empty list value" do
-      {:error, :invalid_hash} = SignatureWithHash.new([])
+      {:error, [hash: :invalid]} = SignatureWithHash.new([])
     end
 
     test "with an invalid hash value", %{sig: sig} do
-      {:error, :invalid_hash} = SignatureWithHash.new(sig: sig)
+      {:error, [hash: :invalid]} = SignatureWithHash.new(sig: sig)
     end
 
     test "with an invalid sig value", %{hash: hash} do
-      {:error, :invalid_sig} = SignatureWithHash.new(hash: hash)
+      {:error, [sig: :invalid]} = SignatureWithHash.new(hash: hash)
     end
   end
 end

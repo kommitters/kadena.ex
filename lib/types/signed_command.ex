@@ -6,12 +6,18 @@ defmodule Kadena.Types.SignedCommand do
 
   @behaviour Kadena.Types.Spec
 
+  @type str :: String.t()
+  @type hash :: str()
+  @type cmd :: str()
   @type sigs :: SignaturesList.t()
+  @type raw_sigs :: list()
+  @type value :: str() | sigs()
+  @type validation :: {:ok, value()} | {:error, Keyword.t()}
 
   @type t :: %__MODULE__{
-          hash: String.t(),
+          hash: hash(),
           sigs: sigs(),
-          cmd: String.t()
+          cmd: cmd()
         }
 
   defstruct [:hash, :sigs, :cmd]
@@ -22,12 +28,22 @@ defmodule Kadena.Types.SignedCommand do
     sigs = Keyword.get(args, :sigs)
     cmd = Keyword.get(args, :cmd)
 
-    with hash when is_binary(hash) <- hash,
-         cmd when is_binary(cmd) <- cmd,
-         %SignaturesList{} <- sigs do
+    with {:ok, hash} <- validate_str(:hash, hash),
+         {:ok, cmd} <- validate_str(:cmd, cmd),
+         {:ok, sigs} <- validate_sigs(sigs) do
       %__MODULE__{hash: hash, sigs: sigs, cmd: cmd}
-    else
-      _error -> {:error, :invalid_signed_command}
+    end
+  end
+
+  @spec validate_str(field :: atom(), value :: str()) :: validation()
+  defp validate_str(_field, value) when is_binary(value), do: {:ok, value}
+  defp validate_str(field, _value), do: {:error, [{field, :invalid}]}
+
+  @spec validate_sigs(sigs :: raw_sigs()) :: validation()
+  defp validate_sigs(sigs) do
+    case SignaturesList.new(sigs) do
+      %SignaturesList{} = sigs -> {:ok, sigs}
+      {:error, reason} -> {:error, [sigs: :invalid] ++ reason}
     end
   end
 end

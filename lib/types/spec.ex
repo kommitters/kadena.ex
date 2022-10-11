@@ -3,8 +3,8 @@ defmodule Kadena.Types.Spec do
   Defines base types constructions.
   """
 
-  @type reason :: atom() | Keyword.t()
-  @type error :: {:error, reason()}
+  @type reasons :: Keyword.t()
+  @type error :: {:error, reasons()}
 
-  @callback new(any()) :: struct() | {:error, error()}
+  @callback new(any()) :: struct() | error()
 end

@@ -28,15 +28,15 @@ defmodule Kadena.Types.SignCommandTest do
     end
 
     test "with an empty list value" do
-      {:error, :invalid_hash} = SignCommand.new([])
+      {:error, [hash: :invalid]} = SignCommand.new([])
     end
 
     test "with an invalid hash value", %{sig: sig} do
-      {:error, :invalid_hash} = SignCommand.new(sig: sig)
+      {:error, [hash: :invalid]} = SignCommand.new(sig: sig)
     end
 
     test "with an invalid sig value", %{hash: hash} do
-      {:error, :invalid_sig} = SignCommand.new(hash: hash)
+      {:error, [sig: :invalid]} = SignCommand.new(hash: hash)
     end
   end
 end

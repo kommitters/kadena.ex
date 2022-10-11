@@ -15,8 +15,12 @@ defmodule Kadena.Types.PactDecimalTest do
         PactDecimal.new("9007199254740992.553")
     end
 
-    test "with valid out of range" do
+    test "with an invalid value out of range" do
       {:error, [value: :not_in_range]} = PactDecimal.new("4.3333333")
+    end
+
+    test "with an invalid string" do
+      {:error, [value: :invalid]} = PactDecimal.new("4.3333.333")
     end
 
     test "with an invalid integer value" do

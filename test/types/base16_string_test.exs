@@ -13,11 +13,11 @@ defmodule Kadena.Types.Base16StringTest do
     end
 
     test "with an invalid atom value" do
-      {:error, :invalid_string} = Base16String.new(:atom)
+      {:error, [value: :invalid]} = Base16String.new(:atom)
     end
 
     test "with an invalid nil value" do
-      {:error, :invalid_string} = Base16String.new(nil)
+      {:error, [value: :invalid]} = Base16String.new(nil)
     end
   end
 end

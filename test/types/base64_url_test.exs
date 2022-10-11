@@ -13,11 +13,11 @@ defmodule Kadena.Types.Base64UrlTest do
     end
 
     test "with an invalid url" do
-      {:error, :invalid_url} = Base64Url.new(:atom)
+      {:error, [url: :invalid]} = Base64Url.new(:atom)
     end
 
     test "with a nil url" do
-      {:error, :invalid_url} = Base64Url.new(nil)
+      {:error, [url: :invalid]} = Base64Url.new(nil)
     end
   end
 end
