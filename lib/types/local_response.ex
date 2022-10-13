@@ -46,26 +46,10 @@ defmodule Kadena.Types.LocalResponse do
   end
 
   @spec build_local_request_body(command_result :: command_result() | errors()) :: t() | errors()
-  defp build_local_request_body(%CommandResult{
-         req_key: req_key,
-         tx_id: tx_id,
-         result: result,
-         gas: gas,
-         logs: logs,
-         continuation: continuation,
-         meta_data: meta_data,
-         events: events
-       }),
-       do: %__MODULE__{
-         req_key: req_key,
-         tx_id: tx_id,
-         result: result,
-         gas: gas,
-         logs: logs,
-         continuation: continuation,
-         meta_data: meta_data,
-         events: events
-       }
+  defp build_local_request_body(%CommandResult{} = command_result) do
+    attrs = Map.from_struct(command_result)
+    struct(%__MODULE__{}, attrs)
+  end
 
   defp build_local_request_body({:error, reason}), do: {:error, reason}
 end

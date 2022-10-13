@@ -37,7 +37,7 @@ defmodule Kadena.Types.SendRequestBodyTest do
     end
 
     test "with an invalid param in list", %{commands_list_params: commands_list_params} do
-      {:error, [commands: :invalid, command: :not_a_list]} =
+      {:error, [commands: :invalid]} =
         SendRequestBody.new(commands_list_params ++ [:invalid_command])
     end
 

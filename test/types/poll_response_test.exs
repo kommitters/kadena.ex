@@ -33,11 +33,11 @@ defmodule Kadena.Types.PollResponseTest do
     end
 
     test "with invalid base64 urls list", %{base64_urls_list: base64_urls_list} do
-      {:error, [urls: :invalid, url: :invalid]} = PollResponse.new(base64_urls_list ++ [:invalid])
+      {:error, [request_keys: :invalid]} = PollResponse.new(base64_urls_list ++ [:invalid])
     end
 
     test "with invalid list" do
-      {:error, [urls: :not_a_list]} = PollResponse.new(:invalid)
+      {:error, [request_keys: :not_a_list]} = PollResponse.new(:invalid)
     end
   end
 end

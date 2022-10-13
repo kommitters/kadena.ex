@@ -14,12 +14,13 @@ defmodule Kadena.Types.SendRequestBody do
   defstruct [:cmds]
 
   @impl true
-  def new(%CommandsList{} = cmds), do: %__MODULE__{cmds: cmds}
-
-  def new(cmds) do
+  def new(cmds) when is_list(cmds) do
     case CommandsList.new(cmds) do
       %CommandsList{} = cmds -> %__MODULE__{cmds: cmds}
-      error -> error
+      {:error, _reason} -> {:error, [commands: :invalid]}
     end
   end
+
+  def new(%CommandsList{} = cmds), do: %__MODULE__{cmds: cmds}
+  def new(_cmds), do: {:error, [commands: :not_a_list]}
 end
