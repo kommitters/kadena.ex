@@ -34,7 +34,6 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
 - [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
 
 ### What we're working on next! 🍰
@@ -63,6 +62,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [PactEvents types](https://github.com/kommitters/kadena.ex/issues/41)
 - [CommandResult types](https://github.com/kommitters/kadena.ex/issues/43)
 - [PactCommand types](https://github.com/kommitters/kadena.ex/issues/13)
+- [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
 
 </details>
 
