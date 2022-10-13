@@ -22,6 +22,5 @@ defmodule Kadena.Types.PollRequestBody do
   end
 
   def new(%Base64UrlsList{} = request_keys), do: %__MODULE__{request_keys: request_keys}
-
   def new(_request_keys), do: {:error, [request_keys: :not_a_list]}
 end
