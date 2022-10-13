@@ -21,26 +21,23 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.2.0"}
+    {:kadena, "~> 0.3.0"}
   ]
 end
 ```
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.2`
+The latest updated branch to target a PR is `v0.4`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [PactCommand types](https://github.com/kommitters/kadena.ex/issues/13)
-- [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
-- [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
+- [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 
 ### What we're working on next! 🍰
 
-- [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 - [Kadena PACT](https://github.com/kommitters/kadena.ex/issues/55)
 - [Kadena API](https://github.com/kommitters/kadena.ex/issues/56)
 - [Kadena Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
@@ -63,6 +60,9 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [PactExec types](https://github.com/kommitters/kadena.ex/issues/40)
 - [PactEvents types](https://github.com/kommitters/kadena.ex/issues/41)
 - [CommandResult types](https://github.com/kommitters/kadena.ex/issues/43)
+- [PactCommand types](https://github.com/kommitters/kadena.ex/issues/13)
+- [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
+- [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
 
 </details>
 
