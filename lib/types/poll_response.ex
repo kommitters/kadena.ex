@@ -3,24 +3,48 @@ defmodule Kadena.Types.PollResponse do
   `PollResponse` struct definition.
   """
 
-  alias Kadena.Types.Base64UrlsList
+  alias Kadena.Types.{Base64Url, CommandResult}
 
   @behaviour Kadena.Types.Spec
 
-  @type request_keys :: Base64UrlsList.t()
+  @type str :: String.t()
+  @type key :: Base64Url.t()
+  @type response :: CommandResult.t()
+  @type value :: key() | response()
+  @type validation :: {:ok, value()} | {:error, Keyword.t()}
 
-  @type t :: %__MODULE__{request_keys: request_keys()}
+  @type t :: %__MODULE__{key: key(), response: response()}
 
-  defstruct [:request_keys]
+  defstruct [:key, :response]
 
   @impl true
-  def new(urls) when is_list(urls) do
-    case Base64UrlsList.new(urls) do
-      %Base64UrlsList{} = urls -> %__MODULE__{request_keys: urls}
-      {:error, _reason} -> {:error, [request_keys: :invalid]}
+  def new(args) do
+    key = Keyword.get(args, :key)
+    response = Keyword.get(args, :response)
+
+    with {:ok, key} <- validate_key(key),
+         {:ok, response} <- validate_response(response) do
+      %__MODULE__{key: key, response: response}
     end
   end
 
-  def new(%Base64UrlsList{} = urls), do: %__MODULE__{request_keys: urls}
-  def new(_request_keys), do: {:error, [request_keys: :not_a_list]}
+  @spec validate_key(key :: str()) :: validation()
+  defp validate_key(key) do
+    case Base64Url.new(key) do
+      %Base64Url{} = key -> {:ok, key}
+      {:error, _reason} -> {:error, [key: :invalid]}
+    end
+  end
+
+  @spec validate_response(response :: response()) :: validation()
+  defp validate_response(%CommandResult{} = response), do: {:ok, response}
+
+  defp validate_response(response) when is_list(response) do
+    case CommandResult.new(response) do
+      %CommandResult{} = response -> {:ok, response}
+      {:error, reason} -> {:error, [response: :invalid] ++ reason}
+    end
+  end
+
+  defp validate_response(_response), do: {:error, [response: :invalid]}
 end

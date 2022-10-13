@@ -25,8 +25,10 @@ defmodule Kadena.Types.LocalRequestBody do
   end
 
   @spec build_local_request_body(command :: command() | errors()) :: t() | errors()
-  defp build_local_request_body(%Command{hash: hash, sigs: sigs, cmd: cmd}),
-    do: %__MODULE__{hash: hash, sigs: sigs, cmd: cmd}
+  defp build_local_request_body(%Command{} = command) do
+    attrs = Map.from_struct(command)
+    struct(%__MODULE__{}, attrs)
+  end
 
   defp build_local_request_body({:error, [command: :not_a_list]}),
     do: {:error, [local_request_body: :not_a_list]}
