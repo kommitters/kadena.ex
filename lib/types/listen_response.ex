@@ -3,7 +3,14 @@ defmodule Kadena.Types.ListenResponse do
   `ListenResponse` struct definition.
   """
 
-  alias Kadena.Types.CommandResult
+  alias Kadena.Types.{
+    Base64Url,
+    ChainwebResponseMetaData,
+    CommandResult,
+    OptionalPactEventsList,
+    PactExec,
+    PactResult
+  }
 
   @behaviour Kadena.Types.Spec
 

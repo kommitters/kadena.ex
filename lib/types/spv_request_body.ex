@@ -8,22 +8,22 @@ defmodule Kadena.Types.SPVRequestBody do
   @behaviour Kadena.Types.Spec
 
   @type request_key :: Base64Url.t()
-  @type chain_id :: ChainID.t()
-  @type value :: request_key() | chain_id()
+  @type target_chain_id :: ChainID.t()
+  @type value :: request_key() | target_chain_id()
   @type validation :: {:ok, value()} | {:error, Keyword.t()}
 
-  @type t :: %__MODULE__{request_key: request_key(), chain_id: chain_id()}
+  @type t :: %__MODULE__{request_key: request_key(), target_chain_id: target_chain_id()}
 
-  defstruct [:request_key, :chain_id]
+  defstruct [:request_key, :target_chain_id]
 
   @impl true
   def new(args) when is_list(args) do
     request_key = Keyword.get(args, :request_key)
-    chain_id = Keyword.get(args, :chain_id)
+    target_chain_id = Keyword.get(args, :target_chain_id)
 
     with {:ok, request_key} <- validate_request_key(request_key),
-         {:ok, chain_id} <- validate_chain_id(chain_id) do
-      %__MODULE__{request_key: request_key, chain_id: chain_id}
+         {:ok, target_chain_id} <- validate_target_chain_id(target_chain_id) do
+      %__MODULE__{request_key: request_key, target_chain_id: target_chain_id}
     end
   end
 
@@ -39,13 +39,13 @@ defmodule Kadena.Types.SPVRequestBody do
     end
   end
 
-  @spec validate_chain_id(chain_id :: chain_id()) :: validation()
-  defp validate_chain_id(%ChainID{} = chain_id), do: {:ok, chain_id}
+  @spec validate_target_chain_id(target_chain_id :: target_chain_id()) :: validation()
+  defp validate_target_chain_id(%ChainID{} = target_chain_id), do: {:ok, target_chain_id}
 
-  defp validate_chain_id(chain_id) do
-    case ChainID.new(chain_id) do
-      %ChainID{} = chain_id -> {:ok, chain_id}
-      {:error, reasons} -> {:error, [chain_id: :invalid] ++ reasons}
+  defp validate_target_chain_id(target_chain_id) do
+    case ChainID.new(target_chain_id) do
+      %ChainID{} = target_chain_id -> {:ok, target_chain_id}
+      {:error, reasons} -> {:error, [target_chain_id: :invalid] ++ reasons}
     end
   end
 end
