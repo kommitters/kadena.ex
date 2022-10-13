@@ -1,3 +1,21 @@
+defmodule Kadena.Cryptography.CannedKeyPairImpl do
+  @moduledoc false
+
+  @behaviour Kadena.Cryptography.KeyPair.Spec
+
+  @impl true
+  def generate do
+    send(self(), {:generate, "KEY"})
+    :ok
+  end
+
+  @impl true
+  def from_secret_key(_secret) do
+    send(self(), {:from_secret_key, "KEYPAIR"})
+    :ok
+  end
+end
+
 defmodule Kadena.Cryptography.KeyPairTest do
   @moduledoc """
   `Cryptography.KeyPair` functions tests.
@@ -5,24 +23,23 @@ defmodule Kadena.Cryptography.KeyPairTest do
 
   use ExUnit.Case
 
-  alias Kadena.Cryptography.KeyPair
-  alias Kadena.Types.KeyPair, as: KeyPairStruct
+  alias Kadena.Cryptography.{CannedKeyPairImpl, KeyPair}
 
-  describe "generate/0" do
-    test "generate a valid keypair" do
-      {:ok, %KeyPairStruct{secret_key: secret, pub_key: public}} = KeyPair.generate()
+  setup do
+    Application.put_env(:kadena, :crypto_sign_impl, CannedKeyPairImpl)
 
-      assert byte_size(secret) == 64
-      assert byte_size(public) == 64
-    end
+    on_exit(fn ->
+      Application.delete_env(:kadena, :crypto_sign_impl)
+    end)
   end
 
-  describe "from_secret_key/1" do
-    test "with a valid secret key" do
-      {:ok, %KeyPairStruct{secret_key: secret, pub_key: expected_public}} = KeyPair.generate()
+  test "generate/0" do
+    KeyPair.generate()
+    assert_receive({:generate, "KEY"})
+  end
 
-      {:ok, %KeyPairStruct{secret_key: ^secret, pub_key: ^expected_public}} =
-        KeyPair.from_secret_key(secret)
-    end
+  test "from_secret_key/0" do
+    KeyPair.from_secret_key("KEY")
+    assert_receive({:from_secret_key, "KEYPAIR"})
   end
 end
