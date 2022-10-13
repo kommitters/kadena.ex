@@ -28,7 +28,7 @@ end
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.2`
+The latest updated branch to target a PR is `v0.3`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
