@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.1 (13.10.2022)
+## 0.3.0 (13.10.2022)
 
 We finished the implementation of initial types on the `Kadena.Types` boundary.
 
