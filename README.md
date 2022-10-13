@@ -21,14 +21,14 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.2.1"}
+    {:kadena, "~> 0.3.0"}
   ]
 end
 ```
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.3`
+The latest updated branch to target a PR is `v0.4`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
