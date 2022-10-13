@@ -9,11 +9,13 @@ defmodule Kadena.Types.SigningCapTest do
 
   describe "new/1" do
     setup do
+      cap_list = [name: "gas", args: ["COIN.gas", 1.0e-2]]
+
       %{
         role: "",
         description: "",
-        cap: [name: "gas", args: ["COIN.gas", 1.0e-2]],
-        cap_struct: Cap.new(name: "gas", args: ["COIN.gas", 1.0e-2])
+        cap: cap_list,
+        cap_struct: Cap.new(cap_list)
       }
     end
 
@@ -59,6 +61,14 @@ defmodule Kadena.Types.SigningCapTest do
     } do
       {:error, [cap: :invalid, name: :invalid]} =
         SigningCap.new(role: role, description: description, cap: [invalid_key: :invalid_value])
+    end
+
+    test "with a no list cap", %{
+      role: role,
+      description: description
+    } do
+      {:error, [cap: :invalid, args: :invalid]} =
+        SigningCap.new(role: role, description: description, cap: :invalid_value)
     end
   end
 end
