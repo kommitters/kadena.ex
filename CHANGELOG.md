@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 (13.10.2022)
+
+We finished the implementation of initial types on the `Kadena.Types` boundary.
+
+* Added [PactCommand types](https://github.com/kommitters/kadena.ex/issues/13)
+* Added [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
+* Added [SignCommand types](https://github.com/kommitters/kadena.ex/issues/18)
+
 ## 0.2.0 (11.10.2022)
 
 We started the implementation of initial types on the `Kadena.Types` boundary.
