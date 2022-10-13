@@ -1,22 +1,22 @@
 defmodule Kadena.Cryptography.Utils do
   @moduledoc """
-  Documentation for `Cryptography` utils functions.
+  Documentation for `Cryptography.Utils` functions.
   """
   @type hash :: String.t()
   @type str :: String.t()
   @type key :: String.t()
   @type opts :: Keyword.t()
 
-  @spec bin_to_hex(key_bin :: binary()) :: String.t()
+  @spec bin_to_hex(key_bin :: binary()) :: key()
   def bin_to_hex(key_bin), do: Base.encode16(key_bin, case: :lower)
 
-  @spec hex_to_bin(key :: String.t()) :: binary()
+  @spec hex_to_bin(key :: key()) :: binary()
   def hex_to_bin(key), do: Base.decode16!(key, case: :lower)
 
-  @spec url_encode64(hash_bin :: binary()) :: String.t()
+  @spec url_encode64(hash_bin :: binary()) :: hash()
   def url_encode64(hash_bin), do: Base.url_encode64(hash_bin, padding: false)
 
-  @spec url_decode64(hash :: String.t()) :: binary()
+  @spec url_decode64(hash :: hash()) :: binary()
   def url_decode64(hash), do: Base.url_decode64!(hash, padding: false)
 
   @spec blake2b_hash(str :: str(), opts :: opts()) :: binary()
