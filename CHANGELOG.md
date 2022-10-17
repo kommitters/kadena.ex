@@ -2,7 +2,7 @@
 
 ## 0.4.0 (17.10.2022)
 
-* Added [Kadena crypto](https://github.com/kommitters/kadena.ex/issues/51) functions
+* Added [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51) functions
 
 ## 0.3.0 (13.10.2022)
 
