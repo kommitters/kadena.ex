@@ -16,5 +16,5 @@ defmodule Kadena.Cryptography.Sign do
   def verify_sign(msg, sig, pub_key), do: impl().verify_sign(msg, sig, pub_key)
 
   @spec impl :: module()
-  defp impl, do: Application.get_env(:kadena, :crypto_keypair_impl, Sign.Default)
+  defp impl, do: Application.get_env(:kadena, :crypto_sign_impl, Sign.Default)
 end
