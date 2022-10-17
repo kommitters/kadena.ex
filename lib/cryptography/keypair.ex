@@ -1,6 +1,6 @@
 defmodule Kadena.Cryptography.KeyPair do
   @moduledoc """
-  Documentation for `Cryptography.KeyPair` functions.
+  Implementation for `Cryptography.KeyPair` functions.
   """
   alias Kadena.Cryptography.KeyPair
 

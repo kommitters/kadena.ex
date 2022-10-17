@@ -1,6 +1,6 @@
 defmodule Kadena.Cryptography.Sign do
   @moduledoc """
-  Documentation for `Cryptography.Sign` functions.
+  Implementation for `Cryptography.Sign` functions.
   """
   alias Kadena.Cryptography.Sign
 
