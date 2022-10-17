@@ -1,6 +1,6 @@
 defmodule Kadena.Cryptography.Utils do
   @moduledoc """
-  Documentation for `Cryptography.Utils` functions.
+  Implementation for `Cryptography.Utils` functions.
   """
   @type hash :: String.t()
   @type str :: String.t()
