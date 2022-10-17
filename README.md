@@ -21,24 +21,23 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.3.0"}
+    {:kadena, "~> 0.4.0"}
   ]
 end
 ```
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.4`
+The latest updated branch to target a PR is `v0.5`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
+- [Kadena PACT](https://github.com/kommitters/kadena.ex/issues/55)
 
 ### What we're working on next! 🍰
 
-- [Kadena PACT](https://github.com/kommitters/kadena.ex/issues/55)
 - [Kadena API](https://github.com/kommitters/kadena.ex/issues/56)
 - [Kadena Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
 
@@ -63,6 +62,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [PactCommand types](https://github.com/kommitters/kadena.ex/issues/13)
 - [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
 - [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
+- [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 
 </details>
 
