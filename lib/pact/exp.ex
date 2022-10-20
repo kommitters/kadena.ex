@@ -3,13 +3,17 @@ defmodule Kadena.Pact.Exp do
   Implementation for `Pact.Exp` functions.
   """
 
-  alias Kadena.Pact.Exp
+  @type args :: list()
+  @type error :: {:error, Keyword.t()}
+  @type result :: String.t()
+  @type response :: {:ok, result()} | error()
 
-  @behaviour Exp.Spec
+  @spec create(args :: args()) :: response()
+  def create(args) when is_list(args) do
+    result = Enum.join(args, " ")
 
-  @impl true
-  def create_exp(args), do: impl().create_exp(args)
+    {:ok, "(#{result})"}
+  end
 
-  @spec impl :: module()
-  defp impl, do: Application.get_env(:kadena, :pact_exp_impl, Exp.Default)
+  def create(_args), do: {:error, [args: :not_a_list]}
 end

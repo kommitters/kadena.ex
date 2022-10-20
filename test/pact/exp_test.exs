@@ -1,15 +1,3 @@
-defmodule Kadena.Pact.CannedExpImpl do
-  @moduledoc false
-
-  @behaviour Kadena.Pact.Exp.Spec
-
-  @impl true
-  def create_exp(_args) do
-    send(self(), {:create_exp, "EXP"})
-    :ok
-  end
-end
-
 defmodule Kadena.Pact.ExpTest do
   @moduledoc """
   `Pact.Exp` functions tests.
@@ -17,18 +5,15 @@ defmodule Kadena.Pact.ExpTest do
 
   use ExUnit.Case
 
-  alias Kadena.Pact.{CannedExpImpl, Exp}
+  alias Kadena.Pact.Exp
 
-  setup do
-    Application.put_env(:kadena, :pact_exp_impl, CannedExpImpl)
+  describe "create/1" do
+    test "with valid args" do
+      {:ok, "(+ 2 3)"} = Exp.create(["+", 2, 3])
+    end
 
-    on_exit(fn ->
-      Application.delete_env(:kadena, :pact_exp_impl)
-    end)
-  end
-
-  test "create_exp/6" do
-    Exp.create_exp("ARGS")
-    assert_receive({:create_exp, "EXP"})
+    test "with an invalid no list args" do
+      {:error, [args: :not_a_list]} = Exp.create("+")
+    end
   end
 end

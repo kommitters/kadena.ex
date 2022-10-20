@@ -10,7 +10,7 @@
 
 * Construct commands for transactions.
 * Implement cryptography required by the network.
-* Interact with p2p api endpoints:
+* Interacting with public network endpoints:
     - listen, local, poll, send, spv, cut.
 * Send, test and update smart contracts on the network.
 
