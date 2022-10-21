@@ -1,6 +1,6 @@
 defmodule Kadena.Pact.Number do
   @moduledoc """
-  Implementation for `Pact.Number`.
+  Implementation for `Pact.Number` functions.
   """
   alias Kadena.Types.{PactDecimal, PactInt}
 
