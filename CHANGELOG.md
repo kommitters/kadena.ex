@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 (21.10.2022)
+
+* Added [Kadena Pact](https://github.com/kommitters/kadena.ex/issues/55) functions
+
 ## 0.4.0 (17.10.2022)
 
 * Added [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51) functions
