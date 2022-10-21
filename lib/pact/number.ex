@@ -1,20 +1,26 @@
 defmodule Kadena.Pact.Number do
   @moduledoc """
-  Implementation for `Pact.Number` functions.
+  Implementation for `Pact.Number`.
   """
-  alias Kadena.Pact.Number
+  alias Kadena.Types.{PactDecimal, PactInt}
 
-  @behaviour Number.Spec
+  def to_pact_integer(number) do
+    with {number, _rest} <- Integer.parse(number),
+         %PactInt{} = pact_int <- PactInt.new(number) do
+      {:ok, pact_int}
+    end
+  end
 
-  @impl true
-  def to_pact_integer(number), do: impl().to_pact_integer(number)
+  def to_pact_decimal(decimal) do
+    case PactDecimal.new(decimal) do
+      %PactDecimal{} = pact_decimal -> {:ok, pact_decimal}
+      error -> error
+    end
+  end
 
-  @impl true
-  def to_pact_decimal(decimal), do: impl().to_pact_decimal(decimal)
+  def to_stringified(number) when is_binary(number), do: Jason.encode(number)
 
-  @impl true
-  def to_stringified(number), do: impl().to_stringified(number)
-
-  @spec impl :: module()
-  defp impl, do: Application.get_env(:kadena, :pact_number_impl, Number.Default)
+  def to_stringified(%PactInt{value: number}), do: Jason.encode(number)
+  def to_stringified(%PactDecimal{value: number}), do: Jason.encode(number)
+  def to_stringified(_number), do: {:error, [number: :invalid]}
 end

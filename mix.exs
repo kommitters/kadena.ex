@@ -16,7 +16,7 @@ defmodule Kadena.MixProject do
       source_url: @github_url,
       package: package(),
       dialyzer: [
-        plt_add_apps: [:kadena, :ex_unit],
+        plt_add_apps: [:kadena, :ex_unit, :jason],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
       ]
     ]

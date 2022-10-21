@@ -1,12 +1,12 @@
-defmodule Kadena.Pact.DefaultNumberTest do
+defmodule Kadena.Pact.NumberTest do
   @moduledoc """
-  `Pact.Number.Default` functions tests.
+  `Pact.Number` functions tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Types.{PactDecimal, PactInt}
   alias Kadena.Pact.Number
+  alias Kadena.Types.{PactDecimal, PactInt}
 
   describe "to_pact_integer/1" do
     test "with a valid integer" do
