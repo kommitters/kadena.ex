@@ -10,7 +10,7 @@
 
 * Construct commands for transactions.
 * Implement cryptography required by the network.
-* Interact with p2p api endpoints:
+* Interacting with public network endpoints:
     - listen, local, poll, send, spv, cut.
 * Send, test and update smart contracts on the network.
 
@@ -21,24 +21,19 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.4.0"}
+    {:kadena, "~> 0.5.0"}
   ]
 end
 ```
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.5`
+The latest updated branch to target a PR is `v0.6`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Kadena PACT](https://github.com/kommitters/kadena.ex/issues/55)
-
-### What we're working on next! 🍰
-
-- [Kadena API](https://github.com/kommitters/kadena.ex/issues/56)
 - [Kadena Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
 
 ### Done - What we've already developed! 🚀
@@ -63,6 +58,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [PactAPI types](https://github.com/kommitters/kadena.ex/issues/17)
 - [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
 - [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
+- [Kadena Pact](https://github.com/kommitters/kadena.ex/issues/55)
 
 </details>
 

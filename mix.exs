@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.4.0"
+  @version "0.5.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -16,7 +16,7 @@ defmodule Kadena.MixProject do
       source_url: @github_url,
       package: package(),
       dialyzer: [
-        plt_add_apps: [:kadena, :ex_unit],
+        plt_add_apps: [:kadena, :ex_unit, :jason],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
       ]
     ]
