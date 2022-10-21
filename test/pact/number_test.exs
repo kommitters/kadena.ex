@@ -33,27 +33,31 @@ defmodule Kadena.Pact.NumberTest do
     end
   end
 
-  describe "to_stringified/1" do
+  describe "to_json_string/1" do
+    test "with a valid stringified integer" do
+      {:ok, "\"233\""} = Number.to_json_string("233")
+    end
+
+    test "with a valid stringified decimal" do
+      {:ok, "\"233.56\""} = Number.to_json_string("233.56")
+    end
+
     test "with a valid integer" do
-      {:ok, "\"233\""} = Number.to_stringified("233")
+      {:ok, "\"233\""} = Number.to_json_string(233)
     end
 
     test "with a valid decimal" do
-      {:ok, "\"233.56\""} = Number.to_stringified("233.56")
+      {:ok, "\"233.56\""} = Number.to_json_string(233.56)
     end
 
     test "with a valid PactInt" do
       {:ok, "\"9007199254740992\""} =
-        9_007_199_254_740_992 |> PactInt.new() |> Number.to_stringified()
+        9_007_199_254_740_992 |> PactInt.new() |> Number.to_json_string()
     end
 
     test "with a valid PactDecimal" do
       {:ok, "\"9007199254740992.56\""} =
-        "9007199254740992.56" |> PactDecimal.new() |> Number.to_stringified()
-    end
-
-    test "with an invalid integer" do
-      {:error, [number: :invalid]} = Number.to_stringified(233)
+        "9007199254740992.56" |> PactDecimal.new() |> Number.to_json_string()
     end
   end
 end
