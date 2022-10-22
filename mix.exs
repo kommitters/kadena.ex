@@ -25,7 +25,7 @@ defmodule Kadena.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:hackney, :logger]
     ]
   end
 
@@ -34,6 +34,7 @@ defmodule Kadena.MixProject do
     [
       {:blake2, "~> 1.0.4"},
       {:decimal, "~> 2.0"},
+      {:hackney, "~> 1.18"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false}

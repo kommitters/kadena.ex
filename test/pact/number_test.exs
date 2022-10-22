@@ -59,5 +59,9 @@ defmodule Kadena.Pact.NumberTest do
       {:ok, "\"9007199254740992.56\""} =
         "9007199254740992.56" |> PactDecimal.new() |> Number.to_json_string()
     end
+
+    test "with an invalid value" do
+      {:error, [value: :invalid]} = Number.to_json_string(:invalid_value)
+    end
   end
 end
