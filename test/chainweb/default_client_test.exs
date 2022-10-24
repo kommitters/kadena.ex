@@ -12,6 +12,8 @@ defmodule Kadena.Chainweb.CannedHTTPClient do
         ) :: {:ok, non_neg_integer(), list(), String.t()} | {:error, Keyword.t()}
   def request(method, url, headers \\ [], body \\ "", opt \\ [])
   def request(:post, _url, _headers, "", _opt), do: {:ok, 400, [], "not enough input"}
+  def request(:post, _url, [], _body, _opt), do: {:ok, 400, [], ""}
+  def request(:get, _url, _headers, _body, _opt), do: {:ok, 405, [], ""}
 
   def request(:post, _url, _headers, _body, [:with_body, follow_redirect: true, recv_timeout: 1]),
     do: {:error, :timeout}
@@ -35,6 +37,7 @@ defmodule Kadena.Chainweb.DefaultClientTest do
     end)
 
     %{
+      url: "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/pact/api/v1",
       header: [{"Content-Type", "application/json"}],
       body:
         "{\"cmd\":\"{\\\"meta\\\":{\\\"chainId\\\":\\\"\\\",\\\"creationTime\\\":0,\\\"gasLimit\\\":10,\\\"gasPrice\\\":0,\\\"sender\\\":\\\"\\\",\\\"ttl\\\":0},\\\"networkId\\\":null,\\\"nonce\\\":\\\"\\\\\\\"step01\\\\\\\"\\\",\\\"payload\\\":{\\\"cont\\\":null,\\\"exec\\\":{\\\"code\\\":\\\"(+ 2 3)\\\",\\\"data\\\":{\\\"accountsAdminKeyset\\\":[\\\"ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d\\\"]}}},\\\"signers\\\":[]}\",\"hash\":\"jr6N7jQ9nVH0A_gRxe3RfKxR7rHn-IG-GosWz6WnMXQ\",\"sigs\":[]}"
@@ -42,23 +45,31 @@ defmodule Kadena.Chainweb.DefaultClientTest do
   end
 
   describe "request/6" do
-    test "success", %{header: header, body: body} do
+    test "success", %{url: url, header: header, body: body} do
       {:ok,
        %{
          result: %{
            status: "success",
            data: 5
          }
-       }} = Client.request(:post, "/local", "0", header, body)
+       }} = Client.request(url <> "/local", :post, header, body)
     end
 
-    test "with an invalid body", %{header: header} do
-      {:error, [chainweb: "not enough input"]} = Client.request(:post, "/local", "0", header)
+    test "with an invalid body", %{url: url, header: header} do
+      {:error, [chainweb: "not enough input"]} = Client.request(url <> "/local", :post, header)
     end
 
-    test "timeout", %{header: header, body: body} do
+    test "without header", %{url: url, body: body} do
+      {:error, [chainweb: ""]} = Client.request(url <> "/local", :post, [], body)
+    end
+
+    test "with an invalid method", %{url: url, header: header, body: body} do
+      {:error, [chainweb: ""]} = Client.request(url <> "/local", :get, header, body)
+    end
+
+    test "timeout", %{url: url, header: header, body: body} do
       {:error, [network: :timeout]} =
-        Client.request(:post, "/local", "0", header, body, recv_timeout: 1)
+        Client.request(url <> "/local", :post, header, body, recv_timeout: 1)
     end
   end
 end

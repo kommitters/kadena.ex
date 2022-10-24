@@ -8,7 +8,6 @@ defmodule Kadena.Chainweb.Client.Spec do
 
   @type method :: :get | :post | :put | :delete
   @type headers :: [{binary(), binary()}, ...]
-  @type chain_id :: String.t()
   @type body :: binary()
   @type status :: non_neg_integer()
   @type options :: Keyword.t()
@@ -17,9 +16,8 @@ defmodule Kadena.Chainweb.Client.Spec do
   @type response_error :: {:error, Keyword.t()}
 
   @callback request(
-              method :: method(),
               url :: binary(),
-              chain_id :: chain_id(),
+              method :: method(),
               body :: binary(),
               headers :: headers(),
               options :: options()

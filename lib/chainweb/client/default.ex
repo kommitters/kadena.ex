@@ -5,8 +5,6 @@ defmodule Kadena.Chainweb.Client.Default do
   This implementation allows you to use your own JSON encoding library. The default is Jason.
   """
 
-  alias Kadena.Chainweb.Network
-
   @behaviour Kadena.Chainweb.Client.Spec
 
   @type status :: pos_integer()
@@ -18,12 +16,11 @@ defmodule Kadena.Chainweb.Client.Default do
   @type parsed_response :: {:ok, map()} | {:error, Keyword.t()}
 
   @impl true
-  def request(method, path, chain_id \\ "0", headers \\ [], body \\ "", opts \\ []) do
-    base_url = Network.base_url() |> String.replace("{chain_id}", chain_id)
+  def request(path, method, headers \\ [], body \\ "", opts \\ []) do
     options = http_options(opts)
 
     method
-    |> http_client().request(base_url <> path, headers, body, options)
+    |> http_client().request(path, headers, body, options)
     |> handle_response()
   end
 
