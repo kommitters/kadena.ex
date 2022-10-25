@@ -18,6 +18,13 @@ defmodule Kadena.MixProject do
       dialyzer: [
         plt_add_apps: [:kadena, :ex_unit, :jason],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
+      ],
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
       ]
     ]
   end
@@ -37,7 +44,8 @@ defmodule Kadena.MixProject do
       {:hackney, "~> 1.18"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.24", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.24", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.15", only: :test}
     ]
   end
 

@@ -1,5 +1,6 @@
 # Kadena.ex
 ![Build Badge](https://img.shields.io/github/workflow/status/kommitters/kadena.ex/Kadena%20CI/main?style=for-the-badge)
+[![Coverage Status](https://img.shields.io/coveralls/github/kommitters/kadena.ex?style=for-the-badge)](https://coveralls.io/github/kommitters/kadena.ex)
 [![Version Badge](https://img.shields.io/hexpm/v/kadena?style=for-the-badge)](https://hexdocs.pm/kadena)
 ![Downloads Badge](https://img.shields.io/hexpm/dt/kadena?style=for-the-badge)
 [![License badge](https://img.shields.io/hexpm/l/kadena?style=for-the-badge)](https://github.com/kommitters/kadena.ex/blob/main/LICENSE)
