@@ -11,6 +11,9 @@ defmodule Kadena.Chainweb.CannedHTTPClient do
           opt :: list()
         ) :: {:ok, non_neg_integer(), list(), String.t()} | {:error, Keyword.t()}
   def request(method, url, headers \\ [], body \\ "", opt \\ [])
+  def request(:post, "/not_existing_url", _headers, _body, _opt), do: {:ok, 404, [], ""}
+  def request(:post, "/server_error_mock", _headers, _body, _opt), do: {:ok, 500, [], ""}
+  def request(:post, "/url_not_authorized", _headers, _body, _opt), do: {:ok, 401, [], ""}
   def request(:post, _url, _headers, "", _opt), do: {:ok, 400, [], "not enough input"}
   def request(:post, _url, [], _body, _opt), do: {:ok, 400, [], ""}
   def request(:get, _url, _headers, _body, _opt), do: {:ok, 405, [], ""}
@@ -27,7 +30,7 @@ end
 defmodule Kadena.Chainweb.DefaultClientTest do
   use ExUnit.Case
 
-  alias Kadena.Chainweb.{CannedHTTPClient, Client}
+  alias Kadena.Chainweb.{CannedHTTPClient, Client, Error}
 
   setup do
     Application.put_env(:kadena, :http_client, CannedHTTPClient)
@@ -52,24 +55,47 @@ defmodule Kadena.Chainweb.DefaultClientTest do
            status: "success",
            data: 5
          }
-       }} = Client.request(url <> "/local", :post, header, body)
+       }} = Client.request(:post, url <> "/local", header, body)
     end
 
     test "with an invalid body", %{url: url, header: header} do
-      {:error, [chainweb: "not enough input"]} = Client.request(url <> "/local", :post, header)
+      {:error, %Error{status: 400, title: "not enough input"}} =
+        Client.request(:post, url <> "/local", header)
+    end
+
+    test "with an invalid url", %{body: body} do
+      {:error, %Error{status: 404, title: "not found"}} =
+        Client.request(:post, "/not_existing_url", [], body)
     end
 
     test "without header", %{url: url, body: body} do
-      {:error, [chainweb: ""]} = Client.request(url <> "/local", :post, [], body)
+      {:error, %Error{status: 400, title: "bad request"}} =
+        Client.request(:post, url <> "/local", [], body)
+    end
+
+    test "with an unauthorized access", %{header: header, body: body} do
+      {:error, %Error{status: 401, title: "unauthorized"}} =
+        Client.request(:post, "/url_not_authorized", header, body)
+    end
+
+    test "with an not existing url", %{header: header, body: body} do
+      {:error, %Error{status: 404, title: "not found"}} =
+        Client.request(:post, "/not_existing_url", header, body)
+    end
+
+    test "with a server error", %{header: header, body: body} do
+      {:error, %Error{status: 500, title: "server error"}} =
+        Client.request(:post, "/server_error_mock", header, body)
     end
 
     test "with an invalid method", %{url: url, header: header, body: body} do
-      {:error, [chainweb: ""]} = Client.request(url <> "/local", :get, header, body)
+      {:error, %Error{status: 405, title: "method not allowed"}} =
+        Client.request(:get, url <> "/local", header, body)
     end
 
     test "timeout", %{url: url, header: header, body: body} do
-      {:error, [network: :timeout]} =
-        Client.request(url <> "/local", :post, header, body, recv_timeout: 1)
+      {:error, %Error{status: :network_error, title: :timeout}} =
+        Client.request(:post, url <> "/local", header, body, recv_timeout: 1)
     end
   end
 end

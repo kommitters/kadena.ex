@@ -4,7 +4,7 @@ defmodule Kadena.Chainweb.CannedClientImpl do
   @behaviour Kadena.Chainweb.Client.Spec
 
   @impl true
-  def request(_path, _method, _headers, _body, _opts) do
+  def request(_method, _path, _headers, _body, _opts) do
     send(self(), {:request, "RESPONSE"})
     :ok
   end
@@ -29,8 +29,8 @@ defmodule Kadena.Chainweb.ClientTest do
 
   test "request/6" do
     Client.request(
-      "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/pact/api/v1/local",
-      :post
+      :post,
+      "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/pact/api/v1/local"
     )
 
     assert_receive({:request, "RESPONSE"})
