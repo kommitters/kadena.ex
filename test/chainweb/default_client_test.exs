@@ -27,7 +27,7 @@ end
 defmodule Kadena.Chainweb.DefaultClientTest do
   use ExUnit.Case
 
-  alias Kadena.Chainweb.{CannedHTTPClient, Client}
+  alias Kadena.Chainweb.{CannedHTTPClient, Client, Error}
 
   setup do
     Application.put_env(:kadena, :http_client, CannedHTTPClient)
@@ -56,19 +56,20 @@ defmodule Kadena.Chainweb.DefaultClientTest do
     end
 
     test "with an invalid body", %{url: url, header: header} do
-      {:error, [chainweb: "not enough input"]} = Client.request(url <> "/local", :post, header)
+      %Error{status: 400, title: "not enough input"} =
+        Client.request(url <> "/local", :post, header)
     end
 
     test "without header", %{url: url, body: body} do
-      {:error, [chainweb: ""]} = Client.request(url <> "/local", :post, [], body)
+      %Error{status: 400, title: ""} = Client.request(url <> "/local", :post, [], body)
     end
 
     test "with an invalid method", %{url: url, header: header, body: body} do
-      {:error, [chainweb: ""]} = Client.request(url <> "/local", :get, header, body)
+      %Error{status: 405, title: ""} = Client.request(url <> "/local", :get, header, body)
     end
 
     test "timeout", %{url: url, header: header, body: body} do
-      {:error, [network: :timeout]} =
+      %Error{status: :network_error, title: :timeout} =
         Client.request(url <> "/local", :post, header, body, recv_timeout: 1)
     end
   end

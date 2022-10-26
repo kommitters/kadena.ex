@@ -6,14 +6,15 @@ defmodule Kadena.Chainweb.Client.Spec do
   The default is :hackney.
   """
 
+  alias Kadena.Chainweb.Error
+
   @type method :: :get | :post | :put | :delete
   @type headers :: [{binary(), binary()}, ...]
   @type body :: binary()
   @type status :: non_neg_integer()
   @type options :: Keyword.t()
-  @type response :: {:ok, status(), headers()}
-  @type response_with_body :: {:ok, status(), headers(), body()}
-  @type response_error :: {:error, Keyword.t()}
+  @type response :: {:ok, map()}
+  @type response_error :: Error.t()
 
   @callback request(
               url :: binary(),
@@ -21,5 +22,5 @@ defmodule Kadena.Chainweb.Client.Spec do
               body :: binary(),
               headers :: headers(),
               options :: options()
-            ) :: response() | response_with_body() | response_error()
+            ) :: response() | response_error()
 end

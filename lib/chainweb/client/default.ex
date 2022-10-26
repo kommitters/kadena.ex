@@ -5,6 +5,8 @@ defmodule Kadena.Chainweb.Client.Default do
   This implementation allows you to use your own JSON encoding library. The default is Jason.
   """
 
+  alias Kadena.Chainweb.Error
+
   @behaviour Kadena.Chainweb.Client.Spec
 
   @type status :: pos_integer()
@@ -31,9 +33,9 @@ defmodule Kadena.Chainweb.Client.Default do
   end
 
   defp handle_response({:ok, status, _headers, body}) when status in 400..599,
-    do: {:error, [chainweb: body]}
+    do: Error.new({:chainweb, %{status: status, title: body}})
 
-  defp handle_response({:error, reason}), do: {:error, [network: reason]}
+  defp handle_response({:error, reason}), do: Error.new({:network, reason})
 
   @spec http_client() :: atom()
   defp http_client, do: Application.get_env(:kadena, :http_client, :hackney)
