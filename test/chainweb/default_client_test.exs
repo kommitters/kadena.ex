@@ -11,6 +11,9 @@ defmodule Kadena.Chainweb.CannedHTTPClient do
           opt :: list()
         ) :: {:ok, non_neg_integer(), list(), String.t()} | {:error, Keyword.t()}
   def request(method, url, headers \\ [], body \\ "", opt \\ [])
+  def request(:post, "/not_existing_url", _headers, _body, _opt), do: {:ok, 404, [], ""}
+  def request(:post, "/server_error_mock", _headers, _body, _opt), do: {:ok, 500, [], ""}
+  def request(:post, "/url_not_authorized", _headers, _body, _opt), do: {:ok, 401, [], ""}
   def request(:post, _url, _headers, "", _opt), do: {:ok, 400, [], "not enough input"}
   def request(:post, _url, [], _body, _opt), do: {:ok, 400, [], ""}
   def request(:get, _url, _headers, _body, _opt), do: {:ok, 405, [], ""}
@@ -60,13 +63,33 @@ defmodule Kadena.Chainweb.DefaultClientTest do
         Client.request(:post, url <> "/local", header)
     end
 
+    test "with an invalid url", %{body: body} do
+      {:error, %Error{status: 404, title: "not found"}} =
+        Client.request(:post, "/not_existing_url", [], body)
+    end
+
     test "without header", %{url: url, body: body} do
-      {:error, %Error{status: 400, title: "client error"}} =
+      {:error, %Error{status: 400, title: "bad request"}} =
         Client.request(:post, url <> "/local", [], body)
     end
 
+    test "with an unauthorized access", %{header: header, body: body} do
+      {:error, %Error{status: 401, title: "unauthorized"}} =
+        Client.request(:post, "/url_not_authorized", header, body)
+    end
+
+    test "with an not existing url", %{header: header, body: body} do
+      {:error, %Error{status: 404, title: "not found"}} =
+        Client.request(:post, "/not_existing_url", header, body)
+    end
+
+    test "with a server error", %{header: header, body: body} do
+      {:error, %Error{status: 500, title: "server error"}} =
+        Client.request(:post, "/server_error_mock", header, body)
+    end
+
     test "with an invalid method", %{url: url, header: header, body: body} do
-      {:error, %Error{status: 405, title: "client error"}} =
+      {:error, %Error{status: 405, title: "method not allowed"}} =
         Client.request(:get, url <> "/local", header, body)
     end
 

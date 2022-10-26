@@ -9,6 +9,7 @@ defmodule Kadena.Chainweb.Client.Default do
 
   @behaviour Kadena.Chainweb.Client.Spec
 
+  @type error_message :: String.t()
   @type status :: pos_integer()
   @type headers :: [{binary(), binary()}, ...]
   @type body :: binary()
@@ -16,6 +17,18 @@ defmodule Kadena.Chainweb.Client.Default do
   @type error_response :: {:error, status(), headers(), body()} | {:error, any()}
   @type client_response :: success_response() | error_response()
   @type parsed_response :: {:ok, map()} | {:error, Error.t()}
+
+  @errors %{
+    400 => "bad request",
+    401 => "unauthorized",
+    404 => "not found",
+    405 => "method not allowed"
+  }
+
+  @default_errors %{
+    400 => "client error",
+    500 => "server error"
+  }
 
   @impl true
   def request(method, path, headers \\ [], body \\ "", opts \\ []) do
@@ -32,13 +45,30 @@ defmodule Kadena.Chainweb.Client.Default do
     {:ok, decoded_body}
   end
 
-  defp handle_response({:ok, status, _headers, ""}) when status in 400..499,
-    do: {:error, Error.new({:chainweb, %{status: status, title: "client error"}})}
+  defp handle_response({:ok, status, _headers, ""}) when status in 400..599,
+    do: {:error, Error.new({:chainweb, %{status: status, title: error_by_status(status)}})}
 
   defp handle_response({:ok, status, _headers, body}) when status in 400..599,
     do: {:error, Error.new({:chainweb, %{status: status, title: body}})}
 
   defp handle_response({:error, reason}), do: {:error, Error.new({:network, reason})}
+
+  @spec error_by_status(status :: status()) :: error_message()
+  defp error_by_status(status) do
+    case @errors[status] do
+      nil ->
+        default_status =
+          status
+          |> Integer.digits()
+          |> List.first()
+          |> Kernel.*(100)
+
+        @default_errors[default_status]
+
+      result ->
+        result
+    end
+  end
 
   @spec http_client() :: atom()
   defp http_client, do: Application.get_env(:kadena, :http_client, :hackney)
