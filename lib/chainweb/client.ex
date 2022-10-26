@@ -7,8 +7,8 @@ defmodule Kadena.Chainweb.Client do
   @behaviour Client.Spec
 
   @impl true
-  def request(path, method, headers \\ [], body \\ "", opts \\ []),
-    do: impl().request(path, method, headers, body, opts)
+  def request(method, path, headers \\ [], body \\ "", opts \\ []),
+    do: impl().request(method, path, headers, body, opts)
 
   @spec impl() :: atom()
   defp impl do

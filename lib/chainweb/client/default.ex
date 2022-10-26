@@ -15,10 +15,10 @@ defmodule Kadena.Chainweb.Client.Default do
   @type success_response :: {:ok, status(), headers(), body()}
   @type error_response :: {:error, status(), headers(), body()} | {:error, any()}
   @type client_response :: success_response() | error_response()
-  @type parsed_response :: {:ok, map()} | {:error, Keyword.t()}
+  @type parsed_response :: {:ok, map()} | {:error, Error.t()}
 
   @impl true
-  def request(path, method, headers \\ [], body \\ "", opts \\ []) do
+  def request(method, path, headers \\ [], body \\ "", opts \\ []) do
     options = http_options(opts)
 
     method
@@ -32,10 +32,13 @@ defmodule Kadena.Chainweb.Client.Default do
     {:ok, decoded_body}
   end
 
-  defp handle_response({:ok, status, _headers, body}) when status in 400..599,
-    do: Error.new({:chainweb, %{status: status, title: body}})
+  defp handle_response({:ok, status, _headers, ""}) when status in 400..499,
+    do: {:error, Error.new({:chainweb, %{status: status, title: "client error"}})}
 
-  defp handle_response({:error, reason}), do: Error.new({:network, reason})
+  defp handle_response({:ok, status, _headers, body}) when status in 400..599,
+    do: {:error, Error.new({:chainweb, %{status: status, title: body}})}
+
+  defp handle_response({:error, reason}), do: {:error, Error.new({:network, reason})}
 
   @spec http_client() :: atom()
   defp http_client, do: Application.get_env(:kadena, :http_client, :hackney)

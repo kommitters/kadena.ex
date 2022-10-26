@@ -52,25 +52,27 @@ defmodule Kadena.Chainweb.DefaultClientTest do
            status: "success",
            data: 5
          }
-       }} = Client.request(url <> "/local", :post, header, body)
+       }} = Client.request(:post, url <> "/local", header, body)
     end
 
     test "with an invalid body", %{url: url, header: header} do
-      %Error{status: 400, title: "not enough input"} =
-        Client.request(url <> "/local", :post, header)
+      {:error, %Error{status: 400, title: "not enough input"}} =
+        Client.request(:post, url <> "/local", header)
     end
 
     test "without header", %{url: url, body: body} do
-      %Error{status: 400, title: ""} = Client.request(url <> "/local", :post, [], body)
+      {:error, %Error{status: 400, title: "client error"}} =
+        Client.request(:post, url <> "/local", [], body)
     end
 
     test "with an invalid method", %{url: url, header: header, body: body} do
-      %Error{status: 405, title: ""} = Client.request(url <> "/local", :get, header, body)
+      {:error, %Error{status: 405, title: "client error"}} =
+        Client.request(:get, url <> "/local", header, body)
     end
 
     test "timeout", %{url: url, header: header, body: body} do
-      %Error{status: :network_error, title: :timeout} =
-        Client.request(url <> "/local", :post, header, body, recv_timeout: 1)
+      {:error, %Error{status: :network_error, title: :timeout}} =
+        Client.request(:post, url <> "/local", header, body, recv_timeout: 1)
     end
   end
 end

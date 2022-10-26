@@ -14,11 +14,11 @@ defmodule Kadena.Chainweb.Client.Spec do
   @type status :: non_neg_integer()
   @type options :: Keyword.t()
   @type response :: {:ok, map()}
-  @type response_error :: Error.t()
+  @type response_error :: {:error, Error.t()}
 
   @callback request(
-              url :: binary(),
               method :: method(),
+              url :: binary(),
               body :: binary(),
               headers :: headers(),
               options :: options()
