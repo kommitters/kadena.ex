@@ -1,8 +1,10 @@
 # Changelog
 
-## 0.6.0 (25.10.2022)
+## 0.6.0 (26.10.2022)
 
 * Added [Kadena Chainweb Client](https://github.com/kommitters/kadena.ex/issues/59) functions
+* Added [Chainweb Pact Behaviour](https://github.com/kommitters/kadena.ex/issues/96)
+* Added [Error struct](https://github.com/kommitters/kadena.ex/pull/111) for Chainweb.Client
 
 ## 0.5.0 (21.10.2022)
 
