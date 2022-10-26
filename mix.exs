@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.5.0"
+  @version "0.6.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -18,6 +18,13 @@ defmodule Kadena.MixProject do
       dialyzer: [
         plt_add_apps: [:kadena, :ex_unit, :jason],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
+      ],
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
       ]
     ]
   end
@@ -25,7 +32,7 @@ defmodule Kadena.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:hackney, :logger]
     ]
   end
 
@@ -34,9 +41,11 @@ defmodule Kadena.MixProject do
     [
       {:blake2, "~> 1.0.4"},
       {:decimal, "~> 2.0"},
+      {:hackney, "~> 1.18"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.24", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.24", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.15", only: :test}
     ]
   end
 
