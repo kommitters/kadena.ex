@@ -14,6 +14,10 @@ defmodule Kadena.Pact.NumberTest do
         Number.to_pact_integer("9007199254740992")
     end
 
+    test "with a invalid value" do
+      {:error, [value: :not_an_integer]} = Number.to_pact_integer("No_Parse_String")
+    end
+
     test "with a valid decimal" do
       {:ok, %PactInt{value: "9007199254740992", raw_value: 9_007_199_254_740_992}} =
         Number.to_pact_integer("9007199254740992.56")

@@ -28,8 +28,8 @@ defmodule Kadena.PactTest do
       {:error, [value: :not_in_range]} = Pact.to_pact_integer("300")
     end
 
-    test "with a unexpected value" do
-      :error = Pact.to_pact_integer("No_Parse_String")
+    test "with a invalid value" do
+      {:error, [value: :not_an_integer]} = Pact.to_pact_integer("No_Parse_String")
     end
 
     test "with a valid decimal" do
