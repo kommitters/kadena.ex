@@ -18,6 +18,9 @@ defmodule Kadena.Pact.Number do
     with {number, _rest} <- Integer.parse(str),
          %PactInt{} = pact_int <- PactInt.new(number) do
       {:ok, pact_int}
+    else
+      :error -> {:error, [value: :not_an_integer]}
+      error -> error
     end
   end
 
