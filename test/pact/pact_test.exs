@@ -1,6 +1,6 @@
 defmodule Kadena.PactTest do
   @moduledoc """
-  Kadena.Pact  tests.
+  `Kadena.pact` functions tests.
   """
 
   use ExUnit.Case
