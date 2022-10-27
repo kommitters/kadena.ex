@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1 (27.10.2022)
+
+* Bump ossf/scorecard-action to v2.0.6
+
 ## 0.6.0 (26.10.2022)
 
 * Added [Kadena Chainweb Client](https://github.com/kommitters/kadena.ex/issues/59) functions
