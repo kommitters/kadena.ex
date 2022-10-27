@@ -6,7 +6,7 @@ defmodule Kadena.Pact do
   # Exp functions
   defdelegate create_exp(args), to: Exp, as: :create
   # Number functions
-  defdelegate to_pact_integer(str), to: Number, as: :to_pact_integer
-  defdelegate to_pact_decimal(str), to: Number, as: :to_pact_decimal
-  defdelegate to_json_string(args), to: Number, as: :to_json_string
+  defdelegate to_pact_integer(str), to: Number
+  defdelegate to_pact_decimal(str), to: Number
+  defdelegate to_json_string(args), to: Number
 end
