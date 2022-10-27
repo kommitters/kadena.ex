@@ -7,6 +7,7 @@ defmodule Kadena.Types.Signer do
 
   @behaviour Kadena.Types.Spec
 
+  @type json :: String.t()
   @type pub_key :: Base16String.t()
   @type scheme :: :ed25519 | nil
   @type addr :: Base16String.t() | nil
@@ -20,10 +21,11 @@ defmodule Kadena.Types.Signer do
           pub_key: pub_key(),
           scheme: scheme(),
           addr: addr(),
-          clist: clist()
+          clist: clist(),
+          json: json()
         }
 
-  defstruct [:pub_key, :scheme, :addr, :clist]
+  defstruct [:pub_key, :scheme, :addr, :clist, :json]
 
   @impl true
   def new(args) do
@@ -35,8 +37,9 @@ defmodule Kadena.Types.Signer do
     with {:ok, pub_key} <- validate_pub_key(pub_key),
          {:ok, scheme} <- validate_scheme(scheme),
          {:ok, addr} <- validate_addr(addr),
-         {:ok, clist} <- validate_clist(clist) do
-      %__MODULE__{pub_key: pub_key, scheme: scheme, addr: addr, clist: clist}
+         {:ok, clist} <- validate_clist(clist),
+         {:ok, json} <- to_json(pub_key, scheme, addr, clist) do
+      %__MODULE__{pub_key: pub_key, scheme: scheme, addr: addr, clist: clist, json: json}
     end
   end
 
@@ -46,7 +49,7 @@ defmodule Kadena.Types.Signer do
 
   @spec validate_scheme(scheme :: scheme()) :: validation()
   defp validate_scheme(nil), do: {:ok, nil}
-  defp validate_scheme(:ed25519), do: {:ok, :ed25519}
+  defp validate_scheme(:ed25519), do: {:ok, :ED25519}
   defp validate_scheme(_code), do: {:error, [scheme: :invalid]}
 
   @spec validate_addr(addr :: str() | nil) :: validation()
@@ -65,5 +68,30 @@ defmodule Kadena.Types.Signer do
     else
       {:error, [{_field, reason}]} -> {:error, [clist: reason]}
     end
+  end
+
+  @spec to_json(pub_key :: pub_key(), scheme :: scheme(), addr :: addr(), clist :: clist()) ::
+          {:ok, json()}
+  defp to_json(
+         %Base16String{value: pub_key},
+         scheme,
+         %Base16String{value: addr},
+         %OptionalCapsList{
+           json: clist
+         }
+       ) do
+    %{pubKey: pub_key, scheme: scheme, addr: addr, clist: "{clist}"}
+    |> Jason.encode!()
+    |> String.replace("\"{clist}\"", clist)
+    |> (&{:ok, &1}).()
+  end
+
+  defp to_json(%Base16String{value: pub_key}, scheme, nil, %OptionalCapsList{
+         json: clist
+       }) do
+    %{pubKey: pub_key, scheme: scheme, clist: "{clist}"}
+    |> Jason.encode!()
+    |> String.replace("\"{clist}\"", clist)
+    |> (&{:ok, &1}).()
   end
 end

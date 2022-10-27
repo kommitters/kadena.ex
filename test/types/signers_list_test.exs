@@ -29,7 +29,7 @@ defmodule Kadena.Types.SignersListTest do
         signers: [
           %Signer{
             pub_key: %Base16String{value: ^pub_key},
-            scheme: :ed25519,
+            scheme: :ED25519,
             addr: %Base16String{value: ^pub_key},
             clist: %OptionalCapsList{clist: ^caps_list}
           }

@@ -47,10 +47,10 @@ defmodule Kadena.Types.ContPayloadTest do
       rollback: rollback
     } do
       %ContPayload{
-        data: nil,
+        data: %EnvData{data: %{}},
         pact_id: %PactTransactionHash{hash: ^pact_id},
         step: %Step{number: ^step},
-        proof: nil,
+        proof: %Proof{value: ""},
         rollback: %Rollback{value: ^rollback}
       } =
         ContPayload.new(

@@ -3,22 +3,29 @@ defmodule Kadena.Types.Command do
   `Command` struct definition.
   """
 
-  alias Kadena.Types.{CommandPayloadStringifiedJSON, PactTransactionHash, SignaturesList}
+  alias Kadena.Types.{
+    CommandPayloadStringifiedJSON,
+    PactTransactionHash,
+    Signature,
+    SignaturesList
+  }
 
   @behaviour Kadena.Types.Spec
 
+  @type json :: String.t()
   @type hash :: PactTransactionHash.t()
   @type raw_hash :: list()
   @type sigs :: SignaturesList.t()
+  @type signatures :: list(Signature.t())
   @type raw_sigs :: list()
   @type cmd :: CommandPayloadStringifiedJSON.t()
   @type raw_cmd :: list()
   @type value :: hash() | sigs() | cmd()
   @type validation :: {:ok, value()} | {:error, Keyword.t()}
 
-  @type t :: %__MODULE__{hash: hash(), sigs: sigs(), cmd: cmd()}
+  @type t :: %__MODULE__{hash: hash(), sigs: sigs(), cmd: cmd(), json: json()}
 
-  defstruct [:hash, :sigs, :cmd]
+  defstruct [:hash, :sigs, :cmd, :json]
 
   @impl true
   def new(args) when is_list(args) do
@@ -28,8 +35,9 @@ defmodule Kadena.Types.Command do
 
     with {:ok, hash} <- validate_hash(hash),
          {:ok, sigs} <- validate_sigs(sigs),
-         {:ok, cmd} <- validate_cmd(cmd) do
-      %__MODULE__{hash: hash, sigs: sigs, cmd: cmd}
+         {:ok, cmd} <- validate_cmd(cmd),
+         {:ok, json} <- to_json(hash, sigs, cmd) do
+      %__MODULE__{hash: hash, sigs: sigs, cmd: cmd, json: json}
     end
   end
 
@@ -57,5 +65,27 @@ defmodule Kadena.Types.Command do
       %CommandPayloadStringifiedJSON{} = cmd -> {:ok, cmd}
       {:error, reason} -> {:error, [cmd: :invalid] ++ reason}
     end
+  end
+
+  @spec to_json(hash :: hash(), sigs :: sigs(), cmd :: cmd()) :: {:ok, json()}
+  defp to_json(
+        %PactTransactionHash{hash: hash},
+        %SignaturesList{signatures: sigs},
+        %CommandPayloadStringifiedJSON{json_string: cmd}
+      ) do
+    []
+    |> signatures_to_list(sigs)
+    |> (&Jason.encode(%{
+          hash: hash,
+          sigs: &1,
+          cmd: cmd
+        })).()
+  end
+
+  @spec signatures_to_list(list :: list(), signatures :: signatures()) :: list()
+  defp signatures_to_list(list, []), do: list
+
+  defp signatures_to_list(list, [%Signature{sig: signature} | rest]) do
+    signatures_to_list(list ++ [%{sig: signature}], rest)
   end
 end

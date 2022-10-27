@@ -29,3 +29,5 @@ kadena-*.tar
 /priv/plts
 
 /.elixir_ls
+
+/.vscode

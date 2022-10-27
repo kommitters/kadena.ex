@@ -29,7 +29,7 @@ defmodule Kadena.Types.SignerTest do
     } do
       %Signer{
         pub_key: %Base16String{value: ^base16string},
-        scheme: ^signer_scheme,
+        scheme: :ED25519,
         addr: %Base16String{value: ^base16string},
         clist: %OptionalCapsList{clist: ^cap_list_struct}
       } =
@@ -43,7 +43,7 @@ defmodule Kadena.Types.SignerTest do
     } do
       %Signer{
         pub_key: %Base16String{value: ^base16string},
-        scheme: ^signer_scheme,
+        scheme: :ED25519,
         addr: %Base16String{value: ^base16string},
         clist: %OptionalCapsList{clist: ^cap_list_struct}
       } =

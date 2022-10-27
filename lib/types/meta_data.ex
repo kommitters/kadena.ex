@@ -7,6 +7,7 @@ defmodule Kadena.Types.MetaData do
 
   @behaviour Kadena.Types.Spec
 
+  @type json :: String.t()
   @type creation_time :: number()
   @type ttl :: number()
   @type gas_limit :: number()
@@ -23,10 +24,11 @@ defmodule Kadena.Types.MetaData do
           gas_limit: gas_limit(),
           gas_price: gas_price(),
           sender: sender(),
-          chain_id: chain_id()
+          chain_id: chain_id(),
+          json: json()
         }
 
-  defstruct [:creation_time, :ttl, :gas_limit, :gas_price, :sender, :chain_id]
+  defstruct [:creation_time, :ttl, :gas_limit, :gas_price, :sender, :chain_id, :json]
 
   @impl true
   def new(args) do
@@ -42,14 +44,16 @@ defmodule Kadena.Types.MetaData do
          {:ok, gas_limit} <- validate_number(:gas_limit, gas_limit),
          {:ok, gas_price} <- validate_number(:gas_price, gas_price),
          {:ok, sender} <- validate_sender(sender),
-         {:ok, chain_id} <- validate_chain_id(chain_id) do
+         {:ok, chain_id} <- validate_chain_id(chain_id),
+         {:ok, json} <- to_json(creation_time, ttl, gas_limit, gas_price, sender, chain_id) do
       %__MODULE__{
         creation_time: creation_time,
         ttl: ttl,
         gas_limit: gas_limit,
         gas_price: gas_price,
         sender: sender,
-        chain_id: chain_id
+        chain_id: chain_id,
+        json: json
       }
     end
   end
@@ -79,4 +83,30 @@ defmodule Kadena.Types.MetaData do
       _error -> {:error, [chain_id: :invalid]}
     end
   end
+
+  @spec to_json(
+          creation_time :: creation_time(),
+          ttl :: ttl(),
+          gas_limit :: gas_limit(),
+          gas_price :: gas_price(),
+          sender :: sender(),
+          chain_id :: chain_id()
+        ) :: {:ok, json()}
+  defp to_json(
+         creation_time,
+         ttl,
+         gas_limit,
+         gas_price,
+         sender,
+         %ChainID{id: chain_id}
+       ),
+       do:
+         Jason.encode(%{
+           creationTime: creation_time,
+           ttl: ttl,
+           gasLimit: gas_limit,
+           gasPrice: gas_price,
+           sender: sender,
+           chainId: chain_id
+         })
 end

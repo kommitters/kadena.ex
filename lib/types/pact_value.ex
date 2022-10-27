@@ -7,6 +7,7 @@ defmodule Kadena.Types.PactValue do
   @behaviour Kadena.Types.Spec
 
   @type str :: String.t()
+  @type json :: str()
   @type raw_decimal :: float() | str()
   @type decimal :: Decimal.t()
   @type error_list :: Keyword.t()
@@ -20,52 +21,60 @@ defmodule Kadena.Types.PactValue do
           | PactValuesList.t()
   @type validation :: {:ok, literal()} | {:error, error_list()}
 
-  @type t :: %__MODULE__{literal: literal()}
+  @type t :: %__MODULE__{literal: literal(), json: json()}
 
-  defstruct [:literal]
+  defstruct [:literal, :json]
 
   @lower_decimal_range -9_007_199_254_740_991
   @upper_decimal_range 9_007_199_254_740_991
   @number_range @lower_decimal_range..@upper_decimal_range
 
   @impl true
-  def new(literal) when is_boolean(literal), do: %__MODULE__{literal: literal}
+  def new(literal) when is_boolean(literal),
+    do: %__MODULE__{literal: literal, json: to_json(literal)}
 
   def new(literal) when is_integer(literal) and literal in @number_range,
-    do: %__MODULE__{literal: literal}
+    do: %__MODULE__{literal: literal, json: to_json(literal)}
 
   def new(literal) when is_integer(literal) and literal not in @number_range,
-    do: %__MODULE__{literal: PactInt.new(literal)}
+    do: %__MODULE__{literal: PactInt.new(literal), json: to_json(literal)}
 
   def new(literal) when is_float(literal) do
     with {:ok, decimal} <- cast_to_decimal(literal),
          {:ok, decimal} <- validate_decimal_range(decimal) do
-      %__MODULE__{literal: decimal}
+      %__MODULE__{literal: decimal, json: to_json(decimal)}
     end
   end
 
   def new(literal) when is_binary(literal) do
-    if is_decimal_expresion?(literal),
+    if is_decimal_expression?(literal),
       do: build_pact_decimal(literal),
-      else: %__MODULE__{literal: literal}
+      else: %__MODULE__{literal: literal, json: to_json(literal)}
   end
 
   def new(literals) when is_list(literals) do
     case PactValuesList.new(literals) do
-      %PactValuesList{} = pact_values_list -> %__MODULE__{literal: pact_values_list}
-      {:error, [{_field, reason}]} -> {:error, [literal: reason]}
+      %PactValuesList{} = pact_values_list ->
+        %__MODULE__{literal: pact_values_list, json: to_json(pact_values_list)}
+
+      {:error, [{_field, reason}]} ->
+        {:error, [literal: reason]}
     end
   end
 
-  def new(%PactValuesList{} = pact_values), do: %__MODULE__{literal: pact_values}
+  def new(%PactValuesList{} = pact_values),
+    do: %__MODULE__{literal: pact_values, json: to_json(pact_values)}
 
   def new(_literal), do: {:error, [literal: :invalid]}
 
   @spec build_pact_decimal(str :: str()) :: t() | {:error, error_list()}
   defp build_pact_decimal(str) do
     case PactDecimal.new(str) do
-      %PactDecimal{} = pact_decimal -> %__MODULE__{literal: pact_decimal}
-      {:error, [{_field, reason}]} -> {:error, [literal: reason]}
+      %PactDecimal{} = pact_decimal ->
+        %__MODULE__{literal: pact_decimal, json: to_json(pact_decimal)}
+
+      {:error, [{_field, reason}]} ->
+        {:error, [literal: reason]}
     end
   end
 
@@ -83,6 +92,13 @@ defmodule Kadena.Types.PactValue do
       else: {:error, [literal: :not_in_range]}
   end
 
-  @spec is_decimal_expresion?(expr :: str()) :: boolean()
-  defp is_decimal_expresion?(expr), do: Regex.match?(~r/^[-]?([0-9]*[.])?[0-9]+$/, expr)
+  @spec is_decimal_expression?(expr :: str()) :: boolean()
+  defp is_decimal_expression?(expr), do: Regex.match?(~r/^[-]?([0-9]*[.])?[0-9]+$/, expr)
+
+  @spec to_json(literal :: literal()) :: json()
+  defp to_json(%PactDecimal{raw_value: literal}),
+    do: literal |> Decimal.to_float() |> Jason.encode!()
+
+  defp to_json(%PactValuesList{json: json}), do: json
+  defp to_json(literal), do: Jason.encode!(literal)
 end

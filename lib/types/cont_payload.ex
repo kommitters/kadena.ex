@@ -7,6 +7,7 @@ defmodule Kadena.Types.ContPayload do
 
   @behaviour Kadena.Types.Spec
 
+  @type json :: String.t()
   @type data :: EnvData.t() | nil
   @type pact_id :: PactTransactionHash.t()
   @type proof :: Proof.t() | nil
@@ -21,10 +22,11 @@ defmodule Kadena.Types.ContPayload do
           pact_id: pact_id(),
           proof: proof(),
           rollback: rollback(),
-          step: step()
+          step: step(),
+          json: json()
         }
 
-  defstruct [:data, :pact_id, :proof, :rollback, :step]
+  defstruct [:data, :pact_id, :proof, :rollback, :step, :json]
 
   @impl true
   def new(args) do
@@ -38,13 +40,21 @@ defmodule Kadena.Types.ContPayload do
          {:ok, pact_id} <- validate_pact_id(pact_id),
          {:ok, proof} <- validate_proof(proof),
          {:ok, rollback} <- validate_rollback(rollback),
-         {:ok, step} <- validate_step(step) do
-      %__MODULE__{data: data, pact_id: pact_id, step: step, proof: proof, rollback: rollback}
+         {:ok, step} <- validate_step(step),
+         {:ok, json} <- to_json(data, pact_id, proof, rollback, step) do
+      %__MODULE__{
+        data: data,
+        pact_id: pact_id,
+        step: step,
+        proof: proof,
+        rollback: rollback,
+        json: json
+      }
     end
   end
 
   @spec validate_data(data :: map()) :: validation()
-  defp validate_data(nil), do: {:ok, nil}
+  defp validate_data(nil), do: {:ok, EnvData.new(%{})}
 
   defp validate_data(data) do
     case EnvData.new(data) do
@@ -62,7 +72,7 @@ defmodule Kadena.Types.ContPayload do
   end
 
   @spec validate_proof(proof :: str()) :: validation()
-  defp validate_proof(nil), do: {:ok, nil}
+  defp validate_proof(nil), do: {:ok, Proof.new("")}
 
   defp validate_proof(proof) do
     case Proof.new(proof) do
@@ -85,5 +95,28 @@ defmodule Kadena.Types.ContPayload do
       %Step{} = step -> {:ok, step}
       _error -> {:error, [step: :invalid]}
     end
+  end
+
+  @spec to_json(
+          data :: data(),
+          pact_id :: pact_id(),
+          proof :: proof(),
+          rollback :: rollback(),
+          step :: step()
+        ) :: {:ok, json()}
+  defp to_json(
+         %EnvData{data: data},
+         %PactTransactionHash{hash: pact_id},
+         %Proof{value: proof},
+         %Rollback{value: rollback},
+         %Step{number: step}
+       ) do
+    Jason.encode(%{
+      data: data,
+      pactId: pact_id,
+      proof: proof,
+      rollback: rollback,
+      step: step
+    })
   end
 end

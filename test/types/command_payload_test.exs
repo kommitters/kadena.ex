@@ -111,7 +111,9 @@ defmodule Kadena.Types.CommandPayloadTest do
         payload: %PactPayload{payload: ^cont_payload},
         signers: ^signers_list_struct,
         meta: ^meta,
-        nonce: ^nonce
+        nonce: ^nonce,
+        json:
+          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":0,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca\",\"ttl\":0},\"networkId\":\"mainnet01\",\"nonce\":\"valid_nonce\",\"payload\":{\"exec\":{\"code\":\"(format \\\"hello {}\\\" [\\\"world\\\"])\",\"data\":{}}},\"signers\":[{\"addr\":\"64617373646164617364617364616473616461736461736464\",\"clist\":[{\"args\":[\"COIN.gas\",\"0.02\"],\"name\":\"gas\"},{\"args\":[\"COIN.gas\",\"0.02\"],\"name\":\"gas\"},{\"args\":[\"COIN.gas\",\"0.02\"],\"name\":\"gas\"}],\"pubKey\":\"64617373646164617364617364616473616461736461736464\",\"scheme\":\"ED25519\"}]}"
       } =
         CommandPayload.new(
           network_id: network_id,

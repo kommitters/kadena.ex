@@ -6,6 +6,7 @@ defmodule Kadena.Types.CommandPayload do
 
   @behaviour Kadena.Types.Spec
 
+  @type json :: String.t()
   @type network_id :: NetworkID.t() | nil
   @type payload :: PactPayload.t()
   @type signers :: SignersList.t()
@@ -18,10 +19,11 @@ defmodule Kadena.Types.CommandPayload do
           payload: payload(),
           signers: signers(),
           meta: meta(),
-          nonce: nonce()
+          nonce: nonce(),
+          json: json()
         }
 
-  defstruct [:network_id, :payload, :signers, :meta, :nonce]
+  defstruct [:network_id, :payload, :signers, :meta, :nonce, :json]
 
   @impl true
   def new(args) do
@@ -35,13 +37,15 @@ defmodule Kadena.Types.CommandPayload do
          {:ok, payload} <- validate_payload(payload),
          {:ok, signers} <- validate_signers(signers),
          {:ok, meta} <- validate_meta(meta),
-         {:ok, nonce} <- validate_nonce(nonce) do
+         {:ok, nonce} <- validate_nonce(nonce),
+         {:ok, json} <- to_json(network_id, payload, signers, meta, nonce) do
       %__MODULE__{
         network_id: network_id,
         payload: payload,
         signers: signers,
         meta: meta,
-        nonce: nonce
+        nonce: nonce,
+        json: json
       }
     end
   end
@@ -82,5 +86,32 @@ defmodule Kadena.Types.CommandPayload do
       %Nonce{} -> {:ok, nonce}
       {:error, _reason} -> {:error, [:nonce, :invalid]}
     end
+  end
+
+  @spec to_json(
+          network_id :: network_id(),
+          payload :: payload(),
+          signers :: signers(),
+          meta :: meta(),
+          nonce :: nonce()
+        ) :: {:ok, json()}
+  defp to_json(
+         %NetworkID{id: network_id},
+         %PactPayload{json: payload},
+         %SignersList{json: signers},
+         %MetaData{json: meta},
+         nonce
+       ) do
+    Jason.encode!(%{
+      networkId: network_id,
+      payload: "{payload}",
+      signers: "{signers}",
+      meta: "{meta}",
+      nonce: nonce
+    })
+    |> String.replace("\"{payload}\"", payload)
+    |> String.replace("\"{signers}\"", signers)
+    |> String.replace("\"{meta}\"", meta)
+    |> (&{:ok, &1}).()
   end
 end

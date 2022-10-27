@@ -6,15 +6,16 @@ defmodule Kadena.Types.Cap do
 
   @behaviour Kadena.Types.Spec
 
+  @type json :: String.t()
   @type name :: String.t()
   @type args :: PactValuesList.t() | list()
   @type pact_values :: PactValuesList.t()
   @type error :: Keyword.t()
   @type validation :: {:ok, any()} | {:error, error()}
 
-  @type t :: %__MODULE__{name: name(), args: pact_values()}
+  @type t :: %__MODULE__{name: name(), args: pact_values(), json: json()}
 
-  defstruct [:name, :args]
+  defstruct [:name, :args, :json]
 
   @impl true
   def new(args) when is_list(args) do
@@ -22,8 +23,9 @@ defmodule Kadena.Types.Cap do
     args = Keyword.get(args, :args)
 
     with {:ok, name} <- validate_name(name),
-         {:ok, args} <- validate_args(args) do
-      %__MODULE__{name: name, args: args}
+         {:ok, args} <- validate_args(args),
+         {:ok, json} <- to_json(name, args) do
+      %__MODULE__{name: name, args: args, json: json}
     end
   end
 
@@ -44,4 +46,12 @@ defmodule Kadena.Types.Cap do
   defp validate_args(%PactValuesList{} = pact_values), do: {:ok, pact_values}
 
   defp validate_args(_args), do: {:error, [args: :invalid]}
+
+  @spec to_json(name :: name(), pact_values()) :: {:ok, json()}
+  defp to_json(name, %PactValuesList{json: pact_values}) do
+    %{name: name, args: "{args}"}
+    |> Jason.encode!()
+    |> String.replace("\"{args}\"", pact_values)
+    |> (&{:ok, &1}).()
+  end
 end

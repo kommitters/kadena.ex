@@ -7,16 +7,18 @@ defmodule Kadena.Types.ExecPayload do
 
   @behaviour Kadena.Types.Spec
 
+  @type json :: String.t()
   @type data :: EnvData.t() | nil
   @type code :: PactCode.t()
   @type value :: data() | code()
   @type validation :: {:ok, value()} | {:error, Keyword.t()}
   @type t :: %__MODULE__{
           data: data(),
-          code: code()
+          code: code(),
+          json: json()
         }
 
-  defstruct [:data, :code]
+  defstruct [:data, :code, :json]
 
   @impl true
   def new(args) do
@@ -24,8 +26,9 @@ defmodule Kadena.Types.ExecPayload do
     code = Keyword.get(args, :code)
 
     with {:ok, data} <- validate_data(data),
-         {:ok, code} <- validate_code(code) do
-      %__MODULE__{data: data, code: code}
+         {:ok, code} <- validate_code(code),
+         {:ok, json} <- to_json(data, code) do
+      %__MODULE__{data: data, code: code, json: json}
     end
   end
 
@@ -46,4 +49,11 @@ defmodule Kadena.Types.ExecPayload do
       _error -> {:error, [code: :invalid]}
     end
   end
+
+  @spec to_json(data :: data(), code :: code()) :: {:ok, json()}
+  defp to_json(%EnvData{data: data}, %PactCode{code: code}),
+    do: Jason.encode(%{data: data, code: code})
+
+  defp to_json(nil, %PactCode{code: code}),
+    do: Jason.encode(%{code: code})
 end
