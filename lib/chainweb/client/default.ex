@@ -25,11 +25,6 @@ defmodule Kadena.Chainweb.Client.Default do
     405 => "method not allowed"
   }
 
-  @default_errors %{
-    400 => "client error",
-    500 => "server error"
-  }
-
   @impl true
   def request(method, path, headers \\ [], body \\ "", opts \\ []) do
     options = http_options(opts)
@@ -45,30 +40,20 @@ defmodule Kadena.Chainweb.Client.Default do
     {:ok, decoded_body}
   end
 
-  defp handle_response({:ok, status, _headers, ""}) when status in 400..599,
-    do: {:error, Error.new({:chainweb, %{status: status, title: error_by_status(status)}})}
+  defp handle_response({:ok, status, _headers, ""}) when status in 400..499 do
+    error = Map.get(@errors, status, "client error")
+    {:error, Error.new({:chainweb, %{status: status, title: error}})}
+  end
+
+  defp handle_response({:ok, status, _headers, ""}) when status in 500..599 do
+    error = Map.get(@errors, status, "server error")
+    {:error, Error.new({:chainweb, %{status: status, title: error}})}
+  end
 
   defp handle_response({:ok, status, _headers, body}) when status in 400..599,
     do: {:error, Error.new({:chainweb, %{status: status, title: body}})}
 
   defp handle_response({:error, reason}), do: {:error, Error.new({:network, reason})}
-
-  @spec error_by_status(status :: status()) :: error_message()
-  defp error_by_status(status) do
-    case @errors[status] do
-      nil ->
-        default_status =
-          status
-          |> Integer.digits()
-          |> List.first()
-          |> Kernel.*(100)
-
-        @default_errors[default_status]
-
-      result ->
-        result
-    end
-  end
 
   @spec http_client() :: atom()
   defp http_client, do: Application.get_env(:kadena, :http_client, :hackney)
