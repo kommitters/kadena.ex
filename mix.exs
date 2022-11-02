@@ -45,8 +45,7 @@ defmodule Kadena.MixProject do
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.15", only: :test},
-      {:casex, "~> 0.4.2"}
+      {:excoveralls, "~> 0.15", only: :test}
     ]
   end
 

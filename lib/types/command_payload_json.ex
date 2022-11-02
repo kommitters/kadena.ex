@@ -2,6 +2,7 @@ defmodule Kadena.Types.CommandPayloadJSON do
   @moduledoc """
   `CommandPayloadJSON` struct definition.
   """
+  alias Kadena.Utils.MapCase
 
   alias Kadena.Types.{
     Base16String,
@@ -83,7 +84,7 @@ defmodule Kadena.Types.CommandPayloadJSON do
           nonce: nonce,
           signers: signers
         }
-        |> Casex.to_camel_case()
+        |> MapCase.to_camel!()
         |> Jason.encode!()
 
       %__MODULE__{json: request_body}
@@ -96,7 +97,7 @@ defmodule Kadena.Types.CommandPayloadJSON do
   @spec extract_payload(pact_payload()) :: {:ok, map()}
   defp extract_payload(%PactPayload{payload: %ExecPayload{} = exec_payload}) do
     %ExecPayload{code: %PactCode{code: code}, data: data} = exec_payload
-    payload = %{exec: %{code: code, data: validate_data(data)}}
+    payload = %{exec: %{code: code, data: extract_data(data)}}
     {:ok, payload}
   end
 
@@ -111,9 +112,9 @@ defmodule Kadena.Types.CommandPayloadJSON do
        }) do
     payload = %{
       cont: %{
-        data: validate_data(data),
+        data: extract_data(data),
         pact_id: hash,
-        proof: validate_proof(proof),
+        proof: extract_proof(proof),
         roollback: rollback,
         step: number
       }
@@ -122,13 +123,13 @@ defmodule Kadena.Types.CommandPayloadJSON do
     {:ok, payload}
   end
 
-  @spec validate_proof(proof()) :: str() | nil
-  defp validate_proof(nil), do: nil
-  defp validate_proof(%Proof{value: proof}), do: proof
+  @spec extract_proof(proof()) :: str() | nil
+  defp extract_proof(nil), do: nil
+  defp extract_proof(%Proof{value: proof}), do: proof
 
-  @spec validate_data(data()) :: map() | nil
-  defp validate_data(nil), do: nil
-  defp validate_data(%EnvData{data: data}), do: data
+  @spec extract_data(data()) :: map() | nil
+  defp extract_data(nil), do: nil
+  defp extract_data(%EnvData{data: data}), do: data
 
   @spec extract_meta(meta()) :: {:ok, map()}
   defp extract_meta(%MetaData{
@@ -165,25 +166,25 @@ defmodule Kadena.Types.CommandPayloadJSON do
          clist: %OptionalCapsList{clist: clist}
        }) do
     %{
-      addr: validate_addr(addr),
-      scheme: validate_scheme(scheme),
+      addr: extract_addr(addr),
+      scheme: extract_scheme(scheme),
       pub_key: pub_key,
-      clist: validate_clist(clist)
+      clist: extract_clist(clist)
     }
   end
 
-  @spec validate_addr(addr()) :: str() | nil
-  defp validate_addr(nil), do: nil
-  defp validate_addr(%Base16String{value: value}), do: value
+  @spec extract_addr(addr()) :: str() | nil
+  defp extract_addr(nil), do: nil
+  defp extract_addr(%Base16String{value: value}), do: value
 
-  @spec validate_scheme(scheme()) :: valid_scheme()
-  defp validate_scheme(nil), do: nil
-  defp validate_scheme(:ed25519), do: :ED25519
+  @spec extract_scheme(scheme()) :: valid_scheme()
+  defp extract_scheme(nil), do: nil
+  defp extract_scheme(:ed25519), do: :ED25519
 
-  @spec validate_clist(clist()) :: valid_clist()
-  defp validate_clist(nil), do: []
+  @spec extract_clist(clist()) :: valid_clist()
+  defp extract_clist(nil), do: []
 
-  defp validate_clist(%CapsList{caps: caps}) do
+  defp extract_clist(%CapsList{caps: caps}) do
     Enum.map(caps, fn cap -> extract_cap_info(cap) end)
   end
 
@@ -194,12 +195,12 @@ defmodule Kadena.Types.CommandPayloadJSON do
 
   @spec extract_values(pact_values_list()) :: pact_value()
   defp extract_values(%PactValuesList{pact_values: pact_values}) do
-    Enum.map(pact_values, fn %PactValue{literal: pact_value} -> validate_value(pact_value) end)
+    Enum.map(pact_values, fn %PactValue{literal: pact_value} -> extract_value(pact_value) end)
   end
 
-  @spec validate_value(literal()) :: valid_pact_value()
-  defp validate_value(%PactValuesList{} = pact_value), do: extract_values(pact_value)
-  defp validate_value(%PactInt{raw_value: value}), do: value
-  defp validate_value(%PactDecimal{raw_value: value}), do: value
-  defp validate_value(value), do: value
+  @spec extract_value(literal()) :: valid_pact_value()
+  defp extract_value(%PactValuesList{} = pact_value), do: extract_values(pact_value)
+  defp extract_value(%PactInt{raw_value: value}), do: value
+  defp extract_value(%PactDecimal{raw_value: value}), do: value
+  defp extract_value(value), do: value
 end
