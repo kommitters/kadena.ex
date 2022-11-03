@@ -36,7 +36,7 @@ defmodule Kadena.Types.CommandPayloadJSON do
   @type signers_list :: SignersList.t()
   @type signers :: list(map())
   @type network_id :: NetworkID.t()
-  @type str :: String.t()
+  @type string_value :: String.t() | nil
   @type pact_payload :: PactPayload.t()
   @type proof :: Proof.t() | nil
   @type data :: EnvData.t() | nil
@@ -56,9 +56,11 @@ defmodule Kadena.Types.CommandPayloadJSON do
           | PactInt.t()
           | PactDecimal.t()
           | PactValuesList.t()
-  @type value :: integer() | str() | boolean() | Decimal.t()
+  @type value :: integer() | string_value() | boolean() | Decimal.t()
   @type valid_pact_value :: list(value)
   @type pact_value :: list(valid_pact_value())
+  @type map_return :: map() | nil
+  @type valid_extract :: {:ok, string_value()} | {:ok, map_return()} | {:ok, signers()}
 
   @type t :: %__MODULE__{json: json()}
 
@@ -91,10 +93,10 @@ defmodule Kadena.Types.CommandPayloadJSON do
     end
   end
 
-  @spec extract_network_id(network_id()) :: {:ok, str()}
+  @spec extract_network_id(network_id()) :: valid_extract()
   defp extract_network_id(%NetworkID{id: id}), do: {:ok, id}
 
-  @spec extract_payload(pact_payload()) :: {:ok, map()}
+  @spec extract_payload(pact_payload()) :: valid_extract()
   defp extract_payload(%PactPayload{payload: %ExecPayload{} = exec_payload}) do
     %ExecPayload{code: %PactCode{code: code}, data: data} = exec_payload
     payload = %{exec: %{code: code, data: extract_data(data)}}
@@ -123,15 +125,15 @@ defmodule Kadena.Types.CommandPayloadJSON do
     {:ok, payload}
   end
 
-  @spec extract_proof(proof()) :: str() | nil
+  @spec extract_proof(proof()) :: string_value()
   defp extract_proof(nil), do: nil
   defp extract_proof(%Proof{value: proof}), do: proof
 
-  @spec extract_data(data()) :: map() | nil
+  @spec extract_data(data()) :: map_return()
   defp extract_data(nil), do: nil
   defp extract_data(%EnvData{data: data}), do: data
 
-  @spec extract_meta(meta()) :: {:ok, map()}
+  @spec extract_meta(meta()) :: valid_extract()
   defp extract_meta(%MetaData{
          creation_time: creation_time,
          ttl: ttl,
@@ -152,13 +154,13 @@ defmodule Kadena.Types.CommandPayloadJSON do
     {:ok, meta}
   end
 
-  @spec extract_signers_list(signers :: signers_list()) :: {:ok, signers()}
+  @spec extract_signers_list(signers :: signers_list()) :: valid_extract()
   defp extract_signers_list(%SignersList{signers: list}) do
     signers = Enum.map(list, fn sig -> extract_signer_info(sig) end)
     {:ok, signers}
   end
 
-  @spec extract_signer_info(signer()) :: map()
+  @spec extract_signer_info(signer()) :: map_return()
   defp extract_signer_info(%Signer{
          addr: addr,
          scheme: scheme,
@@ -173,7 +175,7 @@ defmodule Kadena.Types.CommandPayloadJSON do
     }
   end
 
-  @spec extract_addr(addr()) :: str() | nil
+  @spec extract_addr(addr()) :: string_value()
   defp extract_addr(nil), do: nil
   defp extract_addr(%Base16String{value: value}), do: value
 
@@ -188,7 +190,7 @@ defmodule Kadena.Types.CommandPayloadJSON do
     Enum.map(caps, fn cap -> extract_cap_info(cap) end)
   end
 
-  @spec extract_cap_info(cap()) :: map()
+  @spec extract_cap_info(cap()) :: map_return()
   defp extract_cap_info(%Cap{name: name, args: args}) do
     %{name: name, args: extract_values(args)}
   end
