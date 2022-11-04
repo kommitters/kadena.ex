@@ -3,7 +3,7 @@ defmodule Kadena.Types.Command do
   `Command` struct definition.
   """
 
-  alias Kadena.Types.{CommandPayloadStringifiedJSON, PactTransactionHash, SignaturesList}
+  alias Kadena.Types.{PactTransactionHash, SignaturesList}
 
   @behaviour Kadena.Types.Spec
 
@@ -11,7 +11,7 @@ defmodule Kadena.Types.Command do
   @type raw_hash :: list()
   @type sigs :: SignaturesList.t()
   @type raw_sigs :: list()
-  @type cmd :: CommandPayloadStringifiedJSON.t()
+  @type cmd :: String.t()
   @type raw_cmd :: list()
   @type value :: hash() | sigs() | cmd()
   @type validation :: {:ok, value()} | {:error, Keyword.t()}
@@ -52,10 +52,6 @@ defmodule Kadena.Types.Command do
   end
 
   @spec validate_cmd(cmd :: raw_cmd()) :: validation()
-  defp validate_cmd(cmd) do
-    case CommandPayloadStringifiedJSON.new(cmd) do
-      %CommandPayloadStringifiedJSON{} = cmd -> {:ok, cmd}
-      {:error, reason} -> {:error, [cmd: :invalid] ++ reason}
-    end
-  end
+  defp validate_cmd(cmd) when is_binary(cmd), do: {:ok, cmd}
+  defp validate_cmd(_cmd), do: {:error, [cmd: :not_a_string]}
 end

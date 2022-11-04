@@ -4,14 +4,14 @@ defmodule Kadena.Types.LocalRequestBody do
   """
 
   alias Kadena.Chainweb.Pact.JSONRequestBody
-  alias Kadena.Types.{Command, CommandPayloadStringifiedJSON, PactTransactionHash, SignaturesList}
+  alias Kadena.Types.{Command, PactTransactionHash, SignaturesList}
 
   @behaviour Kadena.Types.Spec
 
   @type command :: String.t()
   @type hash :: PactTransactionHash.t()
   @type sigs :: SignaturesList.t()
-  @type cmd :: CommandPayloadStringifiedJSON.t()
+  @type cmd :: String.t()
   @type errors :: {:error, Keyword.t()}
 
   @type t :: %__MODULE__{hash: hash(), sigs: sigs(), cmd: cmd()}
@@ -39,12 +39,7 @@ defmodule Kadena.Types.LocalRequestBody do
   defimpl JSONRequestBody do
     alias Kadena.Utils.MapCase
 
-    alias Kadena.Types.{
-      CommandPayloadStringifiedJSON,
-      LocalRequestBody,
-      PactTransactionHash,
-      SignaturesList
-    }
+    alias Kadena.Types.LocalRequestBody
 
     @type signatures_list :: SignaturesList.t()
     @type signatures :: list(map())
@@ -52,8 +47,7 @@ defmodule Kadena.Types.LocalRequestBody do
     @impl true
     def parse(%LocalRequestBody{hash: hash, sigs: sigs, cmd: cmd}) do
       with %PactTransactionHash{hash: hash} <- hash,
-           {:ok, sigs} <- to_signature_list(sigs),
-           %CommandPayloadStringifiedJSON{json_string: cmd} <- cmd do
+           {:ok, sigs} <- to_signature_list(sigs) do
         %{hash: hash, sigs: sigs, cmd: cmd}
         |> MapCase.to_camel!()
         |> Jason.encode!()
