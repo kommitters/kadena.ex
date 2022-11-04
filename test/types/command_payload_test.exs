@@ -48,7 +48,7 @@ defmodule Kadena.Types.CommandPayloadTest do
       %{
         network_id: :mainnet01,
         network_id_str: "mainnet01",
-        exec_payload:
+        cont_payload:
           ContPayload.new(
             data: data,
             pact_id: pact_id,
@@ -56,7 +56,7 @@ defmodule Kadena.Types.CommandPayloadTest do
             proof: proof,
             rollback: rollback
           ),
-        cont_payload: ExecPayload.new(data: data, code: code),
+        exec_payload: ExecPayload.new(data: data, code: code),
         signers: signers_list_value,
         signers_list_struct: signer_list_struct,
         meta:
