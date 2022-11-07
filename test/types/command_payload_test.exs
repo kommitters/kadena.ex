@@ -45,6 +45,15 @@ defmodule Kadena.Types.CommandPayloadTest do
       sender = "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca"
       chain_id = "0"
 
+      meta = [
+        creation_time: creation_time,
+        ttl: ttl,
+        gas_limit: gas_limit,
+        gas_price: gas_price,
+        sender: sender,
+        chain_id: chain_id
+      ]
+
       %{
         network_id: :mainnet01,
         network_id_str: "mainnet01",
@@ -59,17 +68,35 @@ defmodule Kadena.Types.CommandPayloadTest do
         exec_payload: ExecPayload.new(data: data, code: code),
         signers: signers_list_value,
         signers_list_struct: signer_list_struct,
-        meta:
-          MetaData.new(
-            creation_time: creation_time,
-            ttl: ttl,
-            gas_limit: gas_limit,
-            gas_price: gas_price,
-            sender: sender,
-            chain_id: chain_id
-          ),
+        meta: MetaData.new(meta),
+        meta_list: meta,
         nonce: "valid_nonce"
       }
+    end
+
+    test "with valid params with NetworkID", %{
+      network_id: network_id,
+      network_id_str: network_id_str,
+      exec_payload: exec_payload,
+      signers: signers,
+      signers_list_struct: signers_list_struct,
+      meta: meta,
+      nonce: nonce
+    } do
+      %CommandPayload{
+        network_id: %NetworkID{id: ^network_id_str},
+        payload: %PactPayload{payload: ^exec_payload},
+        signers: ^signers_list_struct,
+        meta: ^meta,
+        nonce: ^nonce
+      } =
+        CommandPayload.new(
+          network_id: NetworkID.new(network_id),
+          payload: exec_payload,
+          signers: signers,
+          meta: meta,
+          nonce: nonce
+        )
     end
 
     test "with valid params with exec payload", %{
@@ -91,6 +118,31 @@ defmodule Kadena.Types.CommandPayloadTest do
         CommandPayload.new(
           network_id: network_id,
           payload: exec_payload,
+          signers: signers,
+          meta: meta,
+          nonce: nonce
+        )
+    end
+
+    test "with valid params with PactPayload", %{
+      network_id: network_id,
+      network_id_str: network_id_str,
+      exec_payload: exec_payload,
+      signers: signers,
+      signers_list_struct: signers_list_struct,
+      meta: meta,
+      nonce: nonce
+    } do
+      %CommandPayload{
+        network_id: %NetworkID{id: ^network_id_str},
+        payload: %PactPayload{payload: ^exec_payload},
+        signers: ^signers_list_struct,
+        meta: ^meta,
+        nonce: ^nonce
+      } =
+        CommandPayload.new(
+          network_id: network_id,
+          payload: PactPayload.new(exec_payload),
           signers: signers,
           meta: meta,
           nonce: nonce
@@ -146,13 +198,39 @@ defmodule Kadena.Types.CommandPayloadTest do
         )
     end
 
+    test "with valid params and MetaData", %{
+      network_id: network_id,
+      network_id_str: network_id_str,
+      cont_payload: cont_payload,
+      signers_list_struct: signers_list_struct,
+      signers: signers,
+      meta: meta,
+      meta_list: meta_list,
+      nonce: nonce
+    } do
+      %CommandPayload{
+        network_id: %NetworkID{id: ^network_id_str},
+        payload: %PactPayload{payload: ^cont_payload},
+        signers: ^signers_list_struct,
+        meta: ^meta,
+        nonce: ^nonce
+      } =
+        CommandPayload.new(
+          network_id: network_id,
+          payload: cont_payload,
+          signers: signers,
+          meta: meta_list,
+          nonce: nonce
+        )
+    end
+
     test "with invalid network_id", %{
       cont_payload: cont_payload,
       signers: signers,
       meta: meta,
       nonce: nonce
     } do
-      {:error, [:network_id, :invalid]} =
+      {:error, [network_id: :invalid]} =
         CommandPayload.new(
           network_id: :invalid_network_id,
           payload: cont_payload,
@@ -168,7 +246,7 @@ defmodule Kadena.Types.CommandPayloadTest do
       meta: meta,
       nonce: nonce
     } do
-      {:error, [:payload, :invalid]} =
+      {:error, [payload: :invalid]} =
         CommandPayload.new(
           network_id: network_id,
           payload: "invalid_payload",
@@ -185,7 +263,7 @@ defmodule Kadena.Types.CommandPayloadTest do
       meta: meta,
       nonce: nonce
     } do
-      {:error, [:signers, :invalid]} =
+      {:error, [signers: :invalid]} =
         CommandPayload.new(
           network_id: network_id,
           payload: cont_payload,
@@ -201,12 +279,12 @@ defmodule Kadena.Types.CommandPayloadTest do
       signers: signers,
       nonce: nonce
     } do
-      {:error, [:meta, :invalid]} =
+      {:error, [meta: :invalid]} =
         CommandPayload.new(
           network_id: network_id,
           payload: cont_payload,
           signers: signers,
-          meta: "invalid_meta",
+          meta: ["invalid_meta"],
           nonce: nonce
         )
     end
@@ -217,7 +295,7 @@ defmodule Kadena.Types.CommandPayloadTest do
       signers: signers,
       meta: meta
     } do
-      {:error, [:nonce, :invalid]} =
+      {:error, [nonce: :invalid]} =
         CommandPayload.new(
           network_id: network_id,
           payload: cont_payload,
