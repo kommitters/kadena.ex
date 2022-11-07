@@ -28,7 +28,6 @@ defmodule Kadena.Types.SendRequestBody do
   defimpl JSONRequestBody do
     alias Kadena.Types.{
       Command,
-      CommandPayloadStringifiedJSON,
       PactTransactionHash,
       SendRequestBody,
       SignaturesList
@@ -40,7 +39,6 @@ defmodule Kadena.Types.SendRequestBody do
     @type commands_list :: CommandsList.t()
     @type signatures_list :: SignaturesList.t()
     @type command :: Command.t()
-    @type command_payload_stringified_json :: CommandPayloadStringifiedJSON.t()
     @type hash :: PactTransactionHash.t()
     @type hash_value :: String.t()
 
@@ -59,12 +57,8 @@ defmodule Kadena.Types.SendRequestBody do
 
     @spec extract_cmds_info(command()) :: map()
     defp extract_cmds_info(%Command{hash: hash, sigs: sigs, cmd: cmd}) do
-      %{hash: extract_hash(hash), sigs: to_signature_list(sigs), cmd: extract_cmd_info(cmd)}
+      %{hash: extract_hash(hash), sigs: to_signature_list(sigs), cmd: cmd}
     end
-
-    @spec extract_cmd_info(command_payload_stringified_json()) :: json_value()
-    defp extract_cmd_info(%CommandPayloadStringifiedJSON{json_string: json_string}),
-      do: json_string
 
     @spec extract_hash(hash()) :: hash_value()
     defp extract_hash(%PactTransactionHash{hash: hash}), do: hash
