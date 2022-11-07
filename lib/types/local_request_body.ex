@@ -3,7 +3,7 @@ defmodule Kadena.Types.LocalRequestBody do
   `LocalRequestBody` struct definition.
   """
 
-  alias Kadena.Chainweb.Pact.JSONRequestBody
+  alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Command, PactTransactionHash, SignaturesList}
 
   @behaviour Kadena.Types.Spec
@@ -36,7 +36,7 @@ defmodule Kadena.Types.LocalRequestBody do
 
   defp build_local_request_body({:error, reason}), do: {:error, reason}
 
-  defimpl JSONRequestBody do
+  defimpl JSONPayload do
     alias Kadena.Utils.MapCase
 
     alias Kadena.Types.LocalRequestBody
