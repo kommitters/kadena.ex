@@ -2,7 +2,7 @@ defmodule Kadena.Types.CommandPayload do
   @moduledoc """
   `CommandPayload` struct definition.
   """
-  alias Kadena.Types.{MetaData, NetworkID, Nonce, PactPayload, SignersList}
+  alias Kadena.Types.{MetaData, NetworkID, PactPayload, SignersList}
 
   @behaviour Kadena.Types.Spec
 
@@ -87,10 +87,6 @@ defmodule Kadena.Types.CommandPayload do
   end
 
   @spec validate_nonce(nonce :: nonce()) :: validation()
-  defp validate_nonce(nonce) do
-    case Nonce.new(nonce) do
-      %Nonce{} -> {:ok, nonce}
-      {:error, _reason} -> {:error, [nonce: :invalid]}
-    end
-  end
+  defp validate_nonce(nonce) when is_binary(nonce), do: {:ok, nonce}
+  defp validate_nonce(_nonce), do: {:error, [nonce: :not_a_string]}
 end

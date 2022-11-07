@@ -295,7 +295,7 @@ defmodule Kadena.Types.CommandPayloadTest do
       signers: signers,
       meta: meta
     } do
-      {:error, [nonce: :invalid]} =
+      {:error, [nonce: :not_a_string]} =
         CommandPayload.new(
           network_id: network_id,
           payload: cont_payload,
