@@ -5,7 +5,7 @@ defmodule Kadena.Types.LocalRequestBodyTest do
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.JSONRequestBody
+  alias Kadena.Chainweb.Pact.JSONPayload
 
   alias Kadena.Types.{
     LocalRequestBody,
@@ -51,7 +51,7 @@ defmodule Kadena.Types.LocalRequestBodyTest do
     end
   end
 
-  describe "JSONRequestBody.parse/1" do
+  describe "JSONPayload.parse/1" do
     setup do
       %{
         json_result:
@@ -66,7 +66,7 @@ defmodule Kadena.Types.LocalRequestBodyTest do
       json_result: json_result
     } do
       local_request_body = LocalRequestBody.new(hash: hash, sigs: sigs, cmd: cmd)
-      ^json_result = JSONRequestBody.parse(local_request_body)
+      ^json_result = JSONPayload.parse(local_request_body)
     end
   end
 end

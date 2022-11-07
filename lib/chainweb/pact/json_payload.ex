@@ -1,5 +1,6 @@
-defprotocol Kadena.Chainweb.Pact.JSONRequestBody do
+defprotocol Kadena.Chainweb.Pact.JSONPayload do
   alias Kadena.Types.{
+    CommandPayload,
     ListenRequestBody,
     LocalRequestBody,
     PollRequestBody,
@@ -9,7 +10,8 @@ defprotocol Kadena.Chainweb.Pact.JSONRequestBody do
 
   @type json_string :: String.t()
   @type request_body ::
-          ListenRequestBody.t()
+          CommandPayload.t()
+          | ListenRequestBody.t()
           | LocalRequestBody.t()
           | PollRequestBody.t()
           | SendRequestBody.t()

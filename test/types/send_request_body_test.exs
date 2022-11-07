@@ -5,7 +5,7 @@ defmodule Kadena.Types.SendRequestBodyTest do
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.JSONRequestBody
+  alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Command, CommandsList, SendRequestBody}
 
   setup do
@@ -47,7 +47,7 @@ defmodule Kadena.Types.SendRequestBodyTest do
     end
   end
 
-  describe "JSONRequestBody.parse/1" do
+  describe "JSONPayload.parse/1" do
     setup do
       %{
         json_result:
@@ -60,7 +60,7 @@ defmodule Kadena.Types.SendRequestBodyTest do
       json_result: json_result
     } do
       send_request_body = SendRequestBody.new(commands_list)
-      ^json_result = JSONRequestBody.parse(send_request_body)
+      ^json_result = JSONPayload.parse(send_request_body)
     end
   end
 end
