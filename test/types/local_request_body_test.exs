@@ -8,7 +8,6 @@ defmodule Kadena.Types.LocalRequestBodyTest do
   alias Kadena.Chainweb.Pact.JSONRequestBody
 
   alias Kadena.Types.{
-    CommandPayloadStringifiedJSON,
     LocalRequestBody,
     PactTransactionHash,
     SignaturesList
@@ -28,7 +27,7 @@ defmodule Kadena.Types.LocalRequestBodyTest do
   describe "new/1" do
     test "with a valid params list", %{hash: hash, sigs: sigs, cmd: cmd} do
       %LocalRequestBody{
-        cmd: %CommandPayloadStringifiedJSON{json_string: ^cmd},
+        cmd: ^cmd,
         hash: %PactTransactionHash{hash: ^hash},
         sigs: %SignaturesList{}
       } = LocalRequestBody.new(hash: hash, sigs: sigs, cmd: cmd)
@@ -39,8 +38,7 @@ defmodule Kadena.Types.LocalRequestBodyTest do
     end
 
     test "with an invalid cmd", %{hash: hash, sigs: sigs} do
-      {:error, [cmd: :invalid, json_string: :invalid]} =
-        LocalRequestBody.new(hash: hash, sigs: sigs, cmd: 123)
+      {:error, [cmd: :not_a_string]} = LocalRequestBody.new(hash: hash, sigs: sigs, cmd: 123)
     end
 
     test "with an invalid hash", %{sigs: sigs, cmd: cmd} do
@@ -53,7 +51,7 @@ defmodule Kadena.Types.LocalRequestBodyTest do
     end
   end
 
-  describe "json parse/1" do
+  describe "JSONRequestBody.parse/1" do
     setup do
       %{
         json_result:

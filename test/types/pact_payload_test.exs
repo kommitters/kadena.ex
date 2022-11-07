@@ -17,7 +17,7 @@ defmodule Kadena.Types.PactPayloadTest do
       rollback = true
 
       %{
-        exec:
+        cont:
           ContPayload.new(
             data: data,
             pact_id: pact_id,
@@ -25,7 +25,7 @@ defmodule Kadena.Types.PactPayloadTest do
             proof: proof,
             rollback: rollback
           ),
-        cont: ExecPayload.new(data: data, code: code)
+        exec: ExecPayload.new(data: data, code: code)
       }
     end
 
