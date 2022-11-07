@@ -51,7 +51,7 @@ defmodule Kadena.Types.LocalRequestBodyTest do
     end
   end
 
-  describe "json parse/1" do
+  describe "JSONRequestBody.parse/1" do
     setup do
       %{
         json_result:
