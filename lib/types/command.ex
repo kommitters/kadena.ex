@@ -8,9 +8,7 @@ defmodule Kadena.Types.Command do
   @behaviour Kadena.Types.Spec
 
   @type hash :: PactTransactionHash.t()
-  @type raw_hash :: list()
   @type sigs :: SignaturesList.t()
-  @type raw_sigs :: list()
   @type cmd :: String.t()
   @type raw_cmd :: list()
   @type value :: hash() | sigs() | cmd()
@@ -35,7 +33,9 @@ defmodule Kadena.Types.Command do
 
   def new(_args), do: {:error, [command: :not_a_list]}
 
-  @spec validate_hash(hash :: raw_hash()) :: validation()
+  @spec validate_hash(hash :: hash()) :: validation()
+  defp validate_hash(%PactTransactionHash{} = hash), do: {:ok, hash}
+
   defp validate_hash(hash) do
     case PactTransactionHash.new(hash) do
       %PactTransactionHash{} = hash -> {:ok, hash}
@@ -43,7 +43,9 @@ defmodule Kadena.Types.Command do
     end
   end
 
-  @spec validate_sigs(sigs :: raw_sigs()) :: validation()
+  @spec validate_sigs(sigs :: sigs()) :: validation()
+  defp validate_sigs(%SignaturesList{} = hash), do: {:ok, hash}
+
   defp validate_sigs(sigs) do
     case SignaturesList.new(sigs) do
       %SignaturesList{} = sigs -> {:ok, sigs}

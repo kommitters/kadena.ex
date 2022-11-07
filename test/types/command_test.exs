@@ -31,6 +31,15 @@ defmodule Kadena.Types.CommandTest do
       } = Command.new(hash: hash, sigs: sigs, cmd: cmd)
     end
 
+    test "with a valid structs", %{hash: hash, sigs: sigs, cmd: cmd} do
+      %Command{
+        cmd: ^cmd,
+        hash: %PactTransactionHash{hash: ^hash},
+        sigs: %SignaturesList{}
+      } =
+        Command.new(hash: PactTransactionHash.new(hash), sigs: SignaturesList.new(sigs), cmd: cmd)
+    end
+
     test "with an invalid no list params" do
       {:error, [command: :not_a_list]} = Command.new("No list")
     end
