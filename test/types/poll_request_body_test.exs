@@ -5,6 +5,7 @@ defmodule Kadena.Types.PollRequestBodyTest do
 
   use ExUnit.Case
 
+  alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Base64Url, Base64UrlsList, PollRequestBody}
 
   describe "new/1" do
@@ -42,6 +43,21 @@ defmodule Kadena.Types.PollRequestBodyTest do
     test "with an invalid list" do
       {:error, [request_keys: :invalid]} =
         PollRequestBody.new(["ATGCYPMNzdGcFh9Iik73KfMkgURIxaF91Ze4sHFsH8Q", 123])
+    end
+  end
+
+  describe "parse/1" do
+    setup do
+      %{
+        json_result: "{\"requestKeys\":[\"jr6N7jQ9nVH0A_gRxe3RfKxR7rHn-IG-GosWz6WnMXQ\"]}"
+      }
+    end
+
+    test "with a valid PollRequestBody", %{
+      json_result: json_result
+    } do
+      poll = PollRequestBody.new(["jr6N7jQ9nVH0A_gRxe3RfKxR7rHn-IG-GosWz6WnMXQ"])
+      ^json_result = JSONPayload.parse(poll)
     end
   end
 end
