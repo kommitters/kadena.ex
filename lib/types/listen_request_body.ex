@@ -3,6 +3,7 @@ defmodule Kadena.Types.ListenRequestBody do
   `ListenRequestBody` struct definition.
   """
 
+  alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.Base64Url
 
   @behaviour Kadena.Types.Spec
@@ -21,5 +22,20 @@ defmodule Kadena.Types.ListenRequestBody do
       %Base64Url{} = listen -> %__MODULE__{listen: listen}
       {:error, _reasons} -> {:error, [listen: :invalid]}
     end
+  end
+
+  defimpl JSONPayload do
+    alias Kadena.Types.ListenRequestBody
+    @type url :: String.t()
+    @type base_64_url :: Base64Url.t()
+
+    @impl true
+    def parse(%ListenRequestBody{listen: listen}) do
+      listen = extract_listen(listen)
+      Jason.encode!(%{listen: listen})
+    end
+
+    @spec extract_listen(base_64_url()) :: url()
+    defp extract_listen(%Base64Url{url: url}), do: url
   end
 end
