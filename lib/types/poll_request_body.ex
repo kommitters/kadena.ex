@@ -37,14 +37,15 @@ defmodule Kadena.Types.PollRequestBody do
 
     @impl true
     def parse(%PollRequestBody{request_keys: key_list}) do
-      %{request_keys: extract_keys(key_list)}
+      keys = extract_keys(key_list)
+
+      %{request_keys: keys}
       |> MapCase.to_camel!()
       |> Jason.encode!()
     end
 
     @spec extract_keys(base64_urls()) :: urls()
-    defp extract_keys(%Base64UrlsList{urls: list}) do
-      Enum.map(list, fn %Base64Url{url: url} -> url end)
-    end
+    defp extract_keys(%Base64UrlsList{urls: list}),
+      do: Enum.map(list, fn %Base64Url{url: url} -> url end)
   end
 end
