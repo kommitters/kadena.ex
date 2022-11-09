@@ -22,7 +22,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.6.1"}
+    {:kadena, "~> 0.7.0"}
   ]
 end
 ```
