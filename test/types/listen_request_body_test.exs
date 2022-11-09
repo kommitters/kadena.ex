@@ -5,6 +5,7 @@ defmodule Kadena.Types.ListenRequestBodyTest do
 
   use ExUnit.Case
 
+  alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Base64Url, ListenRequestBody}
 
   describe "new/1" do
@@ -22,6 +23,21 @@ defmodule Kadena.Types.ListenRequestBodyTest do
 
     test "with an invalid param" do
       {:error, [listen: :invalid]} = ListenRequestBody.new(123)
+    end
+  end
+
+  describe "parse/1" do
+    setup do
+      %{
+        json_result: "{\"listen\":\"y3aWL72-3wAy7vL9wcegGXnstH0lHi-q-cfxkhD5JCw\"}"
+      }
+    end
+
+    test "with a valid ListenRequestBody", %{
+      json_result: json_result
+    } do
+      listen_request_body = ListenRequestBody.new("y3aWL72-3wAy7vL9wcegGXnstH0lHi-q-cfxkhD5JCw")
+      ^json_result = JSONPayload.parse(listen_request_body)
     end
   end
 end

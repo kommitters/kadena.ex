@@ -7,7 +7,6 @@ defmodule Kadena.Types.CommandTest do
 
   alias Kadena.Types.{
     Command,
-    CommandPayloadStringifiedJSON,
     PactTransactionHash,
     SignaturesList
   }
@@ -26,10 +25,19 @@ defmodule Kadena.Types.CommandTest do
 
     test "with a valid params list", %{hash: hash, sigs: sigs, cmd: cmd} do
       %Command{
-        cmd: %CommandPayloadStringifiedJSON{json_string: ^cmd},
+        cmd: ^cmd,
         hash: %PactTransactionHash{hash: ^hash},
         sigs: %SignaturesList{}
       } = Command.new(hash: hash, sigs: sigs, cmd: cmd)
+    end
+
+    test "with a valid structs", %{hash: hash, sigs: sigs, cmd: cmd} do
+      %Command{
+        cmd: ^cmd,
+        hash: %PactTransactionHash{hash: ^hash},
+        sigs: %SignaturesList{}
+      } =
+        Command.new(hash: PactTransactionHash.new(hash), sigs: SignaturesList.new(sigs), cmd: cmd)
     end
 
     test "with an invalid no list params" do
@@ -37,8 +45,7 @@ defmodule Kadena.Types.CommandTest do
     end
 
     test "with an invalid cmd", %{hash: hash, sigs: sigs} do
-      {:error, [cmd: :invalid, json_string: :invalid]} =
-        Command.new(hash: hash, sigs: sigs, cmd: 123)
+      {:error, [cmd: :not_a_string]} = Command.new(hash: hash, sigs: sigs, cmd: 123)
     end
 
     test "with an invalid hash", %{sigs: sigs, cmd: cmd} do

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 (09.11.2022)
+
+* Added JSONPayload protocol
+* Implemented JSONPayload protocol in [LocalRequestBody](https://github.com/kommitters/kadena.ex/issues/119)
+* Implemented JSONPayload protocol in [SendRequestBody](https://github.com/kommitters/kadena.ex/issues/117)
+* Implemented JSONPayload protocol in [PollRequestBody](https://github.com/kommitters/kadena.ex/issues/123)
+* Implemented JSONPayload protocol in [ListenRequestBody](https://github.com/kommitters/kadena.ex/issues/124)
+* Implemented JSONPayload protocol in [SPVRequestBody](https://github.com/kommitters/kadena.ex/issues/125)
+
 ## 0.6.1 (27.10.2022)
 
 * Bump ossf/scorecard-action to v2.0.6

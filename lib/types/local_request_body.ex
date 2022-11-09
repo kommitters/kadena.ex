@@ -3,14 +3,15 @@ defmodule Kadena.Types.LocalRequestBody do
   `LocalRequestBody` struct definition.
   """
 
-  alias Kadena.Types.{Command, CommandPayloadStringifiedJSON, PactTransactionHash, SignaturesList}
+  alias Kadena.Chainweb.Pact.JSONPayload
+  alias Kadena.Types.{Command, PactTransactionHash, SignaturesList}
 
   @behaviour Kadena.Types.Spec
 
   @type command :: String.t()
   @type hash :: PactTransactionHash.t()
   @type sigs :: SignaturesList.t()
-  @type cmd :: CommandPayloadStringifiedJSON.t()
+  @type cmd :: String.t()
   @type errors :: {:error, Keyword.t()}
 
   @type t :: %__MODULE__{hash: hash(), sigs: sigs(), cmd: cmd()}
@@ -34,4 +35,29 @@ defmodule Kadena.Types.LocalRequestBody do
     do: {:error, [local_request_body: :not_a_list]}
 
   defp build_local_request_body({:error, reason}), do: {:error, reason}
+
+  defimpl JSONPayload do
+    alias Kadena.Utils.MapCase
+
+    alias Kadena.Types.LocalRequestBody
+
+    @type signatures_list :: SignaturesList.t()
+    @type signatures :: list(map())
+
+    @impl true
+    def parse(%LocalRequestBody{hash: hash, sigs: sigs, cmd: cmd}) do
+      with %PactTransactionHash{hash: hash} <- hash,
+           {:ok, sigs} <- to_signature_list(sigs) do
+        %{hash: hash, sigs: sigs, cmd: cmd}
+        |> MapCase.to_camel!()
+        |> Jason.encode!()
+      end
+    end
+
+    @spec to_signature_list(signatures :: signatures_list()) :: {:ok, signatures()}
+    defp to_signature_list(%SignaturesList{signatures: list}) do
+      sigs = Enum.map(list, fn sig -> Map.from_struct(sig) end)
+      {:ok, sigs}
+    end
+  end
 end
