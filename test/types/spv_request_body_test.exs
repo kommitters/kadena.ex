@@ -5,6 +5,7 @@ defmodule Kadena.Types.SPVRequestBodyTest do
 
   use ExUnit.Case
 
+  alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Base64Url, ChainID, SPVRequestBody}
 
   describe "new/1" do
@@ -40,6 +41,27 @@ defmodule Kadena.Types.SPVRequestBodyTest do
 
     test "with an invalid list" do
       {:error, [spv_request_body: :not_a_list]} = SPVRequestBody.new("invalid_param")
+    end
+  end
+
+  describe "JSONPayload.parse/1" do
+    setup do
+      %{
+        json_result:
+          "{\"requestKey\":\"7af34f24d55d2fcf5de6fccfeeb837698ebff4598303237c64348a47806c8646\",\"targetChainId\":\"1\"}"
+      }
+    end
+
+    test "with a valid SPVRequestBody", %{
+      json_result: json_result
+    } do
+      spv_request_body =
+        SPVRequestBody.new(
+          request_key: "7af34f24d55d2fcf5de6fccfeeb837698ebff4598303237c64348a47806c8646",
+          target_chain_id: "1"
+        )
+
+      ^json_result = JSONPayload.parse(spv_request_body)
     end
   end
 end
