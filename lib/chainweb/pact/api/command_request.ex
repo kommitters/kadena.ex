@@ -3,13 +3,14 @@ defmodule Kadena.Chainweb.Pact.API.CommandRequest do
   Specifies contracts to build PACT command requests.
   """
 
+  alias Kadena.Chainweb.Pact.API.ExecCommandRequest
   alias Kadena.Types.{ChainID, Command, KeyPair, MetaData, NetworkID, Signer, SignersList}
 
   @type cmd :: Command.t()
   @type network_id :: NetworkID.t()
   @type chain_id :: ChainID.t()
   @type cont_request :: struct()
-  @type exec_request :: struct()
+  @type exec_request :: ExecCommandRequest.t()
   @type cmd_request :: cont_request() | exec_request()
 
   @type string_value :: String.t()
