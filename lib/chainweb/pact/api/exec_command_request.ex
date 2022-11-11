@@ -15,7 +15,6 @@ defmodule Kadena.Chainweb.Pact.API.ExecCommandRequest do
     MetaData,
     NetworkID,
     PactPayload,
-    Signature,
     SignaturesList,
     SignCommand,
     Signer,
@@ -33,8 +32,15 @@ defmodule Kadena.Chainweb.Pact.API.ExecCommandRequest do
   @type keypairs :: list(keypair())
   @type signer :: Signer.t()
   @type signers :: SignersList.t()
+  @type signatures :: SignaturesList.t()
   @type hash :: String.t()
   @type sign_command :: SignCommand.t()
+  @type sign_commands :: list(sign_command())
+  @type valid_hash :: {:ok, hash()}
+  @type json_string_payload :: String.t()
+  @type valid_sign_command :: {:ok, [sign_command()]}
+  @type pact_payload :: PactPayload.t()
+  @type valid_command_json_string :: {:ok, json_string_payload()}
 
   @type t :: %__MODULE__{
           network_id: network_id(),
@@ -49,12 +55,34 @@ defmodule Kadena.Chainweb.Pact.API.ExecCommandRequest do
   defstruct [:network_id, :code, :data, :nonce, :meta_data, :signers, keypairs: []]
 
   @impl true
-  def new, do: %__MODULE__{}
+  def new(opts \\ nil)
+  def new(nil), do: %__MODULE__{}
+
+  def new(opts) when is_list(opts) do
+    network_id = Keyword.get(opts, :network_id, NetworkID.new())
+    code = Keyword.get(opts, :code, "")
+    data = Keyword.get(opts, :data, nil)
+    nonce = Keyword.get(opts, :nonce, "")
+    meta_data = Keyword.get(opts, :meta_data, %MetaData{})
+    keypairs = Keyword.get(opts, :keypairs, [])
+    signers = Keyword.get(opts, :signers, SignersList.new([]))
+
+    %__MODULE__{}
+    |> set_network(network_id)
+    |> set_data(data)
+    |> set_code(code)
+    |> set_nonce(nonce)
+    |> set_metadata(meta_data)
+    |> add_keypairs(keypairs)
+    |> add_signers(signers)
+  end
+
+  def new(_opts), do: {:error, [args: :not_a_list]}
 
   @impl true
   def set_network(%__MODULE__{} = cmd_request, network) do
     case NetworkID.new(network) do
-      %NetworkID{} = network_id -> Map.put(cmd_request, :network_id, network_id)
+      %NetworkID{} = network_id -> %{cmd_request | network_id: network_id}
       {:error, reason} -> {:error, [network_id: :invalid] ++ reason}
     end
   end
@@ -62,11 +90,11 @@ defmodule Kadena.Chainweb.Pact.API.ExecCommandRequest do
   def set_network({:error, reason}, _network), do: {:error, reason}
 
   @impl true
-  def set_data(%__MODULE__{} = cmd_request, nil), do: Map.put(cmd_request, :data, nil)
+  def set_data(%__MODULE__{} = cmd_request, nil), do: %{cmd_request | data: nil}
 
   def set_data(%__MODULE__{} = cmd_request, data) do
     case EnvData.new(data) do
-      %EnvData{} -> Map.put(cmd_request, :data, data)
+      %EnvData{} -> %{cmd_request | data: data}
       error -> error
     end
   end
@@ -75,25 +103,25 @@ defmodule Kadena.Chainweb.Pact.API.ExecCommandRequest do
 
   @impl true
   def set_code(%__MODULE__{} = cmd_request, code) when is_binary(code),
-    do: Map.put(cmd_request, :code, code)
+    do: %{cmd_request | code: code}
 
   def set_code(%__MODULE__{}, _code), do: {:error, [code: :not_a_string]}
   def set_code({:error, reason}, _code), do: {:error, reason}
 
   @impl true
   def set_nonce(%__MODULE__{} = cmd_request, nonce) when is_binary(nonce),
-    do: Map.put(cmd_request, :nonce, nonce)
+    do: %{cmd_request | nonce: nonce}
 
   def set_nonce(%__MODULE__{}, _nonce), do: {:error, [nonce: :not_a_string]}
   def set_nonce({:error, reason}, _nonce), do: {:error, reason}
 
   @impl true
   def set_metadata(%__MODULE__{} = cmd_request, %MetaData{} = meta_data),
-    do: Map.put(cmd_request, :meta_data, meta_data)
+    do: %{cmd_request | meta_data: meta_data}
 
   def set_metadata(%__MODULE__{} = cmd_request, meta_data) do
     case MetaData.new(meta_data) do
-      %MetaData{} = meta_data -> Map.put(cmd_request, :meta_data, meta_data)
+      %MetaData{} = meta_data -> %{cmd_request | meta_data: meta_data}
       {:error, reason} -> {:error, [meta_data: :invalid] ++ reason}
     end
   end
@@ -101,12 +129,12 @@ defmodule Kadena.Chainweb.Pact.API.ExecCommandRequest do
   def set_metadata({:error, reason}, _metadata), do: {:error, reason}
 
   @impl true
-  def add_keypair(%__MODULE__{} = cmd_request, %KeyPair{} = keypair),
-    do: Map.put(cmd_request, :keypairs, [keypair])
+  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair),
+    do: %{cmd_request | keypairs: keypairs ++ [keypair]}
 
   def add_keypair(%__MODULE__{} = cmd_request, keypair) do
     case KeyPair.new(keypair) do
-      %KeyPair{} = keypair -> Map.put(cmd_request, :keypairs, [keypair])
+      %KeyPair{} = keypair -> add_keypair(cmd_request, keypair)
       {:error, reason} -> {:error, [keypair: :invalid] ++ reason}
     end
   end
@@ -116,27 +144,34 @@ defmodule Kadena.Chainweb.Pact.API.ExecCommandRequest do
   @impl true
   def add_keypairs(%__MODULE__{} = cmd_request, []), do: cmd_request
 
-  def add_keypairs(%__MODULE__{keypairs: keypairs} = cmd_request, [%KeyPair{} = keypair | rest]),
-    do: add_keypairs(Map.put(cmd_request, :keypairs, keypairs ++ [keypair]), rest)
+  def add_keypairs(%__MODULE__{} = cmd_request, [keypair | keypairs]) do
+    cmd_request
+    |> add_keypair(keypair)
+    |> add_keypairs(keypairs)
+  end
 
-  def add_keypairs(%__MODULE__{}, [_keypair | _rest]), do: {:error, [keypairs: :invalid]}
   def add_keypairs(%__MODULE__{}, _keypairs), do: {:error, [keypairs: :not_a_list]}
   def add_keypairs({:error, reason}, _keypairs), do: {:error, reason}
 
   @impl true
-  def add_signer(%__MODULE__{} = cmd_request, %Signer{} = signer),
-    do: Map.put(cmd_request, :signers, SignersList.new([signer]))
+  def add_signer(%__MODULE__{signers: nil} = cmd_request, %Signer{} = signer),
+    do: %{cmd_request | signers: SignersList.new([signer])}
+
+  def add_signer(%__MODULE__{signers: signers} = cmd_request, %Signer{} = signer) do
+    %SignersList{signers: signers} = signers
+    %{cmd_request | signers: SignersList.new(signers ++ [signer])}
+  end
 
   def add_signer(%__MODULE__{}, _signer), do: {:error, [signer: :invalid]}
   def add_signer({:error, reason}, _signer), do: {:error, reason}
 
   @impl true
   def add_signers(%__MODULE__{} = cmd_request, %SignersList{} = list),
-    do: Map.put(cmd_request, :signers, list)
+    do: %{cmd_request | signers: list}
 
   def add_signers(%__MODULE__{} = cmd_request, signers) do
     case SignersList.new(signers) do
-      %SignersList{} = list -> Map.put(cmd_request, :signers, list)
+      %SignersList{} = signers -> %{cmd_request | signers: signers}
       {:error, reason} -> {:error, [signers: :invalid] ++ reason}
     end
   end
@@ -144,49 +179,65 @@ defmodule Kadena.Chainweb.Pact.API.ExecCommandRequest do
   def add_signers({:error, reason}, _signers), do: {:error, reason}
 
   @impl true
-  def build(%__MODULE__{
-        network_id: %NetworkID{} = network_id,
-        code: code,
-        data: data,
-        nonce: nonce,
-        meta_data: %MetaData{chain_id: chain_id} = meta_data,
-        keypairs: [%KeyPair{} | _rest] = keypairs,
-        signers: %SignersList{} = signers
-      })
-      when is_binary(code) and is_binary(nonce) do
-    payload =
-      [code: code, data: data]
-      |> ExecPayload.new()
-      |> PactPayload.new()
+  def build(
+        %__MODULE__{
+          network_id: %NetworkID{} = network_id,
+          meta_data: %MetaData{chain_id: chain_id}
+        } = cmd_request
+      ) do
+    with %PactPayload{} = payload <- create_payload(cmd_request),
+         {:ok, cmd} <- command_to_json_string(payload, cmd_request),
+         {:ok, sig_commands} <- sign_command(cmd, cmd_request),
+         {:ok, hash} <- get_hash(sig_commands),
+         %SignaturesList{} = signatures <- get_signatures(sig_commands, []),
+         %Command{} = command <- Command.new(hash: hash, sigs: signatures, cmd: cmd) do
+      %CommandRequest{cmd: command, network_id: network_id, chain_id: chain_id}
+    end
+  end
 
-    cmd =
-      [
-        network_id: network_id,
-        payload: payload,
-        meta: meta_data,
-        signers: signers,
-        nonce: nonce
-      ]
-      |> CommandPayload.new()
-      |> JSONPayload.parse()
+  def build(_module), do: {:error, [exec_command_request: :invalid_payload]}
 
-    sigs =
+  @spec create_payload(t()) :: pact_payload()
+  defp create_payload(%__MODULE__{code: code, data: data}),
+    do: [code: code, data: data] |> ExecPayload.new() |> PactPayload.new()
+
+  @spec command_to_json_string(payload :: pact_payload(), t()) :: valid_command_json_string()
+  defp command_to_json_string(payload, %__MODULE__{
+         network_id: %NetworkID{} = network_id,
+         meta_data: meta_data,
+         signers: signers,
+         nonce: nonce
+       }) do
+    [
+      network_id: network_id,
+      payload: payload,
+      meta: meta_data,
+      signers: signers,
+      nonce: nonce
+    ]
+    |> CommandPayload.new()
+    |> JSONPayload.parse()
+    |> (&{:ok, &1}).()
+  end
+
+  @spec sign_command(cmd :: json_string_payload(), t()) :: valid_sign_command()
+  defp sign_command(cmd, %__MODULE__{keypairs: keypairs}) do
+    sign_command =
       Enum.map(keypairs, fn keypair ->
         {:ok, sign_command} = Sign.sign(cmd, keypair)
         sign_command
       end)
 
-    signatures =
-      sigs
-      |> Enum.map(&Signature.new(&1.sig))
-      |> SignaturesList.new()
-
-    hash = Enum.reduce(sigs, nil, fn %SignCommand{hash: hash}, _acc -> hash end)
-
-    command = Command.new(hash: hash, sigs: signatures, cmd: cmd)
-
-    %CommandRequest{cmd: command, network_id: network_id, chain_id: chain_id}
+    {:ok, sign_command}
   end
 
-  def build(_module), do: {:error, [exec_command_request: :invalid_format]}
+  @spec get_signatures(sign_commands :: sign_commands(), result :: list()) :: signatures()
+  defp get_signatures([], result), do: SignaturesList.new(result)
+
+  defp get_signatures([%SignCommand{sig: sig} | rest], result) do
+    get_signatures(rest, result ++ [sig])
+  end
+
+  @spec get_hash(sign_commands()) :: valid_hash()
+  defp get_hash([%SignCommand{hash: hash} | _rest]), do: {:ok, hash}
 end
