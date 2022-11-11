@@ -18,7 +18,7 @@ defmodule Kadena.Types.KeyPair do
   defstruct [:pub_key, :secret_key, :clist]
 
   @impl true
-  def new(args) do
+  def new(args) when is_list(args) do
     pub_key_arg = Keyword.get(args, :pub_key)
     secret_key_arg = Keyword.get(args, :secret_key)
     clist_arg = Keyword.get(args, :clist)
@@ -29,6 +29,8 @@ defmodule Kadena.Types.KeyPair do
       %__MODULE__{pub_key: pub_key, secret_key: secret_key, clist: clist}
     end
   end
+
+  def new(_args), do: {:error, [args: :not_a_list]}
 
   @spec validate_key(arg :: arg()) :: arg_validation()
   defp validate_key({_arg, key}) when is_binary(key) and byte_size(key) == 64, do: {:ok, key}
