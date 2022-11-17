@@ -1,10 +1,10 @@
-defmodule Kadena.Chainweb.Pact.API.ExecCommandRequestTest do
+defmodule Kadena.Pact.API.ExecCommandRequestTest do
   @moduledoc """
   `ExecCommandRequest` struct definition tests.
   """
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.API.{CommandRequest, ExecCommandRequest}
+  alias Kadena.Pact.API.{CommandRequest, ExecCommandRequest}
 
   alias Kadena.Types.{
     CapsList,
