@@ -61,7 +61,6 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
 
   @impl true
   def new(opts \\ nil)
-  def new(nil), do: %__MODULE__{}
 
   def new(opts) when is_list(opts) do
     network_id = Keyword.get(opts, :network_id)
@@ -82,7 +81,7 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
     |> add_signers(signers)
   end
 
-  def new(_opts), do: {:error, [args: :not_a_list]}
+  def new(_opts), do: %__MODULE__{}
 
   @impl true
   def set_network(%__MODULE__{} = cmd_request, network) do
@@ -95,8 +94,6 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   def set_network({:error, reason}, _network), do: {:error, reason}
 
   @impl true
-  def set_data(%__MODULE__{} = cmd_request, nil), do: %{cmd_request | data: nil}
-
   def set_data(%__MODULE__{} = cmd_request, data) do
     case EnvData.new(data) do
       %EnvData{} -> %{cmd_request | data: data}

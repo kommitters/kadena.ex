@@ -355,7 +355,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       } =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -374,7 +374,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [exec_command_request: :invalid_payload]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network("invalid value")
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -393,7 +393,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [network_id: :invalid, id: :invalid]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network("invalid value")
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -429,7 +429,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [code: :not_a_string]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code([code])
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -446,7 +446,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [nonce: :not_a_string]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(123)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -463,7 +463,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [meta_data: :invalid, args: :not_a_list]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata("invalid value")
@@ -480,7 +480,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [keypair: :invalid, args: :not_a_list]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -497,7 +497,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [keypairs: :not_a_list]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -514,7 +514,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [keypair: :invalid, args: :not_a_list]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -531,7 +531,7 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [signers: :invalid, signers: :invalid_type]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
@@ -548,16 +548,12 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
       {:error, [signer: :invalid]} =
         ExecCommandRequest.new()
         |> ExecCommandRequest.set_network(:testnet04)
-        |> ExecCommandRequest.set_data(nil)
+        |> ExecCommandRequest.set_data(%{})
         |> ExecCommandRequest.set_code(code)
         |> ExecCommandRequest.set_nonce(nonce)
         |> ExecCommandRequest.set_metadata(meta_data)
         |> ExecCommandRequest.add_keypair(keypair)
         |> ExecCommandRequest.add_signer("invalid_value")
-    end
-
-    test "with an invalid args list in new function" do
-      {:error, [args: :not_a_list]} = ExecCommandRequest.new("invalid_value")
     end
   end
 end
