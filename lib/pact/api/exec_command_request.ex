@@ -8,6 +8,7 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   alias Kadena.Pact.API.CommandRequest
 
   alias Kadena.Types.{
+    CapsList,
     Command,
     CommandPayload,
     EnvData,
@@ -15,6 +16,7 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
     KeyPair,
     MetaData,
     NetworkID,
+    OptionalCapsList,
     PactPayload,
     SignaturesList,
     SignCommand,
@@ -24,6 +26,12 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
 
   @behaviour CommandRequest
 
+  @type key :: String.t()
+  @type clist :: OptionalCapsList.t()
+  @type arg_value :: key() | clist()
+  @type arg_type :: atom()
+  @type arg :: {arg_type(), arg_value()}
+  @type arg_validation :: {:ok, arg_value()} | {:error, Keyword.t()}
   @type cmd :: String.t()
   @type code :: String.t()
   @type command :: Command.t()
@@ -32,9 +40,9 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   @type keypair :: KeyPair.t()
   @type keypairs :: list(keypair())
   @type json_string_payload :: String.t()
+  @type meta_data :: MetaData.t()
   @type network_id :: NetworkID.t()
   @type nonce :: String.t()
-  @type meta_data :: MetaData.t()
   @type pact_payload :: PactPayload.t()
   @type signer :: Signer.t()
   @type signers :: SignersList.t()
@@ -45,7 +53,8 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   @type valid_command_json_string :: {:ok, json_string_payload()}
   @type valid_hash :: {:ok, hash()}
   @type valid_payload :: {:ok, pact_payload()}
-  @type valid_sign_command :: {:ok, [sign_command()]}
+  @type valid_signatures :: {:ok, signatures()}
+  @type valid_sign_commands :: {:ok, [sign_command()]}
 
   @type t :: %__MODULE__{
           network_id: network_id(),
@@ -131,8 +140,12 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   def set_metadata({:error, reason}, _metadata), do: {:error, reason}
 
   @impl true
-  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair),
-    do: %{cmd_request | keypairs: keypairs ++ [keypair]}
+  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair) do
+    case validate_keypair(keypair) do
+      %KeyPair{} = valid_key_pair -> %{cmd_request | keypairs: keypairs ++ [valid_key_pair]}
+      {:error, reason} -> {:error, [key_pair: :invalid] ++ reason}
+    end
+  end
 
   def add_keypair(%__MODULE__{} = cmd_request, keypair) do
     case KeyPair.new(keypair) do
@@ -159,8 +172,8 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   def add_signer(%__MODULE__{signers: nil} = cmd_request, %Signer{} = signer),
     do: %{cmd_request | signers: SignersList.new([signer])}
 
-  def add_signer(%__MODULE__{signers: signers} = cmd_request, %Signer{} = signer) do
-    %SignersList{signers: signers} = signers
+  def add_signer(%__MODULE__{signers: signer_list} = cmd_request, %Signer{} = signer) do
+    %SignersList{signers: signers} = signer_list
     %{cmd_request | signers: SignersList.new(signers ++ [signer])}
   end
 
@@ -184,13 +197,16 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   def build(
         %__MODULE__{
           network_id: %NetworkID{} = network_id,
-          meta_data: %MetaData{chain_id: chain_id}
+          meta_data: %MetaData{chain_id: chain_id},
+          keypairs: keypairs,
+          code: code,
+          data: data
         } = cmd_request
       ) do
-    with {:ok, payload} <- create_payload(cmd_request),
+    with {:ok, payload} <- create_payload(code, data),
          {:ok, cmd} <- command_to_json_string(payload, cmd_request),
-         {:ok, sig_commands} <- sign_command(cmd, cmd_request),
-         {:ok, hash} <- get_hash(sig_commands),
+         {:ok, sig_commands} <- sign_commands([], cmd, keypairs),
+         {:ok, hash} <- get_unique_hash(sig_commands),
          {:ok, signatures} <- get_signatures(sig_commands, []),
          {:ok, command} <- create_command(hash, signatures, cmd) do
       %CommandRequest{cmd: command, network_id: network_id, chain_id: chain_id}
@@ -199,8 +215,33 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
 
   def build(_module), do: {:error, [exec_command_request: :invalid_payload]}
 
-  @spec create_payload(t()) :: valid_payload()
-  defp create_payload(%__MODULE__{code: code, data: data}) do
+  defp validate_keypair(%KeyPair{
+         pub_key: pub_key_arg,
+         secret_key: secret_key_arg,
+         clist: clist_arg
+       }) do
+    with {:ok, pub_key} <- validate_key({:pub_key, pub_key_arg}),
+         {:ok, secret_key} <- validate_key({:secret_key, secret_key_arg}),
+         {:ok, clist} <- validate_optional_caps_list({:clist, clist_arg}) do
+      %KeyPair{pub_key: pub_key, secret_key: secret_key, clist: clist}
+    end
+  end
+
+  @spec validate_key(arg :: arg()) :: arg_validation()
+  defp validate_key({_arg, key}) when is_binary(key) and byte_size(key) == 64, do: {:ok, key}
+  defp validate_key({arg, _key}), do: {:error, [{arg, :invalid}]}
+
+  @spec validate_optional_caps_list(arg :: arg()) :: arg_validation()
+  defp validate_optional_caps_list({arg, clist}) do
+    case clist do
+      %OptionalCapsList{} = optional_caps -> {:ok, optional_caps}
+      %CapsList{} = caps_list -> {:ok, OptionalCapsList.new(caps_list)}
+      _error -> {:error, [{arg, :invalid}]}
+    end
+  end
+
+  @spec create_payload(code :: code(), data :: data()) :: valid_payload()
+  defp create_payload(code, data) do
     [code: code, data: data]
     |> ExecPayload.new()
     |> PactPayload.new()
@@ -220,7 +261,7 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
 
   @spec command_to_json_string(payload :: pact_payload(), t()) :: valid_command_json_string()
   defp command_to_json_string(payload, %__MODULE__{
-         network_id: %NetworkID{} = network_id,
+         network_id: network_id,
          meta_data: meta_data,
          signers: signers,
          nonce: nonce
@@ -237,23 +278,38 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
     |> (&{:ok, &1}).()
   end
 
-  @spec sign_command(cmd :: json_string_payload(), t()) :: valid_sign_command()
-  defp sign_command(cmd, %__MODULE__{keypairs: keypairs}) do
-    sign_command =
-      Enum.map(keypairs, fn keypair ->
-        {:ok, sign_command} = Sign.sign(cmd, keypair)
-        sign_command
-      end)
+  @spec sign_commands(signs :: list(), cmd :: json_string_payload(), keypairs()) ::
+          valid_sign_commands()
+  defp sign_commands(signs, _cmd, []), do: {:ok, signs}
 
-    {:ok, sign_command}
+  defp sign_commands(signs, cmd, [%KeyPair{} = keypair | keypairs]) do
+    signs
+    |> sign_command(cmd, keypair)
+    |> sign_commands(cmd, keypairs)
   end
 
-  @spec get_signatures(sign_commands :: sign_commands(), result :: list()) :: {:ok, signatures()}
+  @spec sign_command(signs :: list(), cmd :: json_string_payload(), keypair()) ::
+          list()
+  defp sign_command(signs, cmd, %KeyPair{} = keypair) do
+    {:ok, sign_command} = Sign.sign(cmd, keypair)
+    signs ++ [sign_command]
+  end
+
+  @spec get_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
   defp get_signatures([], result), do: {:ok, SignaturesList.new(result)}
 
   defp get_signatures([%SignCommand{sig: sig} | rest], result),
     do: get_signatures(rest, result ++ [sig])
 
-  @spec get_hash(sign_commands()) :: valid_hash()
-  defp get_hash([%SignCommand{hash: hash} | _rest]), do: {:ok, hash}
+  @spec get_unique_hash(sign_commands()) :: valid_hash()
+  defp get_unique_hash(sign_commands) do
+    unique_hash =
+      Enum.reduce(sign_commands, nil, fn %SignCommand{hash: hash}, acc ->
+        if is_nil(acc) or acc == hash,
+          do: hash,
+          else: {:error, [hash: :hashes_are_not_unique]}
+      end)
+
+    {:ok, unique_hash}
+  end
 end

@@ -54,7 +54,8 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
             clist: clist
           ),
         code: "(+ 5 6)",
-        nonce: "2023-06-13 17:45:18.211131 UTC"
+        nonce: "2023-06-13 17:45:18.211131 UTC",
+        clist: clist
       }
     end
 
@@ -364,6 +365,47 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
         |> ExecCommandRequest.build()
     end
 
+    test "with a valid keypair struct", %{
+      meta_data: meta_data,
+      signer: signer,
+      nonce: nonce,
+      code: code,
+      clist: clist
+    } do
+      %CommandRequest{
+        chain_id: %ChainID{id: "0"},
+        cmd: %Command{
+          cmd:
+            "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{}}},\"signers\":[{\"addr\":\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\",\"clist\":[{\"args\":[\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\",\"scheme\":\"ED25519\"}]}",
+          hash: %PactTransactionHash{
+            hash: "-1npoTU2Mi71pKE_oteJiJuHuXTXxoObJm8zzVRK2pk"
+          },
+          sigs: %SignaturesList{
+            signatures: [
+              %Signature{
+                sig:
+                  "c91ade4318661acdde88f3d13b60189fbc5dc39e76bb3a64be9b9ed277b5ac84c74e373a03f4a13cf25d4944308e8f1895fe6fe891d96bd92fcef4ed87f91b0e"
+              }
+            ]
+          }
+        },
+        network_id: %NetworkID{id: "testnet04"}
+      } =
+        ExecCommandRequest.new()
+        |> ExecCommandRequest.set_network(:testnet04)
+        |> ExecCommandRequest.set_data(%{})
+        |> ExecCommandRequest.set_code(code)
+        |> ExecCommandRequest.set_nonce(nonce)
+        |> ExecCommandRequest.set_metadata(meta_data)
+        |> ExecCommandRequest.add_keypair(%KeyPair{
+          pub_key: "85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd",
+          secret_key: "99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4",
+          clist: clist
+        })
+        |> ExecCommandRequest.add_signer(signer)
+        |> ExecCommandRequest.build()
+    end
+
     test "with an invalid data in build function", %{
       meta_data: meta_data,
       keypair: keypair,
@@ -381,6 +423,88 @@ defmodule Kadena.Pact.API.ExecCommandRequestTest do
         |> ExecCommandRequest.add_keypair(keypair)
         |> ExecCommandRequest.add_signers([signer])
         |> ExecCommandRequest.build()
+    end
+
+    test "with an invalid clist in KeyPair struct", %{
+      meta_data: meta_data,
+      signer: signer,
+      nonce: nonce,
+      code: code
+    } do
+      {:error, [key_pair: :invalid, clist: :invalid]} =
+        ExecCommandRequest.new()
+        |> ExecCommandRequest.set_network(:testnet04)
+        |> ExecCommandRequest.set_data(%{})
+        |> ExecCommandRequest.set_code(code)
+        |> ExecCommandRequest.set_nonce(nonce)
+        |> ExecCommandRequest.set_metadata(meta_data)
+        |> ExecCommandRequest.add_keypair(%KeyPair{
+          pub_key: "85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd",
+          secret_key: "99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4",
+          clist: "invalid"
+        })
+        |> ExecCommandRequest.add_signers([signer])
+    end
+
+    test "with an invalid pub_key in KeyPair struct", %{
+      meta_data: meta_data,
+      signer: signer,
+      nonce: nonce,
+      code: code,
+      clist: clist
+    } do
+      {:error, [key_pair: :invalid, pub_key: :invalid]} =
+        ExecCommandRequest.new()
+        |> ExecCommandRequest.set_network(:testnet04)
+        |> ExecCommandRequest.set_data(%{})
+        |> ExecCommandRequest.set_code(code)
+        |> ExecCommandRequest.set_nonce(nonce)
+        |> ExecCommandRequest.set_metadata(meta_data)
+        |> ExecCommandRequest.add_keypair(%KeyPair{
+          pub_key: "",
+          secret_key: "99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4",
+          clist: clist
+        })
+        |> ExecCommandRequest.add_signers([signer])
+    end
+
+    test "with an invalid secret_key in KeyPair struct", %{
+      meta_data: meta_data,
+      signer: signer,
+      nonce: nonce,
+      code: code,
+      clist: clist
+    } do
+      {:error, [key_pair: :invalid, secret_key: :invalid]} =
+        ExecCommandRequest.new()
+        |> ExecCommandRequest.set_network(:testnet04)
+        |> ExecCommandRequest.set_data(%{})
+        |> ExecCommandRequest.set_code(code)
+        |> ExecCommandRequest.set_nonce(nonce)
+        |> ExecCommandRequest.set_metadata(meta_data)
+        |> ExecCommandRequest.add_keypair(%KeyPair{
+          pub_key: "85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd",
+          secret_key: "",
+          clist: clist
+        })
+        |> ExecCommandRequest.add_signers([signer])
+    end
+
+    test "with an empty data in KeyPair struct", %{
+      meta_data: meta_data,
+      signer: signer,
+      nonce: nonce,
+      code: code
+    } do
+      {:error, [key_pair: :invalid, pub_key: :invalid]} =
+        ExecCommandRequest.new()
+        |> ExecCommandRequest.set_network(:testnet04)
+        |> ExecCommandRequest.set_data(%{})
+        |> ExecCommandRequest.set_code(code)
+        |> ExecCommandRequest.set_nonce(nonce)
+        |> ExecCommandRequest.set_metadata(meta_data)
+        |> ExecCommandRequest.add_keypair(%KeyPair{})
+        |> ExecCommandRequest.add_signers([signer])
     end
 
     test "with an invalid networ_id", %{
