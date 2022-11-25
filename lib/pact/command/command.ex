@@ -1,16 +1,16 @@
-defmodule Kadena.Pact.API.CommandRequest do
+defmodule Kadena.Pact.Command do
   @moduledoc """
   Specifies contracts to build PACT command requests.
   """
 
-  alias Kadena.Pact.API.ExecCommandRequest
+  alias Kadena.Pact.ExecCommand
   alias Kadena.Types.{ChainID, Command, KeyPair, MetaData, NetworkID, Signer, SignersList}
 
   @type cmd :: Command.t()
   @type network_id :: NetworkID.t()
   @type chain_id :: ChainID.t()
   @type cont_request :: struct()
-  @type exec_request :: ExecCommandRequest.t()
+  @type exec_request :: ExecCommand.t()
   @type cmd_request :: cont_request() | exec_request()
 
   @type string_value :: String.t()
@@ -20,10 +20,6 @@ defmodule Kadena.Pact.API.CommandRequest do
   @type signer :: Signer.t()
   @type signers_list :: list(signer()) | SignersList.t()
   @type hash :: String.t()
-
-  @type t :: %__MODULE__{cmd: cmd(), network_id: network_id(), chain_id: chain_id()}
-
-  defstruct [:cmd, :network_id, :chain_id]
 
   @callback new() :: cmd_request()
   @callback set_network(cmd :: cmd_request(), network :: atom()) :: cmd_request()
@@ -39,7 +35,7 @@ defmodule Kadena.Pact.API.CommandRequest do
   @callback set_step(cmd :: cont_request(), step :: integer()) :: cont_request()
   @callback set_proof(cmd :: cont_request(), proof :: string_value()) :: cont_request()
   @callback set_rollback(cmd :: cont_request(), rollback :: boolean()) :: cont_request()
-  @callback build(cmd :: cmd_request()) :: t()
+  @callback build(cmd :: cmd_request()) :: cmd()
 
   @optional_callbacks set_code: 2,
                       set_pact_tx_hash: 2,

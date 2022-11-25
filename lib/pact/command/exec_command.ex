@@ -1,14 +1,12 @@
-defmodule Kadena.Pact.API.ExecCommandRequest do
+defmodule Kadena.Pact.ExecCommand do
   @moduledoc """
-  Specifies functions to build PACT execution command requests.
+    Specifies functions to build PACT execution command requests.
   """
 
   alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Cryptography.Sign
-  alias Kadena.Pact.API.CommandRequest
 
   alias Kadena.Types.{
-    CapsList,
     Command,
     CommandPayload,
     EnvData,
@@ -24,7 +22,7 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
     SignersList
   }
 
-  @behaviour CommandRequest
+  @behaviour Kadena.Pact.Command
 
   @type key :: String.t()
   @type clist :: OptionalCapsList.t()
@@ -140,12 +138,8 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   def set_metadata({:error, reason}, _metadata), do: {:error, reason}
 
   @impl true
-  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair) do
-    case validate_keypair(keypair) do
-      %KeyPair{} = valid_key_pair -> %{cmd_request | keypairs: keypairs ++ [valid_key_pair]}
-      {:error, reason} -> {:error, [key_pair: :invalid] ++ reason}
-    end
-  end
+  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair),
+    do: %{cmd_request | keypairs: keypairs ++ [keypair]}
 
   def add_keypair(%__MODULE__{} = cmd_request, keypair) do
     case KeyPair.new(keypair) do
@@ -196,8 +190,6 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
   @impl true
   def build(
         %__MODULE__{
-          network_id: %NetworkID{} = network_id,
-          meta_data: %MetaData{chain_id: chain_id},
           keypairs: keypairs,
           code: code,
           data: data
@@ -207,38 +199,13 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
          {:ok, cmd} <- command_to_json_string(payload, cmd_request),
          {:ok, sig_commands} <- sign_commands([], cmd, keypairs),
          {:ok, hash} <- get_unique_hash(sig_commands),
-         {:ok, signatures} <- get_signatures(sig_commands, []),
+         {:ok, signatures} <- build_signatures(sig_commands, []),
          {:ok, command} <- create_command(hash, signatures, cmd) do
-      %CommandRequest{cmd: command, network_id: network_id, chain_id: chain_id}
+      %Command{} = command
     end
   end
 
   def build(_module), do: {:error, [exec_command_request: :invalid_payload]}
-
-  defp validate_keypair(%KeyPair{
-         pub_key: pub_key_arg,
-         secret_key: secret_key_arg,
-         clist: clist_arg
-       }) do
-    with {:ok, pub_key} <- validate_key({:pub_key, pub_key_arg}),
-         {:ok, secret_key} <- validate_key({:secret_key, secret_key_arg}),
-         {:ok, clist} <- validate_optional_caps_list({:clist, clist_arg}) do
-      %KeyPair{pub_key: pub_key, secret_key: secret_key, clist: clist}
-    end
-  end
-
-  @spec validate_key(arg :: arg()) :: arg_validation()
-  defp validate_key({_arg, key}) when is_binary(key) and byte_size(key) == 64, do: {:ok, key}
-  defp validate_key({arg, _key}), do: {:error, [{arg, :invalid}]}
-
-  @spec validate_optional_caps_list(arg :: arg()) :: arg_validation()
-  defp validate_optional_caps_list({arg, clist}) do
-    case clist do
-      %OptionalCapsList{} = optional_caps -> {:ok, optional_caps}
-      %CapsList{} = caps_list -> {:ok, OptionalCapsList.new(caps_list)}
-      _error -> {:error, [{arg, :invalid}]}
-    end
-  end
 
   @spec create_payload(code :: code(), data :: data()) :: valid_payload()
   defp create_payload(code, data) do
@@ -295,11 +262,11 @@ defmodule Kadena.Pact.API.ExecCommandRequest do
     signs ++ [sign_command]
   end
 
-  @spec get_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
-  defp get_signatures([], result), do: {:ok, SignaturesList.new(result)}
+  @spec build_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
+  defp build_signatures([], result), do: {:ok, SignaturesList.new(result)}
 
-  defp get_signatures([%SignCommand{sig: sig} | rest], result),
-    do: get_signatures(rest, result ++ [sig])
+  defp build_signatures([%SignCommand{sig: sig} | rest], result),
+    do: build_signatures(rest, result ++ [sig])
 
   @spec get_unique_hash(sign_commands()) :: valid_hash()
   defp get_unique_hash(sign_commands) do
