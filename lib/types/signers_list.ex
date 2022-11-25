@@ -19,6 +19,9 @@ defmodule Kadena.Types.SignersList do
   @spec build_list(list :: t(), signers :: signers()) :: t() | {:error, Keyword.t()}
   defp build_list(list, []), do: list
 
+  defp build_list(%__MODULE__{signers: list}, [%Signer{} = signer | rest]),
+    do: build_list(%__MODULE__{signers: [signer | list]}, rest)
+
   defp build_list(%__MODULE__{signers: list}, [value | rest]) do
     case Signer.new(value) do
       %Signer{} = signer -> build_list(%__MODULE__{signers: [signer | list]}, rest)
