@@ -1,4 +1,5 @@
 # Kadena.ex
+
 ![Build Badge](https://img.shields.io/github/workflow/status/kommitters/kadena.ex/Kadena%20CI/main?style=for-the-badge)
 [![Coverage Status](https://img.shields.io/coveralls/github/kommitters/kadena.ex?style=for-the-badge)](https://coveralls.io/github/kommitters/kadena.ex)
 [![Version Badge](https://img.shields.io/hexpm/v/kadena?style=for-the-badge)](https://hexdocs.pm/kadena)
@@ -29,14 +30,14 @@ end
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.8`
+The latest updated branch to target a PR is `v0.9`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Kadena Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
-- [Kadena Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
+- [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
+- [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 
 ### Done - What we've already developed! 🚀
 
@@ -68,77 +69,106 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ## Building Commands
 
-### Command
+This library allows to build command payloads in a composable and semantic manner.
+These commands are intended to be used as the request body to the Pact API endpoints.
 
-It allows construction of PACT command payloads, in a composable and semantic manner, which will be part of the body of a request to the pact api endpoints, the commands which allows to build are [Execution](#execution-command) command and `Continuation` command
+There are two type of commands:
 
-### [Execution Command](#execution-command)
+- [`Execution`](#execution-command)
+- `Continuation`.
 
-An execution command is the first contract state that contains the actor keys and the code that will be run once the contract's requirements have been met.
+### Execution Command
+
+An execution command uploads code to Pact API
+
 To create an execution command is needed:
 
 - [NetworkID](#networkid)
-- Code (PACT)
-- Nonce
-- [Env Data](#env-data)
-- [Meta Data](#meta-data)
-- [Key Pairs](#key-pair)
-- [Signers](#signers-list)
+- [Code](#code)
+- [Nonce](#nonce)
+- [EnvData](#envdata) (optional)
+- [MetaData](#metadata)
+- [KeyPairs](#keypair)
+- [Signers](#signerslist)
 
+The following example shows how to create an execution command:
 
-#### [NetworkID](#networkid)
+```elixir
+ExecCommand.new()
+  |> ExecCommand.set_network(network_id)
+  |> ExecCommand.set_code(code)
+  |> ExecCommand.set_nonce(nonce)
+  |> ExecCommand.set_data(env_data)
+  |> ExecCommand.set_metadata(keypair)
+  |> ExecCommand.add_keypair(keypair)
+  |> ExecCommand.add_signers(signers_list)
+  |> ExecCommand.build()
+```
 
-There are three options allowed to set a network ID:
+#### NetworkID
+
+There are three options allowed to set a NetworkID:
+
 - `:testnet04`
 - `:mainnet01`
 - `:development`
 
-#### [Env Data](#env-data)
+#### Code
+
+String value that represents the Pact code to execute in the `Execution Command`.
+
+#### Nonce
+
+String value to ensure unique hash. You can use current timestamp.
+
+#### EnvData
 
 A map must be provided to create an environment data, for example:
 
 ```elixir
 data= %{
   accounts_admin_keyset: [
-    "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"    
+    "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"
   ]
 }
 
 Kadena.Types.EnvData.new(data)
 ```
 
-#### [Meta Data](#meta-data)
-To create a Meta data:
-```elixir
-raw_meta_data = [
-    creation_time: 0,
-    ttl: 0,
-    gas_limit: 2500,
-    gas_price: 1.0e-2,
-    sender: "account_name",
-    chain_id: "0"
-  ]
+#### MetaData
 
-  Kadena.Types.MetaData.new(raw_meta_data)
+To create a MetaData:
+
+```elixir
+raw_metadata = [
+  creation_time: 0,
+  ttl: 0,
+  gas_limit: 2500,
+  gas_price: 1.0e-2,
+  sender: "account_name",
+  chain_id: "0"
+]
+
+Kadena.Types.MetaData.new(raw_metadata)
 ```
 
-#### [Key Pair](#key-pair)
-There are two ways to create a keypair:
+#### KeyPairs
+
+There are two ways to get a keypair:
+
 ```elixir
 # generate a random keypair
-%KeyPair{pub_key: pub_key, secret_key: secret_key} = Kadena.Cryptography.KeyPair.generate()
 
-# derive a key pair from a secret key
-
+# derive a keypair from a secret key
 secret_key = "secret_key_value"
-{:ok, %KeyPair{pub_key: pub_key}} = Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
+
+{:ok, %KeyPair{pub_key: pub_key} = key_pair} =
+  Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
 ```
 
 The KeyPair can then be created either with or without Capabilities
-
+ + Without Capabilities
 ```elixir
-# without Capabilities
-
 key_pair_values = [
   pub_key: "pub_key_value",
   secret_key: "secret_key_value"
@@ -146,8 +176,10 @@ key_pair_values = [
 
 KeyPair.new(key_pair_values)
 
-# with Capabilities
-
+```
+- With Capabilities
+```elixir
+# * Creating a new Keypair with clist
 clist =
   CapsList.new([
     [name: "gas", args: ["COIN.gas", 0.02]],
@@ -155,43 +187,34 @@ clist =
   ])
 
 key_pair_values = [
-pub_key: "pub_key_value",
-secret_key: "secret_key_value",
-clist: clist
+  pub_key: "pub_key_value",
+  secret_key: "secret_key_value",
+  clist: clist
 ]
 
 KeyPair.new(key_pair_values)
 
+# *Adding a Clist in a existing KeyPair
+KeyPair.add_clist(clist, key_pair)
+
 ```
 
-#### [Signers List](#signers-list)
-There are many ways to create a list of signatures but we recommend 
+#### SignersList
+
+There are many ways to create a list of signatures:
+
 ```elixir
+# with Keywords
+signer1 = [pub_key: "pub_key_1"]
+signer2 = [pub_key: "pub_key_2"]
 
-signer1 = [
-  pub_key: "pub_key_1"
-]
-
-signer2 = [
-  pub_key: "pub_key_2"
-]
+# with Signer structs
+signer1 = Kadena.Types.Signer.new([pub_key: "pub_key_1"])
+signer2 = Kadena.Types.Signer.new([pub_key: "pub_key_2"])
 
 Kadena.Types.SignersList.new([signer1, signer2])
-
 ```
 
-#### Execution command builder
-``` elixir 
-ExecCommand.new()
-        |> ExecCommand.set_network(:testnet04)
-        |> ExecCommand.set_data(%{})
-        |> ExecCommand.set_code(code)
-        |> ExecCommand.set_nonce(nonce)
-        |> ExecCommand.set_metadata(meta_data)
-        |> ExecCommand.add_keypair(keypair)
-        |> ExecCommand.add_signers(signers_list)
-        |> ExecCommand.build()
-```
 ---
 
 ## Development
