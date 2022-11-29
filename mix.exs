@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.7.0"
+  @version "0.8.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -15,6 +15,7 @@ defmodule Kadena.MixProject do
       description: description(),
       source_url: @github_url,
       package: package(),
+      docs: docs(),
       dialyzer: [
         plt_add_apps: [:kadena, :ex_unit, :jason],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
@@ -65,6 +66,115 @@ defmodule Kadena.MixProject do
         "GitHub" => @github_url,
         "Sponsor" => "https://github.com/sponsors/kommitters"
       }
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      name: "Kadena.ex",
+      source_ref: "v#{@version}",
+      source_url: @github_url,
+      canonical: "https://hexdocs.pm/kadena/Kadena.html",
+      extras: extras(),
+      groups_for_modules: groups_for_modules()
+    ]
+  end
+
+  defp groups_for_modules do
+    [
+      "Building Commands": [
+        Kadena.Pact.Command,
+        Kadena.Pact.ExecCommand
+      ],
+      "Kadena Chainweb": [
+        Kadena.Chainweb.Client,
+        Kadena.Chainweb.Error,
+        Kadena.Chainweb.Client.Default,
+        Kadena.Chainweb.Client.Spec,
+        Kadena.Chainweb.Pact.Request,
+        Kadena.Chainweb.Pact.JSONPayload
+      ],
+      Cryptography: [
+        Kadena.Cryptography.Sign,
+        Kadena.Cryptography.KeyPair,
+        Kadena.Cryptography.Utils,
+        Kadena.Cryptography.KeyPair,
+        Kadena.Cryptography.KeyPair.Spec,
+        Kadena.Cryptography.KeyPair.Default,
+        Kadena.Cryptography.Sign,
+        Kadena.Cryptography.Sign.Spec,
+        Kadena.Cryptography.Sign.Default
+      ],
+      Types: [
+        Kadena.Types.Base16String,
+        Kadena.Types.Base64Url,
+        Kadena.Types.Base64UrlsList,
+        Kadena.Types.Cap,
+        Kadena.Types.CapsList,
+        Kadena.Types.ChainID,
+        Kadena.Types.ChainwebResponseMetaData,
+        Kadena.Types.Command,
+        Kadena.Types.CommandPayload,
+        Kadena.Types.CommandResult,
+        Kadena.Types.CommandsList,
+        Kadena.Types.ContPayload,
+        Kadena.Types.Continuation,
+        Kadena.Types.EnvData,
+        Kadena.Types.ExecPayload,
+        Kadena.Types.KeyPair,
+        Kadena.Types.ListenRequestBody,
+        Kadena.Types.ListenResponse,
+        Kadena.Types.LocalRequestBody,
+        Kadena.Types.LocalResponse,
+        Kadena.Types.MetaData,
+        Kadena.Types.NetworkID,
+        Kadena.Types.OptionalCapsList,
+        Kadena.Types.OptionalMetaData,
+        Kadena.Types.OptionalPactEventsList,
+        Kadena.Types.PactCode,
+        Kadena.Types.PactDecimal,
+        Kadena.Types.PactEvent,
+        Kadena.Types.PactEventModule,
+        Kadena.Types.PactEventsList,
+        Kadena.Types.PactExec,
+        Kadena.Types.PactInt,
+        Kadena.Types.PactPayload,
+        Kadena.Types.PactResult,
+        Kadena.Types.PactTransactionHash,
+        Kadena.Types.PactValue,
+        Kadena.Types.PactValuesList,
+        Kadena.Types.PollRequestBody,
+        Kadena.Types.PollResponse,
+        Kadena.Types.Proof,
+        Kadena.Types.Provenance,
+        Kadena.Types.Rollback,
+        Kadena.Types.SendRequestBody,
+        Kadena.Types.SendResponse,
+        Kadena.Types.SignCommand,
+        Kadena.Types.SignatureWithHash,
+        Kadena.Types.Signature,
+        Kadena.Types.SignaturesList,
+        Kadena.Types.SignedCommand,
+        Kadena.Types.Signer,
+        Kadena.Types.SignersList,
+        Kadena.Types.SigningCap,
+        Kadena.Types.Spec,
+        Kadena.Types.SPVProof,
+        Kadena.Types.SPVRequestBody,
+        Kadena.Types.SPVResponse,
+        Kadena.Types.Step,
+        Kadena.Types.Yield
+      ],
+      Utils: Kadena.Utils.MapCase
+    ]
+  end
+
+  defp extras() do
+    [
+      "README.md",
+      "CHANGELOG.md",
+      "CONTRIBUTING.md"
     ]
   end
 end
