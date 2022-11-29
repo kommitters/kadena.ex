@@ -75,7 +75,7 @@ defmodule Kadena.MixProject do
       name: "Kadena.ex",
       source_ref: "v#{@version}",
       source_url: @github_url,
-      canonical: "https://hexdocs.pm/kadena/Kadena.html",
+      canonical: "https://hexdocs.pm/kadena",
       extras: extras(),
       groups_for_modules: groups_for_modules()
     ]

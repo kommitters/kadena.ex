@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.8.0 (28.11.2022)
+## 0.8.0 (29.11.2022)
 
 - Added [PACT Command Behaviour](https://github.com/kommitters/kadena.ex/issues/132)
 - Added [Execution Command](https://github.com/kommitters/kadena.ex/issues/134)

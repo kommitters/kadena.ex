@@ -36,6 +36,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 ### What we're working on now 🎉
 
 - [Kadena Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
+- [Kadena Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 
 ### Done - What we've already developed! 🚀
 
@@ -60,7 +61,6 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
 - [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 - [Kadena Pact](https://github.com/kommitters/kadena.ex/issues/55)
-- [Kadena Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 
 </details>
 
@@ -77,25 +77,25 @@ It allows construction of PACT command payloads, in a composable and semantic ma
 An execution command is the first contract state that contains the actor keys and the code that will be run once the contract's requirements have been met.
 To create an execution command is needed:
 
-- [Network Id](#network-id)
-- Codigo (PACT)
+- [NetworkID](#networkid)
+- Code (PACT)
 - Nonce
-- [Enviroment Data](#env-data)
+- [Env Data](#env-data)
 - [Meta Data](#meta-data)
 - [Key Pairs](#key-pair)
 - [Signers](#signers-list)
 
-### [Network ID](#network-id)
 
-To create a network ID:
+#### [NetworkID](#networkid)
 
-```elixir
-Kadena.Types.NetworkID.new(:testnet04)
-```
+There are three options allowed to set a network ID:
+- `:testnet04`
+- `:mainnet01`
+- `:development`
 
-### [Env Data](#env-data)
+#### [Env Data](#env-data)
 
-To create an Enviroment data:
+A map must be provided to create an environment data, for example:
 
 ```elixir
 data= %{
@@ -107,67 +107,90 @@ data= %{
 Kadena.Types.EnvData.new(data)
 ```
 
-### [Meta Data](#meta-data)
+#### [Meta Data](#meta-data)
 To create a Meta data:
 ```elixir
-[
-  creation_time: 0,
-  ttl: 0,
-  gas_limit: 2500,
-  gas_price: 1.0e-2,
-  sender: "account_name",
-  chain_id: "0"
-]
-|>Kadena.Types.MetaData.new()
+raw_meta_data = [
+    creation_time: 0,
+    ttl: 0,
+    gas_limit: 2500,
+    gas_price: 1.0e-2,
+    sender: "account_name",
+    chain_id: "0"
+  ]
+
+  Kadena.Types.MetaData.new(raw_meta_data)
 ```
 
-### [Key Pair](#key-pair)
-Here are two ways to create a keypair:
+#### [Key Pair](#key-pair)
+There are two ways to create a keypair:
 ```elixir
-#return new public and the secret keys
-Kadena.Cryptography.KeyPair.generate()
+# generate a random keypair
+%KeyPair{pub_key: pub_key, secret_key: secret_key} = Kadena.Cryptography.KeyPair.generate()
 
-#with a secret key already in existence
+# derive a key pair from a secret key
 
 secret_key = "secret_key_value"
-{:ok, %KeyPair{pub_key: pub_key}} = CryptographyKeyPair.from_secret_key(secret_key)
+{:ok, %KeyPair{pub_key: pub_key}} = Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
 ```
 
 The KeyPair can then be created either with or without Capabilities
 
 ```elixir
-#without Capabilities
-[
-pub_key: "pub_key_value",
-secret_key: "secret_key_value"
+# without Capabilities
+
+key_pair_values = [
+  pub_key: "pub_key_value",
+  secret_key: "secret_key_value"
 ]
-|> KeyPair.new()
-#with Capabilities
+
+KeyPair.new(key_pair_values)
+
+# with Capabilities
+
 clist =
-      CapsList.new([
-        [name: "gas", args: ["COIN.gas", 0.02]],
-        [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
-      ])
-[
+  CapsList.new([
+    [name: "gas", args: ["COIN.gas", 0.02]],
+    [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
+  ])
+
+key_pair_values = [
 pub_key: "pub_key_value",
 secret_key: "secret_key_value",
 clist: clist
 ]
-|> KeyPair.new()
+
+KeyPair.new(key_pair_values)
+
 ```
 
-### [Signers List](#signers-list)
+#### [Signers List](#signers-list)
 There are many ways to create a list of signatures but we recommend 
 ```elixir
+
 signer1 = [
-        pub_key: "pub_key_1",
-      ]
+  pub_key: "pub_key_1"
+]
 
 signer2 = [
-        pub_key: "pub_key_2",
-      ]
+  pub_key: "pub_key_2"
+]
 
 Kadena.Types.SignersList.new([signer1, signer2])
+
+```
+
+#### Execution command builder
+``` elixir 
+ExecCommand.new()
+        |> ExecCommand.set_network(:testnet04)
+        |> ExecCommand.set_data(%{})
+        |> ExecCommand.set_code(code)
+        |> ExecCommand.set_nonce(nonce)
+        |> ExecCommand.set_metadata(meta_data)
+        |> ExecCommand.add_keypair(keypair)
+        |> ExecCommand.add_signers(signers_list)
+        |> ExecCommand.build()
 ```
 ---
 
