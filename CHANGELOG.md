@@ -4,7 +4,7 @@
 
 - Added [PACT Command Behaviour](https://github.com/kommitters/kadena.ex/issues/132)
 - Added [Execution Command](https://github.com/kommitters/kadena.ex/issues/134)
-- Added [Refactor exec_command and keypair](https://github.com/kommitters/kadena.ex/pull/147)
+- [Refactor ExecCommand and Types.KeyPair ](https://github.com/kommitters/kadena.ex/pull/147)
 
 ## 0.7.0 (09.11.2022)
 

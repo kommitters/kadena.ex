@@ -92,15 +92,15 @@ To create an execution command is needed:
 The following example shows how to create an execution command:
 
 ```elixir
-ExecCommand.new()
-  |> ExecCommand.set_network(network_id)
-  |> ExecCommand.set_code(code)
-  |> ExecCommand.set_nonce(nonce)
-  |> ExecCommand.set_data(env_data)
-  |> ExecCommand.set_metadata(keypair)
-  |> ExecCommand.add_keypair(keypair)
-  |> ExecCommand.add_signers(signers_list)
-  |> ExecCommand.build()
+Kadena.Pact.ExecCommand.new()
+  |> Kadena.Pact.ExecCommand.set_network(network_id)
+  |> Kadena.Pact.ExecCommand.set_code(code)
+  |> Kadena.Pact.ExecCommand.set_nonce(nonce)
+  |> Kadena.Pact.ExecCommand.set_data(env_data)
+  |> Kadena.Pact.ExecCommand.set_metadata(keypair)
+  |> Kadena.Pact.ExecCommand.add_keypair(keypair)
+  |> Kadena.Pact.ExecCommand.add_signers(signers_list)
+  |> Kadena.Pact.ExecCommand.build()
 ```
 
 #### NetworkID
@@ -124,7 +124,7 @@ String value to ensure unique hash. You can use current timestamp.
 A map must be provided to create an environment data, for example:
 
 ```elixir
-data= %{
+data = %{
   accounts_admin_keyset: [
     "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"
   ]
@@ -156,54 +156,52 @@ There are two ways to get a keypair:
 
 ```elixir
 # generate a random keypair
+{:ok, %Kadena.Types.KeyPair{} = keypair} = Kadena.Cryptography.KeyPair.generate()
 
 # derive a keypair from a secret key
 secret_key = "secret_key_value"
-
-{:ok, %KeyPair{pub_key: pub_key} = key_pair} =
-  Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
+{:ok, %Kadena.Types.KeyPair{} = keypair} = Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
 ```
 
-The KeyPair can then be created either with or without Capabilities
 
-- Without Capabilities
+**KeyPairs with Capabilites**
 
-```elixir
-key_pair_values = [
-  pub_key: "pub_key_value",
-  secret_key: "secret_key_value"
-]
-
-KeyPair.new(key_pair_values)
-
-```
-
-- With Capabilities
+Creating a keypair with capabilities:
 
 ```elixir
-# * Creating a new Keypair with clist
 clist =
-  CapsList.new([
+  Kadena.Types.CapsList.new([
     [name: "gas", args: ["COIN.gas", 0.02]],
     [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
   ])
 
-key_pair_values = [
+keypair_values = [
   pub_key: "pub_key_value",
   secret_key: "secret_key_value",
   clist: clist
 ]
 
-KeyPair.new(key_pair_values)
+Kadena.Types.KeyPair.new(keypair_values)
+```
 
-# *Adding a Clist in a existing KeyPair
-KeyPair.add_clist(clist, key_pair)
+Adding capabilities to existing keypair:
+```elixir
+clist =
+  Kadena.Types.CapsList.new([
+    [name: "gas", args: ["COIN.gas", 0.02]],
+    [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
+  ])
 
+
+secret_key = "secret_key_value"
+{:ok, %Kadena.Types.KeyPair{} = keypair} = Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
+
+keypair_with_clist = Kadena.Types.KeyPair.add_caps(keypair, clist)
 ```
 
 #### SignersList
 
-There are many ways to create a list of signatures:
+There are two ways to create a list of signers:
 
 ```elixir
 # with Keywords
