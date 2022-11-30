@@ -79,8 +79,6 @@ There are two type of commands:
 
 ### Execution Command
 
-An execution command uploads code to Pact API
-
 To create an execution command is needed:
 
 - [NetworkID](#networkid)
@@ -167,7 +165,9 @@ secret_key = "secret_key_value"
 ```
 
 The KeyPair can then be created either with or without Capabilities
- + Without Capabilities
+
+- Without Capabilities
+
 ```elixir
 key_pair_values = [
   pub_key: "pub_key_value",
@@ -177,7 +177,9 @@ key_pair_values = [
 KeyPair.new(key_pair_values)
 
 ```
+
 - With Capabilities
+
 ```elixir
 # * Creating a new Keypair with clist
 clist =
