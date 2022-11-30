@@ -33,8 +33,8 @@ defmodule Kadena.Types.KeyPair do
 
   def new(_args), do: {:error, [args: :not_a_list]}
 
-  @spec add_caps(caps :: clist(), keypair :: t()) :: validated_keypair()
-  def add_caps(caps, %__MODULE__{} = keypair) do
+  @spec add_caps(keypair :: t(), caps :: clist()) :: validated_keypair()
+  def add_caps(%__MODULE__{} = keypair, caps) do
     case validate_optional_caps_list({:clist, caps}) do
       {:ok, %OptionalCapsList{} = caps} -> %{keypair | clist: caps}
       {:error, reason} -> {:error, reason}
