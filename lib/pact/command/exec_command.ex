@@ -14,7 +14,6 @@ defmodule Kadena.Pact.ExecCommand do
     KeyPair,
     MetaData,
     NetworkID,
-    OptionalCapsList,
     PactPayload,
     SignaturesList,
     SignCommand,
@@ -24,12 +23,6 @@ defmodule Kadena.Pact.ExecCommand do
 
   @behaviour Kadena.Pact.Command
 
-  @type key :: String.t()
-  @type clist :: OptionalCapsList.t()
-  @type arg_value :: key() | clist()
-  @type arg_type :: atom()
-  @type arg :: {arg_type(), arg_value()}
-  @type arg_validation :: {:ok, arg_value()} | {:error, Keyword.t()}
   @type cmd :: String.t()
   @type code :: String.t()
   @type command :: Command.t()

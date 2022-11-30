@@ -45,4 +45,21 @@ defmodule Kadena.Types.KeypairTest do
         KeyPair.new(pub_key: pub_key, secret_key: secret_key, clist: "invalid")
     end
   end
+
+  describe "add_caps/2" do
+    test "with valid clist", %{pub_key: pub_key, secret_key: secret_key, clist: clist} do
+      keypair = KeyPair.new(pub_key: pub_key, secret_key: secret_key)
+
+      %KeyPair{
+        pub_key: ^pub_key,
+        secret_key: ^secret_key,
+        clist: %OptionalCapsList{clist: ^clist}
+      } = KeyPair.add_caps(keypair, clist)
+    end
+
+    test "with invalid clist", %{pub_key: pub_key, secret_key: secret_key} do
+      keypair = KeyPair.new(pub_key: pub_key, secret_key: secret_key)
+      {:error, [clist: :invalid]} = KeyPair.add_caps(keypair, "invalid")
+    end
+  end
 end

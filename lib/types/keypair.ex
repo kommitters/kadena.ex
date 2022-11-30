@@ -12,6 +12,7 @@ defmodule Kadena.Types.KeyPair do
   @type arg_value :: key() | clist()
   @type arg :: {arg_type(), arg_value()}
   @type arg_validation :: {:ok, arg_value()} | {:error, Keyword.t()}
+  @type validated_keypair :: t() | {:error, Keyword.t()}
 
   @type t :: %__MODULE__{pub_key: key(), secret_key: key(), clist: clist()}
 
@@ -31,6 +32,14 @@ defmodule Kadena.Types.KeyPair do
   end
 
   def new(_args), do: {:error, [args: :not_a_list]}
+
+  @spec add_caps(keypair :: t(), caps :: clist()) :: validated_keypair()
+  def add_caps(%__MODULE__{} = keypair, caps) do
+    case validate_optional_caps_list({:clist, caps}) do
+      {:ok, %OptionalCapsList{} = caps} -> %{keypair | clist: caps}
+      {:error, reason} -> {:error, reason}
+    end
+  end
 
   @spec validate_key(arg :: arg()) :: arg_validation()
   defp validate_key({_arg, key}) when is_binary(key) and byte_size(key) == 64, do: {:ok, key}
