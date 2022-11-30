@@ -695,7 +695,7 @@ defmodule Kadena.Types.CommandPayloadTest do
           nonce: "2023-06-13 17:45:18.211131 UTC"
         )
 
-      ~s({"meta":{"chainId":"0","creationTime":1667249173,"gasLimit":1000,"gasPrice":1.0e-6,"sender":"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94","ttl":28800},"networkId":"testnet04","nonce":"2023-06-13 17:45:18.211131 UTC","payload":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":"valid_proof",\"roollback\":true,\"step\":2}},"signers":[{"addr":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","clist":[{"args":[["#{"9007199254740992.553"}"]],"name":"coin.GAS"}],"pubKey":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","scheme":"ED25519"}]}) =
+      ~s({"meta":{"chainId":"0","creationTime":1667249173,"gasLimit":1000,"gasPrice":1.0e-6,"sender":"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94","ttl":28800},"networkId":"testnet04","nonce":"2023-06-13 17:45:18.211131 UTC","payload":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":"valid_proof",\"rollback\":true,\"step\":2}},"signers":[{"addr":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","clist":[{"args":[["#{"9007199254740992.553"}"]],"name":"coin.GAS"}],"pubKey":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","scheme":"ED25519"}]}) =
         JSONPayload.parse(command_payload)
     end
 
@@ -743,7 +743,7 @@ defmodule Kadena.Types.CommandPayloadTest do
           nonce: "2023-06-13 17:45:18.211131 UTC"
         )
 
-      ~s({"meta":{"chainId":"0","creationTime":1667249173,"gasLimit":1000,"gasPrice":1.0e-6,"sender":"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94","ttl":28800},"networkId":"testnet04","nonce":"2023-06-13 17:45:18.211131 UTC","payload":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"roollback\":true,\"step\":2}},"signers":[{"addr":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","clist":[{"args":[["#{"9007199254740992.553"}"]],"name":"coin.GAS"}],"pubKey":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","scheme":"ED25519"}]}) =
+      ~s({"meta":{"chainId":"0","creationTime":1667249173,"gasLimit":1000,"gasPrice":1.0e-6,"sender":"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94","ttl":28800},"networkId":"testnet04","nonce":"2023-06-13 17:45:18.211131 UTC","payload":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":true,\"step\":2}},"signers":[{"addr":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","clist":[{"args":[["#{"9007199254740992.553"}"]],"name":"coin.GAS"}],"pubKey":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","scheme":"ED25519"}]}) =
         JSONPayload.parse(command_payload)
     end
   end
