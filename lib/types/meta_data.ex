@@ -29,7 +29,7 @@ defmodule Kadena.Types.MetaData do
   defstruct [:creation_time, :ttl, :gas_limit, :gas_price, :sender, :chain_id]
 
   @impl true
-  def new(args) do
+  def new(args) when is_list(args) do
     creation_time = Keyword.get(args, :creation_time)
     ttl = Keyword.get(args, :ttl)
     gas_limit = Keyword.get(args, :gas_limit)
@@ -53,6 +53,8 @@ defmodule Kadena.Types.MetaData do
       }
     end
   end
+
+  def new(_args), do: {:error, [args: :not_a_list]}
 
   @spec validate_creation_time(creation_time :: creation_time()) :: validation()
   defp validate_creation_time(creation_time) when is_number(creation_time),
