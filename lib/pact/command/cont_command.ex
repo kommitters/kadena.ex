@@ -164,6 +164,7 @@ defmodule Kadena.Pact.ContCommand do
   end
 
   def add_keypair({:error, reason}, _keypair), do: {:error, reason}
+
   @impl true
   def add_keypairs(%__MODULE__{} = cmd_request, []), do: cmd_request
 
@@ -202,34 +203,30 @@ defmodule Kadena.Pact.ContCommand do
   def add_signers({:error, reason}, _signers), do: {:error, reason}
 
   @impl true
-  def set_pact_tx_hash(%__MODULE__{} = cmd_request, pact_tx_hash) when is_binary(pact_tx_hash) do
-    %{cmd_request | pact_tx_hash: pact_tx_hash}
-  end
+  def set_pact_tx_hash(%__MODULE__{} = cmd_request, pact_tx_hash) when is_binary(pact_tx_hash),
+    do: %{cmd_request | pact_tx_hash: pact_tx_hash}
 
   def set_pact_tx_hash(%__MODULE__{}, _pact_tx_hash), do: {:error, [pact_tx_hash: :not_a_string]}
   def set_pact_tx_hash({:error, reason}, _pact_tx_hash), do: {:error, reason}
 
   @impl true
-  def set_step(%__MODULE__{} = cmd_request, step) when is_integer(step) do
-    %{cmd_request | step: step}
-  end
+  def set_step(%__MODULE__{} = cmd_request, step) when is_integer(step),
+    do: %{cmd_request | step: step}
 
   def set_step(%__MODULE__{}, _step), do: {:error, [step: :not_an_integer]}
   def set_step({:error, reason}, _step), do: {:error, reason}
 
   @impl true
-  def set_proof(%__MODULE__{} = cmd_request, proof) when is_binary(proof) do
-    %{cmd_request | proof: proof}
-  end
+  def set_proof(%__MODULE__{} = cmd_request, proof) when is_binary(proof),
+    do: %{cmd_request | proof: proof}
 
   def set_proof(%__MODULE__{}, _proof), do: {:error, [proof: :not_a_string]}
   def set_proof({:error, reason}, _proof), do: {:error, reason}
 
   @impl true
 
-  def set_rollback(%__MODULE__{} = cmd_request, rollback) when is_boolean(rollback) do
-    %{cmd_request | rollback: rollback}
-  end
+  def set_rollback(%__MODULE__{} = cmd_request, rollback) when is_boolean(rollback),
+    do: %{cmd_request | rollback: rollback}
 
   def set_rollback(%__MODULE__{}, _rollback), do: {:error, [rollback: :not_a_boolean]}
   def set_rollback({:error, reason}, _rollback), do: {:error, reason}

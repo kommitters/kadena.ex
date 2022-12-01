@@ -100,6 +100,20 @@ defmodule Kadena.Pact.API.ContCommandTest do
       signer: signer,
       nonce: nonce
     } do
+      cont_command =
+        ContCommand.new(
+          network_id: :testnet04,
+          data: %{},
+          nonce: nonce,
+          meta_data: metadata,
+          keypairs: [keypair],
+          signers: SignersList.new([signer]),
+          pact_tx_hash: pact_tx_hash,
+          step: 0,
+          proof: "",
+          rollback: false
+        )
+
       %Command{
         cmd:
           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":\"\",\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
@@ -114,20 +128,7 @@ defmodule Kadena.Pact.API.ContCommandTest do
             }
           ]
         }
-      } =
-        ContCommand.new(
-          network_id: :testnet04,
-          data: %{},
-          nonce: nonce,
-          meta_data: metadata,
-          keypairs: [keypair],
-          signers: SignersList.new([signer]),
-          pact_tx_hash: pact_tx_hash,
-          step: 0,
-          proof: "",
-          rollback: false
-        )
-        |> ContCommand.build()
+      } = ContCommand.build(cont_command)
     end
 
     test "with a keypair list", %{
