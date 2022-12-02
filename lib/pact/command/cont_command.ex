@@ -1,6 +1,6 @@
-defmodule Kadena.Pact.ExecCommand do
+defmodule Kadena.Pact.ContCommand do
   @moduledoc """
-    Specifies functions to build PACT execution command requests.
+  Specifies functions to build PACT continuation command requests.
   """
   @behaviour Kadena.Pact.Command
 
@@ -11,20 +11,23 @@ defmodule Kadena.Pact.ExecCommand do
   alias Kadena.Types.{
     Command,
     CommandPayload,
+    ContPayload,
     EnvData,
-    ExecPayload,
     KeyPair,
     MetaData,
     NetworkID,
     PactPayload,
+    PactTransactionHash,
+    Proof,
+    Rollback,
     SignaturesList,
     SignCommand,
     Signer,
-    SignersList
+    SignersList,
+    Step
   }
 
   @type cmd :: String.t()
-  @type code :: String.t()
   @type command :: Command.t()
   @type data :: EnvData.t() | nil
   @type hash :: String.t()
@@ -35,48 +38,72 @@ defmodule Kadena.Pact.ExecCommand do
   @type network_id :: NetworkID.t()
   @type nonce :: String.t()
   @type pact_payload :: PactPayload.t()
-  @type signers :: SignersList.t()
+  @type pact_tx_hash :: PactTransactionHash.t()
+  @type proof :: Proof.t() | nil
+  @type rollback :: Rollback.t()
   @type signatures :: SignaturesList.t()
+  @type signers :: SignersList.t()
   @type sign_command :: SignCommand.t()
   @type sign_commands :: list(sign_command())
-  @type valid_command_json_string :: {:ok, json_string_payload()}
+  @type step :: Step.t()
   @type valid_command :: {:ok, command()}
+  @type valid_command_json_string :: {:ok, json_string_payload()}
   @type valid_payload :: {:ok, pact_payload()}
   @type valid_signatures :: {:ok, signatures()}
   @type valid_sign_commands :: {:ok, sign_commands()}
 
   @type t :: %__MODULE__{
           network_id: network_id(),
-          code: code(),
           data: data(),
           nonce: nonce(),
           meta_data: meta_data(),
+          pact_tx_hash: pact_tx_hash(),
+          step: step(),
+          proof: proof(),
+          rollback: rollback(),
           keypairs: keypairs(),
           signers: signers()
         }
 
-  defstruct [:network_id, :meta_data, :code, :nonce, :signers, :data, keypairs: []]
+  defstruct [
+    :network_id,
+    :data,
+    :nonce,
+    :meta_data,
+    :pact_tx_hash,
+    :step,
+    :proof,
+    :rollback,
+    :signers,
+    keypairs: []
+  ]
 
   @impl true
   def new(opts \\ nil)
 
   def new(opts) when is_list(opts) do
     network_id = Keyword.get(opts, :network_id)
-    code = Keyword.get(opts, :code, "")
     data = Keyword.get(opts, :data)
     nonce = Keyword.get(opts, :nonce, "")
     meta_data = Keyword.get(opts, :meta_data, %MetaData{})
+    pact_tx_hash = Keyword.get(opts, :pact_tx_hash, "")
+    step = Keyword.get(opts, :step, %Step{})
+    proof = Keyword.get(opts, :proof)
+    rollback = Keyword.get(opts, :rollback, %Rollback{})
     keypairs = Keyword.get(opts, :keypairs, [])
     signers = Keyword.get(opts, :signers, %SignersList{})
 
     %__MODULE__{}
     |> set_network(network_id)
     |> set_data(data)
-    |> set_code(code)
     |> set_nonce(nonce)
     |> set_metadata(meta_data)
     |> add_keypairs(keypairs)
     |> add_signers(signers)
+    |> set_pact_tx_hash(pact_tx_hash)
+    |> set_proof(proof)
+    |> set_step(step)
+    |> set_rollback(rollback)
   end
 
   def new(_opts), do: %__MODULE__{}
@@ -100,13 +127,6 @@ defmodule Kadena.Pact.ExecCommand do
   end
 
   def set_data({:error, reason}, _data), do: {:error, reason}
-
-  @impl true
-  def set_code(%__MODULE__{} = cmd_request, code) when is_binary(code),
-    do: %{cmd_request | code: code}
-
-  def set_code(%__MODULE__{}, _code), do: {:error, [code: :not_a_string]}
-  def set_code({:error, reason}, _code), do: {:error, reason}
 
   @impl true
   def set_nonce(%__MODULE__{} = cmd_request, nonce) when is_binary(nonce),
@@ -161,14 +181,41 @@ defmodule Kadena.Pact.ExecCommand do
   def add_signers({:error, reason}, _signers), do: {:error, reason}
 
   @impl true
+  def set_pact_tx_hash(%__MODULE__{} = cmd_request, pact_tx_hash) when is_binary(pact_tx_hash),
+    do: %{cmd_request | pact_tx_hash: pact_tx_hash}
+
+  def set_pact_tx_hash(%__MODULE__{}, _pact_tx_hash), do: {:error, [pact_tx_hash: :not_a_string]}
+  def set_pact_tx_hash({:error, reason}, _pact_tx_hash), do: {:error, reason}
+
+  @impl true
+  def set_step(%__MODULE__{} = cmd_request, step) when is_integer(step),
+    do: %{cmd_request | step: step}
+
+  def set_step(%__MODULE__{}, _step), do: {:error, [step: :not_an_integer]}
+  def set_step({:error, reason}, _step), do: {:error, reason}
+
+  @impl true
+  def set_proof(%__MODULE__{} = cmd_request, proof) when is_binary(proof),
+    do: %{cmd_request | proof: proof}
+
+  def set_proof(%__MODULE__{}, _proof), do: {:error, [proof: :not_a_string]}
+  def set_proof({:error, reason}, _proof), do: {:error, reason}
+
+  @impl true
+
+  def set_rollback(%__MODULE__{} = cmd_request, rollback) when is_boolean(rollback),
+    do: %{cmd_request | rollback: rollback}
+
+  def set_rollback(%__MODULE__{}, _rollback), do: {:error, [rollback: :not_a_boolean]}
+  def set_rollback({:error, reason}, _rollback), do: {:error, reason}
+
+  @impl true
   def build(
         %__MODULE__{
-          keypairs: keypairs,
-          code: code,
-          data: data
+          keypairs: keypairs
         } = cmd_request
       ) do
-    with {:ok, payload} <- create_payload(code, data),
+    with {:ok, payload} <- create_payload(cmd_request),
          {:ok, cmd} <- command_to_json_string(payload, cmd_request),
          {:ok, sig_commands} <- sign_commands([], cmd, keypairs),
          {:ok, hash} <- Hash.pull_unique(sig_commands),
@@ -180,10 +227,16 @@ defmodule Kadena.Pact.ExecCommand do
 
   def build(_module), do: {:error, [exec_command_request: :invalid_payload]}
 
-  @spec create_payload(code :: code(), data :: data()) :: valid_payload()
-  defp create_payload(code, data) do
-    [code: code, data: data]
-    |> ExecPayload.new()
+  @spec create_payload(t()) :: valid_payload()
+  defp create_payload(%__MODULE__{
+         data: data,
+         pact_tx_hash: pact_tx_hash,
+         proof: proof,
+         rollback: rollback,
+         step: step
+       }) do
+    [data: data, pact_id: pact_tx_hash, proof: proof, rollback: rollback, step: step]
+    |> ContPayload.new()
     |> PactPayload.new()
     |> (&{:ok, &1}).()
   end
