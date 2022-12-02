@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.8.0"
+  @version "0.9.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -85,7 +85,9 @@ defmodule Kadena.MixProject do
     [
       "Building Commands": [
         Kadena.Pact.Command,
-        Kadena.Pact.ExecCommand
+        Kadena.Pact.Command.Hash,
+        Kadena.Pact.ExecCommand,
+        Kadena.Pact.ContCommand
       ],
       "Kadena Chainweb": [
         Kadena.Chainweb.Client,

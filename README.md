@@ -23,21 +23,20 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.8.0"}
+    {:kadena, "~> 0.9.0"}
   ]
 end
 ```
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.9`
+The latest updated branch to target a PR is `v0.10`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
 - [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
-- [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 
 ### Done - What we've already developed! 🚀
 
@@ -62,6 +61,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
 - [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 - [Kadena Pact](https://github.com/kommitters/kadena.ex/issues/55)
+- [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 
 </details>
 
@@ -75,7 +75,7 @@ These commands are intended to be used as the request body to the Pact API endpo
 There are two type of commands:
 
 - [`Execution`](#execution-command)
-- `Continuation`.
+- [`Continuation`](#continuation-command)
 
 ### Execution Command
 
@@ -97,10 +97,41 @@ Kadena.Pact.ExecCommand.new()
   |> Kadena.Pact.ExecCommand.set_code(code)
   |> Kadena.Pact.ExecCommand.set_nonce(nonce)
   |> Kadena.Pact.ExecCommand.set_data(env_data)
-  |> Kadena.Pact.ExecCommand.set_metadata(keypair)
+  |> Kadena.Pact.ExecCommand.set_metadata(meta_data)
   |> Kadena.Pact.ExecCommand.add_keypair(keypair)
   |> Kadena.Pact.ExecCommand.add_signers(signers_list)
   |> Kadena.Pact.ExecCommand.build()
+```
+
+### Continuation Command
+
+To create a continuation command is needed:
+
+- [NetworkID](#networkid)
+- [Nonce](#nonce)
+- [EnvData](#envdata) (optional)
+- [MetaData](#metadata)
+- [KeyPairs](#keypair)
+- [Signers](#signerslist)
+- [Step](#step)
+- [Proof](#proof) (optional)
+- [Rollback](#rollback)
+- [PactId](#pactid)
+
+The following example shows how to create a continuation command:
+
+```elixir
+     Kadena.Pact.ContCommand.new()
+        |> Kadena.Pact.ContCommand.set_network(network_id)
+        |> Kadena.Pact.ContCommand.set_data(env_data)
+        |> Kadena.Pact.ContCommand.set_nonce(nonce)
+        |> Kadena.Pact.ContCommand.set_metadata(meta_data)
+        |> Kadena.Pact.ContCommand.add_keypair(keypair)
+        |> Kadena.Pact.ContCommand.add_signers(signers_list)
+        |> Kadena.Pact.ContCommand.set_pact_tx_hash(pact_id)
+        |> Kadena.Pact.ContCommand.set_step(step)
+        |> Kadena.Pact.ContCommand.set_rollback(rollback)
+        |> Kadena.Pact.ContCommand.build()
 ```
 
 #### NetworkID
@@ -113,11 +144,30 @@ There are three options allowed to set a NetworkID:
 
 #### Code
 
-String value that represents the Pact code to execute in the `Execution Command`.
+A String value that represents the Pact code to execute in the `Execution Command`.
 
 #### Nonce
 
-String value to ensure unique hash. You can use current timestamp.
+A String value to ensure unique hash. You can use current timestamp.
+
+#### Step
+
+The step is an Integer of the mutli-step transaction.
+
+#### Proof
+
+A String SPV proof, required for cross-chain transfer.
+
+#### Rollback
+
+A Boolean that indicates if the continuation is:
+
+- rollback `true`
+- cancel `false`
+
+#### PactId
+
+Pact transaction id as a String.
 
 #### EnvData
 
@@ -163,7 +213,6 @@ secret_key = "secret_key_value"
 {:ok, %Kadena.Types.KeyPair{} = keypair} = Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
 ```
 
-
 **KeyPairs with Capabilites**
 
 Creating a keypair with capabilities:
@@ -185,6 +234,7 @@ Kadena.Types.KeyPair.new(keypair_values)
 ```
 
 Adding capabilities to existing keypair:
+
 ```elixir
 clist =
   Kadena.Types.CapsList.new([
@@ -220,7 +270,7 @@ Kadena.Types.SignersList.new([signer1, signer2])
 ## Development
 
 - Install any Elixir version above 1.13.
-- Compile dependencies: `mix deps.get`
+- Compile dependencies: `mix deps.get`.
 - Run tests: `mix test`.
 
 ## Want to jump in?
