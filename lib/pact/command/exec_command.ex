@@ -2,11 +2,14 @@ defmodule Kadena.Pact.ExecCommand do
   @moduledoc """
     Specifies functions to build PACT execution command requests.
   """
+  @behaviour Kadena.Pact.Command
 
   alias Kadena.Chainweb.Pact.JSONPayload
-  alias Pact.Command.CommandBuilder
+  alias Kadena.Cryptography.Sign
+  alias Kadena.Pact.Command.Hash
 
   alias Kadena.Types.{
+    Command,
     CommandPayload,
     EnvData,
     ExecPayload,
@@ -14,14 +17,17 @@ defmodule Kadena.Pact.ExecCommand do
     MetaData,
     NetworkID,
     PactPayload,
+    SignaturesList,
+    SignCommand,
     Signer,
     SignersList
   }
 
-  @behaviour Kadena.Pact.Command
-
+  @type cmd :: String.t()
   @type code :: String.t()
+  @type command :: Command.t()
   @type data :: EnvData.t() | nil
+  @type hash :: String.t()
   @type json_string_payload :: String.t()
   @type keypair :: KeyPair.t()
   @type keypairs :: list(keypair())
@@ -30,8 +36,14 @@ defmodule Kadena.Pact.ExecCommand do
   @type nonce :: String.t()
   @type pact_payload :: PactPayload.t()
   @type signers :: SignersList.t()
-  @type valid_payload :: {:ok, pact_payload()}
+  @type signatures :: SignaturesList.t()
+  @type sign_command :: SignCommand.t()
+  @type sign_commands :: list(sign_command())
   @type valid_command_json_string :: {:ok, json_string_payload()}
+  @type valid_command :: {:ok, command()}
+  @type valid_payload :: {:ok, pact_payload()}
+  @type valid_signatures :: {:ok, signatures()}
+  @type valid_sign_commands :: {:ok, sign_commands()}
 
   @type t :: %__MODULE__{
           network_id: network_id(),
@@ -158,10 +170,10 @@ defmodule Kadena.Pact.ExecCommand do
       ) do
     with {:ok, payload} <- create_payload(code, data),
          {:ok, cmd} <- command_to_json_string(payload, cmd_request),
-         {:ok, sig_commands} <- CommandBuilder.sign_commands([], cmd, keypairs),
-         {:ok, hash} <- CommandBuilder.get_unique_hash(sig_commands),
-         {:ok, signatures} <- CommandBuilder.build_signatures(sig_commands, []),
-         {:ok, command} <- CommandBuilder.create_command(hash, signatures, cmd) do
+         {:ok, sig_commands} <- sign_commands([], cmd, keypairs),
+         {:ok, hash} <- Hash.pull_unique(sig_commands),
+         {:ok, signatures} <- build_signatures(sig_commands, []),
+         {:ok, command} <- create_command(hash, signatures, cmd) do
       command
     end
   end
@@ -194,4 +206,38 @@ defmodule Kadena.Pact.ExecCommand do
     |> JSONPayload.parse()
     |> (&{:ok, &1}).()
   end
+
+  @spec create_command(
+          hash :: hash(),
+          sigs :: signatures(),
+          cmd :: cmd()
+        ) :: valid_command()
+  defp create_command(hash, sigs, cmd) do
+    case Command.new(hash: hash, sigs: sigs, cmd: cmd) do
+      %Command{} = command -> {:ok, command}
+    end
+  end
+
+  @spec sign_commands(signs :: list(), cmd :: json_string_payload(), keypairs()) ::
+          valid_sign_commands()
+  defp sign_commands(signs, _cmd, []), do: {:ok, signs}
+
+  defp sign_commands(signs, cmd, [%KeyPair{} = keypair | keypairs]) do
+    signs
+    |> sign_command(cmd, keypair)
+    |> sign_commands(cmd, keypairs)
+  end
+
+  @spec sign_command(signs :: list(), cmd :: json_string_payload(), keypair()) ::
+          list()
+  defp sign_command(signs, cmd, %KeyPair{} = keypair) do
+    {:ok, sign_command} = Sign.sign(cmd, keypair)
+    signs ++ [sign_command]
+  end
+
+  @spec build_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
+  defp build_signatures([], result), do: {:ok, SignaturesList.new(result)}
+
+  defp build_signatures([%SignCommand{sig: sig} | rest], result),
+    do: build_signatures(rest, result ++ [sig])
 end
