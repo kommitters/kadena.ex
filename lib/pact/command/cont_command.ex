@@ -4,11 +4,9 @@ defmodule Kadena.Pact.ContCommand do
   """
 
   alias Kadena.Chainweb.Pact.JSONPayload
-  alias Kadena.Cryptography.Sign
-  alias Kadena.Pact.Command
+  alias Pact.Command.CommandBuilder
 
   alias Kadena.Types.{
-    Command,
     CommandPayload,
     ContPayload,
     EnvData,
@@ -19,8 +17,6 @@ defmodule Kadena.Pact.ContCommand do
     PactTransactionHash,
     Proof,
     Rollback,
-    SignaturesList,
-    SignCommand,
     Signer,
     SignersList,
     Step
@@ -28,10 +24,7 @@ defmodule Kadena.Pact.ContCommand do
 
   @behaviour Kadena.Pact.Command
 
-  @type cmd :: String.t()
-  @type command :: Command.t()
   @type data :: EnvData.t() | nil
-  @type hash :: String.t()
   @type json_string_payload :: String.t()
   @type keypair :: KeyPair.t()
   @type keypairs :: list(keypair())
@@ -42,19 +35,10 @@ defmodule Kadena.Pact.ContCommand do
   @type pact_tx_hash :: PactTransactionHash.t()
   @type proof :: Proof.t() | nil
   @type rollback :: Rollback.t()
-  @type signer :: Signer.t()
   @type signers :: SignersList.t()
-  @type signatures :: SignaturesList.t()
-  @type sign_command :: SignCommand.t()
-  @type sign_commands :: list(sign_command())
   @type step :: Step.t()
-  @type valid_command :: {:ok, command()}
-  @type valid_command_json_string :: {:ok, json_string_payload()}
-  @type valid_hash :: {:ok, hash()}
   @type valid_payload :: {:ok, pact_payload()}
-  @type valid_sign_command :: {:ok, [sign_command()]}
-  @type valid_sign_commands :: {:ok, [sign_command()]}
-  @type valid_signatures :: {:ok, signatures()}
+  @type valid_command_json_string :: {:ok, json_string_payload()}
 
   @type t :: %__MODULE__{
           network_id: network_id(),
@@ -143,26 +127,14 @@ defmodule Kadena.Pact.ContCommand do
   def set_metadata(%__MODULE__{} = cmd_request, %MetaData{} = meta_data),
     do: %{cmd_request | meta_data: meta_data}
 
-  def set_metadata(%__MODULE__{} = cmd_request, meta_data) do
-    case MetaData.new(meta_data) do
-      %MetaData{} = meta_data -> %{cmd_request | meta_data: meta_data}
-      {:error, reason} -> {:error, [meta_data: :invalid] ++ reason}
-    end
-  end
-
+  def set_metadata(%__MODULE__{}, _metadata), do: {:error, [metadata: :invalid]}
   def set_metadata({:error, reason}, _metadata), do: {:error, reason}
 
   @impl true
   def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair),
     do: %{cmd_request | keypairs: keypairs ++ [keypair]}
 
-  def add_keypair(%__MODULE__{} = cmd_request, keypair) do
-    case KeyPair.new(keypair) do
-      %KeyPair{} = keypair -> add_keypair(cmd_request, keypair)
-      {:error, reason} -> {:error, [keypair: :invalid] ++ reason}
-    end
-  end
-
+  def add_keypair(%__MODULE__{}, _keypair), do: {:error, [keypair: :invalid]}
   def add_keypair({:error, reason}, _keypair), do: {:error, reason}
 
   @impl true
@@ -193,13 +165,7 @@ defmodule Kadena.Pact.ContCommand do
   def add_signers(%__MODULE__{} = cmd_request, %SignersList{} = list),
     do: %{cmd_request | signers: list}
 
-  def add_signers(%__MODULE__{} = cmd_request, signers) do
-    case SignersList.new(signers) do
-      %SignersList{} = signers -> %{cmd_request | signers: signers}
-      {:error, reason} -> {:error, [signers: :invalid] ++ reason}
-    end
-  end
-
+  def add_signers(%__MODULE__{}, _signers), do: {:error, [signers: :invalid]}
   def add_signers({:error, reason}, _signers), do: {:error, reason}
 
   @impl true
@@ -239,11 +205,11 @@ defmodule Kadena.Pact.ContCommand do
       ) do
     with {:ok, payload} <- create_payload(cmd_request),
          {:ok, cmd} <- command_to_json_string(payload, cmd_request),
-         {:ok, sig_commands} <- sign_commands([], cmd, keypairs),
-         {:ok, hash} <- get_unique_hash(sig_commands),
-         {:ok, signatures} <- build_signatures(sig_commands, []),
-         {:ok, command} <- create_command(hash, signatures, cmd) do
-      %Command{} = command
+         {:ok, sig_commands} <- CommandBuilder.sign_commands([], cmd, keypairs),
+         {:ok, hash} <- CommandBuilder.get_unique_hash(sig_commands),
+         {:ok, signatures} <- CommandBuilder.build_signatures(sig_commands, []),
+         {:ok, command} <- CommandBuilder.create_command(hash, signatures, cmd) do
+      command
     end
   end
 
@@ -263,17 +229,6 @@ defmodule Kadena.Pact.ContCommand do
     |> (&{:ok, &1}).()
   end
 
-  @spec create_command(
-          hash :: hash(),
-          sigs :: signatures(),
-          cmd :: cmd()
-        ) :: valid_command()
-  defp create_command(hash, sigs, cmd) do
-    case Command.new(hash: hash, sigs: sigs, cmd: cmd) do
-      %Command{} = command -> {:ok, command}
-    end
-  end
-
   @spec command_to_json_string(payload :: pact_payload(), t()) :: valid_command_json_string()
   defp command_to_json_string(payload, %__MODULE__{
          network_id: network_id,
@@ -291,40 +246,5 @@ defmodule Kadena.Pact.ContCommand do
     |> CommandPayload.new()
     |> JSONPayload.parse()
     |> (&{:ok, &1}).()
-  end
-
-  @spec sign_commands(signs :: list(), cmd :: json_string_payload(), keypairs()) ::
-          valid_sign_commands()
-  defp sign_commands(signs, _cmd, []), do: {:ok, signs}
-
-  defp sign_commands(signs, cmd, [%KeyPair{} = keypair | keypairs]) do
-    signs
-    |> sign_command(cmd, keypair)
-    |> sign_commands(cmd, keypairs)
-  end
-
-  @spec sign_command(signs :: list(), cmd :: json_string_payload(), keypair()) ::
-          list()
-  defp sign_command(signs, cmd, %KeyPair{} = keypair) do
-    {:ok, sign_command} = Sign.sign(cmd, keypair)
-    signs ++ [sign_command]
-  end
-
-  @spec build_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
-  defp build_signatures([], result), do: {:ok, SignaturesList.new(result)}
-
-  defp build_signatures([%SignCommand{sig: sig} | rest], result),
-    do: build_signatures(rest, result ++ [sig])
-
-  @spec get_unique_hash(sign_commands()) :: valid_hash()
-  defp get_unique_hash(sign_commands) do
-    unique_hash =
-      Enum.reduce(sign_commands, nil, fn %SignCommand{hash: hash}, acc ->
-        if is_nil(acc) or acc == hash,
-          do: hash,
-          else: {:error, [hash: :hashes_are_not_unique]}
-      end)
-
-    {:ok, unique_hash}
   end
 end

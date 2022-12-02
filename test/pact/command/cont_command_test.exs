@@ -1,4 +1,4 @@
-defmodule Kadena.Pact.API.ContCommandTest do
+defmodule Kadena.Pact.ContCommandTest do
   @moduledoc """
   `ContCommand` struct definition tests.
   """
@@ -42,9 +42,7 @@ defmodule Kadena.Pact.API.ContCommandTest do
 
       %{
         metadata: MetaData.new(raw_meta_data),
-        raw_meta_data: raw_meta_data,
         keypair: KeyPair.new(keypair_data),
-        keypair_data: keypair_data,
         signer:
           Signer.new(
             pub_key: pub_key,
@@ -243,79 +241,6 @@ defmodule Kadena.Pact.API.ContCommandTest do
         |> ContCommand.build()
     end
 
-    test "with a signers list", %{
-      pact_tx_hash: pact_tx_hash,
-      metadata: metadata,
-      keypair: keypair,
-      signer: signer,
-      nonce: nonce
-    } do
-      signers_list = [signer, signer]
-
-      %Command{
-        cmd:
-          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
-        hash: %PactTransactionHash{
-          hash: "NH1oRytubJHKE7I4W6UWsnfvF2NlehctV8H71o6_vfY"
-        },
-        sigs: %SignaturesList{
-          signatures: [
-            %Signature{
-              sig:
-                "fa9924f206f6e95d3f3594ce954577d275e56d1bad23e348942ee261a93653c1186b4d02c88858d4103237041850548dd1469b002acc6bbd8cf6502fbdae3507"
-            }
-          ]
-        }
-      } =
-        ContCommand.new()
-        |> ContCommand.set_network(:testnet04)
-        |> ContCommand.set_data(%{})
-        |> ContCommand.set_nonce(nonce)
-        |> ContCommand.set_metadata(metadata)
-        |> ContCommand.add_keypair(keypair)
-        |> ContCommand.add_signers(signers_list)
-        |> ContCommand.set_pact_tx_hash(pact_tx_hash)
-        |> ContCommand.set_step(0)
-        |> ContCommand.set_rollback(false)
-        |> ContCommand.build()
-    end
-
-    test "without structs", %{
-      pact_tx_hash: pact_tx_hash,
-      raw_meta_data: raw_meta_data,
-      keypair_data: keypair_data,
-      signer: signer,
-      nonce: nonce
-    } do
-      %Command{
-        cmd:
-          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":\"valid proof\",\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
-        hash: %PactTransactionHash{
-          hash: "vb3u_BDS1Xu3ck7Okp6rK1LdLLwhixDEJBDNvr6AvAc"
-        },
-        sigs: %SignaturesList{
-          signatures: [
-            %Signature{
-              sig:
-                "cbdd6e3d535967e0c964946e37a06b145c4fbe73d7a49f5af69f5e6bb3dddf51488a71f2791aed0b8283a265bdeef8a1e7f939e9998f9d370707efe5f1c8b808"
-            }
-          ]
-        }
-      } =
-        ContCommand.new()
-        |> ContCommand.set_network(:testnet04)
-        |> ContCommand.set_data(%{})
-        |> ContCommand.set_nonce(nonce)
-        |> ContCommand.set_metadata(raw_meta_data)
-        |> ContCommand.add_keypair(keypair_data)
-        |> ContCommand.add_signers([signer])
-        |> ContCommand.set_pact_tx_hash(pact_tx_hash)
-        |> ContCommand.set_proof("valid proof")
-        |> ContCommand.set_step(0)
-        |> ContCommand.set_rollback(false)
-        |> ContCommand.build()
-    end
-
     test "with an invalid data in build function", %{
       pact_tx_hash: pact_tx_hash,
       metadata: metadata,
@@ -330,7 +255,9 @@ defmodule Kadena.Pact.API.ContCommandTest do
         |> ContCommand.set_nonce(nonce)
         |> ContCommand.set_metadata(metadata)
         |> ContCommand.add_keypair(keypair)
-        |> ContCommand.add_signers([signer])
+        |> ContCommand.add_keypairs([keypair])
+        |> ContCommand.add_signer(signer)
+        |> ContCommand.add_signers(signer)
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_proof(123)
         |> ContCommand.set_step(0)
@@ -484,7 +411,7 @@ defmodule Kadena.Pact.API.ContCommandTest do
       signer: signer,
       nonce: nonce
     } do
-      {:error, [meta_data: :invalid, args: :not_a_list]} =
+      {:error, [metadata: :invalid]} =
         ContCommand.new()
         |> ContCommand.set_network(:testnet04)
         |> ContCommand.set_data(%{})
@@ -503,7 +430,7 @@ defmodule Kadena.Pact.API.ContCommandTest do
       signer: signer,
       nonce: nonce
     } do
-      {:error, [keypair: :invalid, args: :not_a_list]} =
+      {:error, [keypair: :invalid]} =
         ContCommand.new()
         |> ContCommand.set_network(:testnet04)
         |> ContCommand.set_data(%{})
@@ -541,13 +468,13 @@ defmodule Kadena.Pact.API.ContCommandTest do
       signer: signer,
       nonce: nonce
     } do
-      {:error, [keypair: :invalid, args: :not_a_list]} =
+      {:error, [keypairs: :not_a_list]} =
         ContCommand.new()
         |> ContCommand.set_network(:testnet04)
         |> ContCommand.set_data(%{})
         |> ContCommand.set_nonce(nonce)
         |> ContCommand.set_metadata(metadata)
-        |> ContCommand.add_keypairs(["invalid_value"])
+        |> ContCommand.add_keypairs("invalid_value")
         |> ContCommand.add_signer(signer)
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_step(0)
@@ -560,7 +487,7 @@ defmodule Kadena.Pact.API.ContCommandTest do
       keypair: keypair,
       nonce: nonce
     } do
-      {:error, [signers: :invalid, signers: :invalid_type]} =
+      {:error, [signers: :invalid]} =
         ContCommand.new()
         |> ContCommand.set_network(:testnet04)
         |> ContCommand.set_data(%{})
