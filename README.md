@@ -87,11 +87,12 @@ To create an execution command is needed:
 - [EnvData](#envdata) (optional)
 - [MetaData](#metadata)
 - [KeyPairs](#keypair)
-- [Signers](#signerslist)
+- [Signers](#signerslist) / [Signer](#signer)
 
-The following example shows how to create an execution command:
+The following examples shows how to create an execution command:
 
 ```elixir
+# with a single KeyPair and Signer
 Kadena.Pact.ExecCommand.new()
   |> Kadena.Pact.ExecCommand.set_network(network_id)
   |> Kadena.Pact.ExecCommand.set_code(code)
@@ -99,8 +100,32 @@ Kadena.Pact.ExecCommand.new()
   |> Kadena.Pact.ExecCommand.set_data(env_data)
   |> Kadena.Pact.ExecCommand.set_metadata(meta_data)
   |> Kadena.Pact.ExecCommand.add_keypair(keypair)
+  |> Kadena.Pact.ExecCommand.add_signer(signer)
+  |> Kadena.Pact.ExecCommand.build()
+
+# with a list of KeyPair and a SignersList
+Kadena.Pact.ExecCommand.new()
+  |> Kadena.Pact.ExecCommand.set_network(network_id)
+  |> Kadena.Pact.ExecCommand.set_code(code)
+  |> Kadena.Pact.ExecCommand.set_nonce(nonce)
+  |> Kadena.Pact.ExecCommand.set_data(env_data)
+  |> Kadena.Pact.ExecCommand.set_metadata(meta_data)
+  |> Kadena.Pact.ExecCommand.add_keypairs([keypair_1, keypair_2])
   |> Kadena.Pact.ExecCommand.add_signers(signers_list)
   |> Kadena.Pact.ExecCommand.build()
+
+# with a keyword list
+  args = [
+    network_id: network_id,
+    code: code,
+    data: env_data,
+    nonce: nonce,
+    meta_data: meta_data,
+    keypairs: keypairs, #KeyPair list
+    signers: signers #SignersList struct
+  ]
+
+Kadena.Pact.ExecCommand.new(args)
 ```
 
 ### Continuation Command
@@ -112,26 +137,57 @@ To create a continuation command is needed:
 - [EnvData](#envdata) (optional)
 - [MetaData](#metadata)
 - [KeyPairs](#keypair)
-- [Signers](#signerslist)
+- [Signers](#signerslist) / [Signer](#signer)
 - [Step](#step)
 - [Proof](#proof) (optional)
 - [Rollback](#rollback)
 - [PactId](#pactid)
 
-The following example shows how to create a continuation command:
+The following examples shows how to create a continuation command:
 
 ```elixir
-     Kadena.Pact.ContCommand.new()
-        |> Kadena.Pact.ContCommand.set_network(network_id)
-        |> Kadena.Pact.ContCommand.set_data(env_data)
-        |> Kadena.Pact.ContCommand.set_nonce(nonce)
-        |> Kadena.Pact.ContCommand.set_metadata(meta_data)
-        |> Kadena.Pact.ContCommand.add_keypair(keypair)
-        |> Kadena.Pact.ContCommand.add_signers(signers_list)
-        |> Kadena.Pact.ContCommand.set_pact_tx_hash(pact_id)
-        |> Kadena.Pact.ContCommand.set_step(step)
-        |> Kadena.Pact.ContCommand.set_rollback(rollback)
-        |> Kadena.Pact.ContCommand.build()
+# with a single KeyPair and Signer
+Kadena.Pact.ContCommand.new()
+  |> Kadena.Pact.ContCommand.set_network(network_id)
+  |> Kadena.Pact.ContCommand.set_data(env_data)
+  |> Kadena.Pact.ContCommand.set_nonce(nonce)
+  |> Kadena.Pact.ContCommand.set_metadata(meta_data)
+  |> Kadena.Pact.ContCommand.add_keypair(keypair)
+  |> Kadena.Pact.ContCommand.add_signer(signer)
+  |> Kadena.Pact.ContCommand.set_pact_tx_hash(pact_id)
+  |> Kadena.Pact.ContCommand.set_step(step)
+  |> Kadena.Pact.ContCommand.set_rollback(rollback)
+  |> Kadena.Pact.ContCommand.build()
+
+# with a list of KeyPair and a SignersList
+Kadena.Pact.ContCommand.new()
+  |> Kadena.Pact.ContCommand.set_network(network_id)
+  |> Kadena.Pact.ContCommand.set_data(env_data)
+  |> Kadena.Pact.ContCommand.set_nonce(nonce)
+  |> Kadena.Pact.ContCommand.set_metadata(meta_data)
+  |> Kadena.Pact.ContCommand.add_keypairs([keypair_1, keypair_2])
+  |> Kadena.Pact.ContCommand.add_signers(signers_list)
+  |> Kadena.Pact.ContCommand.set_pact_tx_hash(pact_id)
+  |> Kadena.Pact.ContCommand.set_step(step)
+  |> Kadena.Pact.ContCommand.set_rollback(rollback)
+  |> Kadena.Pact.ContCommand.build()
+
+# with a keyword list
+  args = [
+    network_id: network_id,
+    data: emv_data,
+    nonce: nonce,
+    meta_data: meta_data,
+    pact_tx_hash: pact_id,
+    step: step,
+    proof: proof,
+    rollback: rollback,
+    keypairs: keypairs, #KeyPair list
+    signers: signers #SignersList struct
+  ]
+
+Kadena.Pact.ExecCommand.new(args)
+
 ```
 
 #### NetworkID
@@ -230,7 +286,7 @@ keypair_values = [
   clist: clist
 ]
 
-Kadena.Types.KeyPair.new(keypair_values)
+keypair = Kadena.Types.KeyPair.new(keypair_values)
 ```
 
 Adding capabilities to existing keypair:
@@ -249,20 +305,30 @@ secret_key = "secret_key_value"
 keypair_with_clist = Kadena.Types.KeyPair.add_caps(keypair, clist)
 ```
 
+#### Signer
+
+Creating a signer:
+
+```elixir
+signer = Kadena.Types.Signer.new([pub_key: "pub_key"])
+```
+
 #### SignersList
 
 There are two ways to create a list of signers:
 
 ```elixir
-# with Keywords
+# with keyword list
 signer1 = [pub_key: "pub_key_1"]
 signer2 = [pub_key: "pub_key_2"]
+
+signers = Kadena.Types.SignersList.new([signer1, signer2])
 
 # with Signer structs
 signer1 = Kadena.Types.Signer.new([pub_key: "pub_key_1"])
 signer2 = Kadena.Types.Signer.new([pub_key: "pub_key_2"])
 
-Kadena.Types.SignersList.new([signer1, signer2])
+signers = Kadena.Types.SignersList.new([signer1, signer2])
 ```
 
 ---
@@ -270,7 +336,7 @@ Kadena.Types.SignersList.new([signer1, signer2])
 ## Development
 
 - Install any Elixir version above 1.13.
-- Compile dependencies: `mix deps.get`.
+- Compile dependencies: `mix deps.get`
 - Run tests: `mix test`.
 
 ## Want to jump in?
