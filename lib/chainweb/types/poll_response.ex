@@ -1,9 +1,10 @@
-defmodule Kadena.Types.PollResponse do
+defmodule Kadena.Chainweb.Types.PollResponse do
   @moduledoc """
   `PollResponse` struct definition.
   """
 
-  alias Kadena.Types.{Base64Url, CommandResult}
+  alias Kadena.Chainweb.Types.CommandResult
+  alias Kadena.Types.Base64Url
 
   @behaviour Kadena.Types.Spec
 
