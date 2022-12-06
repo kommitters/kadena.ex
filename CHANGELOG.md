@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.0 (06.12.2022)
+- Added [Continuation Command](https://github.com/kommitters/kadena.ex/issues/133)
+
 ## 0.8.0 (30.11.2022)
 
 - Added [PACT Command Behaviour](https://github.com/kommitters/kadena.ex/issues/132)
