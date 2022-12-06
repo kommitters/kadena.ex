@@ -1,4 +1,4 @@
-defmodule Kadena.Types.PollResponseTest do
+defmodule Kadena.Chainweb.Types.PollResponseTest do
   @moduledoc """
   `PollResponse` struct definition tests.
   """
@@ -8,12 +8,12 @@ defmodule Kadena.Types.PollResponseTest do
   alias Kadena.Types.{
     Base64Url,
     ChainwebResponseMetaData,
-    CommandResult,
     Continuation,
     PactResult,
-    PollResponse,
     Yield
   }
+
+  alias Kadena.Chainweb.Types.{CommandResult, PollResponse}
 
   describe "new/1" do
     setup do

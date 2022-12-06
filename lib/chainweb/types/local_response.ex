@@ -1,4 +1,4 @@
-defmodule Kadena.Types.LocalResponse do
+defmodule Kadena.Chainweb.Types.LocalResponse do
   @moduledoc """
   `LocalResponse` struct definition.
   """
@@ -6,11 +6,12 @@ defmodule Kadena.Types.LocalResponse do
   alias Kadena.Types.{
     Base64Url,
     ChainwebResponseMetaData,
-    CommandResult,
     OptionalPactEventsList,
     PactExec,
     PactResult
   }
+
+  alias Kadena.Chainweb.Types.CommandResult
 
   @behaviour Kadena.Types.Spec
 

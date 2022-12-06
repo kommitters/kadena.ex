@@ -1,4 +1,4 @@
-defmodule Kadena.Types.CommandResult do
+defmodule Kadena.Chainweb.Types.CommandResult do
   @moduledoc """
   `CommandResult` struct definition.
   """

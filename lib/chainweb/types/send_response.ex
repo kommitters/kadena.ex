@@ -1,4 +1,4 @@
-defmodule Kadena.Types.SendResponse do
+defmodule Kadena.Chainweb.Types.SendResponse do
   @moduledoc """
   `SendResponse` struct definition.
   """
