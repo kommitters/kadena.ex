@@ -166,7 +166,7 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Types.LocalResponse,
         Kadena.Chainweb.Types.PollResponse,
         Kadena.Chainweb.Types.SendResponse,
-        Kadena.Chainweb.Types.SPVResponse,
+        Kadena.Chainweb.Types.SPVResponse
       ],
       Utils: Kadena.Utils.MapCase
     ]
