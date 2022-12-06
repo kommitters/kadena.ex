@@ -115,15 +115,15 @@ Kadena.Pact.ExecCommand.new()
   |> Kadena.Pact.ExecCommand.build()
 
 # with a keyword list
-  args = [
-    network_id: network_id,
-    code: code,
-    data: env_data,
-    nonce: nonce,
-    meta_data: meta_data,
-    keypairs: keypairs, #KeyPair list
-    signers: signers #SignersList struct
-  ]
+args = [
+  network_id: network_id,
+  code: code,
+  data: env_data,
+  nonce: nonce,
+  meta_data: meta_data,
+  keypairs: keypairs, #KeyPair list
+  signers: signers #SignersList struct
+]
 
 Kadena.Pact.ExecCommand.new(args)
 ```
@@ -173,18 +173,18 @@ Kadena.Pact.ContCommand.new()
   |> Kadena.Pact.ContCommand.build()
 
 # with a keyword list
-  args = [
-    network_id: network_id,
-    data: emv_data,
-    nonce: nonce,
-    meta_data: meta_data,
-    pact_tx_hash: pact_id,
-    step: step,
-    proof: proof,
-    rollback: rollback,
-    keypairs: keypairs, #KeyPair list
-    signers: signers #SignersList struct
-  ]
+args = [
+  network_id: network_id,
+  data: emv_data,
+  nonce: nonce,
+  meta_data: meta_data,
+  pact_tx_hash: pact_id,
+  step: step,
+  proof: proof,
+  rollback: rollback,
+  keypairs: keypairs, #KeyPair list
+  signers: signers #SignersList struct
+]
 
 Kadena.Pact.ExecCommand.new(args)
 
@@ -208,7 +208,7 @@ A String value to ensure unique hash. You can use current timestamp.
 
 #### Step
 
-The step is an Integer of the mutli-step transaction.
+The step is an Integer of the multi-step transaction.
 
 #### Proof
 
