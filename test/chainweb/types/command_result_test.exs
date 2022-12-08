@@ -1,6 +1,6 @@
-defmodule Kadena.Types.ListenResponseTest do
+defmodule Kadena.Chainweb.Types.CommandResultTest do
   @moduledoc """
-  `ListenResponse` struct definition tests.
+  `CommandResult` struct definition tests.
   """
 
   use ExUnit.Case
@@ -8,14 +8,16 @@ defmodule Kadena.Types.ListenResponseTest do
   alias Kadena.Types.{
     Base64Url,
     ChainwebResponseMetaData,
+    CommandResult,
     Continuation,
-    ListenResponse,
     OptionalPactEventsList,
     PactEventsList,
     PactExec,
     PactResult,
     Yield
   }
+
+  alias Kadena.Chainweb.Types.CommandResult
 
   describe "new/1" do
     setup do
@@ -95,7 +97,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events_value: events_value,
       events: events
     } do
-      %ListenResponse{
+      %CommandResult{
         req_key: %Base64Url{url: ^req_key},
         tx_id: ^tx_id,
         result: ^result,
@@ -105,7 +107,7 @@ defmodule Kadena.Types.ListenResponseTest do
         meta_data: ^meta_data,
         events: %OptionalPactEventsList{pact_events: ^events}
       } =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result_value,
@@ -127,7 +129,7 @@ defmodule Kadena.Types.ListenResponseTest do
       meta_data: meta_data,
       events: events
     } do
-      %ListenResponse{
+      %CommandResult{
         req_key: %Base64Url{url: ^req_key},
         tx_id: ^tx_id,
         result: ^result,
@@ -137,7 +139,7 @@ defmodule Kadena.Types.ListenResponseTest do
         meta_data: ^meta_data,
         events: %OptionalPactEventsList{pact_events: ^events}
       } =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -155,7 +157,7 @@ defmodule Kadena.Types.ListenResponseTest do
       gas: gas,
       continuation: continuation
     } do
-      %ListenResponse{
+      %CommandResult{
         req_key: %Base64Url{url: ^req_key},
         tx_id: nil,
         result: ^result,
@@ -165,7 +167,7 @@ defmodule Kadena.Types.ListenResponseTest do
         meta_data: nil,
         events: %OptionalPactEventsList{pact_events: nil}
       } =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: nil,
           result: result,
@@ -187,7 +189,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [req_key: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: :invalid,
           tx_id: tx_id,
           result: result,
@@ -209,7 +211,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [tx_id: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: "invalid",
           result: result,
@@ -231,7 +233,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [result: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: "invalid",
@@ -253,7 +255,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [result: :invalid, status: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: [status: :invalid_status, result: 3],
@@ -275,7 +277,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [gas: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -297,7 +299,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [logs: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -319,7 +321,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [continuation: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -341,7 +343,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [continuation: :invalid, pact_id: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -363,7 +365,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [meta_data: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -385,7 +387,7 @@ defmodule Kadena.Types.ListenResponseTest do
       events: events
     } do
       {:error, [meta_data: :invalid, block_hash: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -407,7 +409,7 @@ defmodule Kadena.Types.ListenResponseTest do
       meta_data: meta_data
     } do
       {:error, [events: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -429,7 +431,7 @@ defmodule Kadena.Types.ListenResponseTest do
       meta_data: meta_data
     } do
       {:error, [events: :invalid, pact_events: :invalid, name: :invalid]} =
-        ListenResponse.new(
+        CommandResult.new(
           req_key: req_key,
           tx_id: tx_id,
           result: result,
@@ -439,10 +441,6 @@ defmodule Kadena.Types.ListenResponseTest do
           meta_data: meta_data,
           events: [[name: :invalid_value]]
         )
-    end
-
-    test "with an invalid list" do
-      {:error, [listen_response: :not_a_list]} = ListenResponse.new("no list")
     end
   end
 end

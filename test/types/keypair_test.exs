@@ -61,5 +61,9 @@ defmodule Kadena.Types.KeypairTest do
       keypair = KeyPair.new(pub_key: pub_key, secret_key: secret_key)
       {:error, [clist: :invalid]} = KeyPair.add_caps(keypair, "invalid")
     end
+
+    test "with an invalid KeywordList" do
+      {:error, [args: :not_a_list]} = KeyPair.new("invalid_args")
+    end
   end
 end

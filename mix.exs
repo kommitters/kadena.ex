@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.8.0"
+  @version "0.9.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -85,7 +85,9 @@ defmodule Kadena.MixProject do
     [
       "Building Commands": [
         Kadena.Pact.Command,
-        Kadena.Pact.ExecCommand
+        Kadena.Pact.Command.Hash,
+        Kadena.Pact.ExecCommand,
+        Kadena.Pact.ContCommand
       ],
       "Kadena Chainweb": [
         Kadena.Chainweb.Client,
@@ -116,7 +118,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.ChainwebResponseMetaData,
         Kadena.Types.Command,
         Kadena.Types.CommandPayload,
-        Kadena.Types.CommandResult,
         Kadena.Types.CommandsList,
         Kadena.Types.ContPayload,
         Kadena.Types.Continuation,
@@ -124,9 +125,7 @@ defmodule Kadena.MixProject do
         Kadena.Types.ExecPayload,
         Kadena.Types.KeyPair,
         Kadena.Types.ListenRequestBody,
-        Kadena.Types.ListenResponse,
         Kadena.Types.LocalRequestBody,
-        Kadena.Types.LocalResponse,
         Kadena.Types.MetaData,
         Kadena.Types.NetworkID,
         Kadena.Types.OptionalCapsList,
@@ -145,12 +144,10 @@ defmodule Kadena.MixProject do
         Kadena.Types.PactValue,
         Kadena.Types.PactValuesList,
         Kadena.Types.PollRequestBody,
-        Kadena.Types.PollResponse,
         Kadena.Types.Proof,
         Kadena.Types.Provenance,
         Kadena.Types.Rollback,
         Kadena.Types.SendRequestBody,
-        Kadena.Types.SendResponse,
         Kadena.Types.SignCommand,
         Kadena.Types.SignatureWithHash,
         Kadena.Types.Signature,
@@ -162,9 +159,16 @@ defmodule Kadena.MixProject do
         Kadena.Types.Spec,
         Kadena.Types.SPVProof,
         Kadena.Types.SPVRequestBody,
-        Kadena.Types.SPVResponse,
         Kadena.Types.Step,
         Kadena.Types.Yield
+      ],
+      "Chainweb Types": [
+        Kadena.Chainweb.Types.CommandResult,
+        Kadena.Chainweb.Types.ListenResponse,
+        Kadena.Chainweb.Types.LocalResponse,
+        Kadena.Chainweb.Types.PollResponse,
+        Kadena.Chainweb.Types.SendResponse,
+        Kadena.Chainweb.Types.SPVResponse
       ],
       Utils: Kadena.Utils.MapCase
     ]

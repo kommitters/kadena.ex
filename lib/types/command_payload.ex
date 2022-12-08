@@ -194,7 +194,7 @@ defmodule Kadena.Types.CommandPayload do
           data: extract_data(data),
           pact_id: hash,
           proof: extract_proof(proof),
-          roollback: rollback,
+          rollback: rollback,
           step: number
         }
       }

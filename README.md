@@ -6,15 +6,14 @@
 ![Downloads Badge](https://img.shields.io/hexpm/dt/kadena?style=for-the-badge)
 [![License badge](https://img.shields.io/hexpm/l/kadena?style=for-the-badge)](https://github.com/kommitters/kadena.ex/blob/main/LICENSE)
 
-**Kadena.ex** is an open source library for Elixir that allows developers to interact with the Kadena Chainweb.
+**Kadena.ex** is an open source library for Elixir that allows developers to interact with Kadena Chainweb.
 
 ## What can you do with Kadena.ex?
 
-- Construct commands for transactions.
-- Implement cryptography required by the network.
-- Interacting with public network endpoints:
-  - listen, local, poll, send, spv, cut.
-- Send, test and update smart contracts on the network.
+- Build PACT commands for transactions.
+- Implement the cryptography required by the network.
+- Send, test and update smart contracts.
+- Interact with Chainweb endpoints: `listen, local, poll, send, spv.`
 
 ## Installation
 
@@ -23,21 +22,404 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.8.0"}
+    {:kadena, "~> 0.9.0"}
   ]
 end
 ```
 
+## Configuration
+
+The default HTTP Client is `:hackney`. Options can be passed to `:hackney` via configuration parameters.
+```elixir
+config :kadena, hackney_opts: [{:connect_timeout, 1000}, {:recv_timeout, 5000}]
+```
+
+### Custom HTTP Client
+`kadena.ex` allows you to use the HTTP client of your choice. See [**Kadena.Chainweb.Client.Spec**][http_client_spec] for details.
+
+```elixir
+config :kadena, :http_client_impl, YourApp.CustomClientImpl
+```
+
+### Custom JSON library
+Following the same approach as the HTTP client, the JSON parsing library can also be configured. Defaults to [`Jason`][jason_url].
+
+```elixir
+config :kadena, :json_library, YourApp.CustomJSONLibrary
+```
+
+## Keypairs
+Curve25519 keypair of (PUBLIC,SECRET) match. Key values are base-16 strings of length 32.
+
+### Generate a KeyPair
+
+```elixir
+alias Kadena.Cryptography.KeyPair
+
+# generate a random keypair
+{:ok, keypair} = KeyPair.generate()
+
+{:ok,
+ %Kadena.Types.KeyPair{
+   clist: %Kadena.Types.OptionalCapsList{clist: nil},
+   pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
+   secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
+ }}
+```
+
+### Derive a keyPair from a secret key
+```elixir
+{:ok, keypair} = KeyPair.from_secret_key("e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d")
+
+{:ok,
+ %Kadena.Types.KeyPair{
+   clist: %Kadena.Types.OptionalCapsList{clist: nil},
+   pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
+   secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
+ }}
+```
+
+### Adding capabilities to a KeyPair
+
+```elixir
+alias Kadena.Cryptography.KeyPair
+alias Kadena.Types.CapsList
+
+{:ok, keypair} = KeyPair.from_secret_key("e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d")
+
+clist = Kadena.Types.CapsList.new([
+    [name: "coin.GAS", args: [keypair.pub_key]]
+  ])
+
+keypair_with_caps = Kadena.Types.KeyPair.add_caps(keypair, clist)
+
+%Kadena.Types.KeyPair{
+  clist: %Kadena.Types.OptionalCapsList{
+    clist: %Kadena.Types.CapsList{
+      caps: [
+        %Kadena.Types.Cap{
+          args: %Kadena.Types.PactValuesList{
+            pact_values: [
+              %Kadena.Types.PactValue{
+                literal: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
+              }
+            ]
+          },
+          name: "coin.GAS"
+        }
+      ]
+    }
+  },
+  pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
+  secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
+}
+```
+
+## PACT Commands
+
+`kadena.ex` allows the construction of **execution** and **continuation** commands in a semantic way for developers.
+
+```elixir
+alias Kadena.Cryptography.KeyPair
+alias Kadena.Types.Command
+alias Kadena.Pact
+
+{:ok, keypair} = KeyPair.generate()
+
+code = "(+ 1 2)"
+
+{:ok, %Command{} = command} =
+  Pact.ExecCommand.new()
+  |> Pact.ExecCommand.set_code(code)
+  |> Pact.ExecCommand.add_keypair(keypair)
+  |> Pact.ExecCommand.build()
+```
+
+### Attributes
+
+#### NetworkID
+Backend-specific identifier of target network. Allowed values: `:testnet04` `:mainnet01` `:development`.
+
+```elixir
+alias Kadena.Pact
+
+network_id = :testnet04
+
+Pact.ExecCommand.new() |> Pact.ExecCommand.set_network(network_id)
+```
+
+#### Code
+Executable PACT code.
+
+```elixir
+alias Kadena.Pact
+
+code = "(+ 1 2)"
+
+Pact.ExecCommand.new() |> Pact.ExecCommand.set_code(code)
+```
+
+#### Metadata
+Public metadata for Chainweb.
+
+```elixir
+alias Kadena.Pact
+
+metadata = Kadena.Types.MetaData.new(
+    creation_time: 1_667_249_173,
+    ttl: 28_800,
+    gas_limit: 1000,
+    gas_price: 0.01,
+    sender: "k:37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
+    chain_id: "0"
+  )
+
+Pact.ExecCommand.new() |> Pact.ExecCommand.set_metadata(metadata)
+```
+
+#### Nonce
+An arbitrary user-supplied value. Defaults to current timestamp.
+
+```elixir
+alias Kadena.Pact
+
+nonce = "2023-01-01 00:00:00.000000 UTC"
+
+Pact.ExecCommand.new() |> Pact.ExecCommand.set_nonce(data)
+```
+
+#### EnvData
+Environment transaction data.
+
+```elixir
+alias Kadena.Pact
+
+env_data = %{
+    accounts_admin_keyset: [
+      "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"
+    ]
+  }
+
+Pact.ExecCommand.new() |> Pact.ExecCommand.set_data(data)
+```
+
+#### KeyPairs
+List of KeyPairs for signing.
+
+```elixir
+alias Kadena.Pact
+alias Kadena.Cryptography.KeyPair
+
+{:ok, keypair1} = KeyPair.generate()
+{:ok, keypair2} = KeyPair.generate()
+
+# add a list of keypairs
+Pact.ExecCommand.new() |> Pact.ExecCommand.add_keypairs([keypair1, keypair2])
+
+# add a single keypair
+Pact.ExecCommand.new() |> Pact.ExecCommand.add_keypair(keypair1)
+```
+
+#### Signers
+List of signers for detached signatures.
+
+```elixir
+alias Kadena.Pact
+
+signer1 = Kadena.Types.Signer.new(pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9")
+signer2 = Kadena.Types.Signer.new(pub_key: "8567032f1fe8b99c657338cd46480d0ee1a86985626b16374099d8d406e4d313")
+
+# add a list of signers
+Pact.ExecCommand.new() |> Pact.ExecCommand.add_signers([signer1, signer2])
+
+# add a single signer
+Pact.ExecCommand.new() |> Pact.ExecCommand.add_signer(signer1)
+```
+
+#### Step (Continuation command)
+
+An integer value for the multi-step transaction.
+
+```elixir
+alias Kadena.Pact
+
+step = 1
+
+Pact.ContCommand.new() |> Pact.ContCommand.set_step(step)
+```
+
+#### Proof (Continuation command)
+
+A SPV proof, required for cross-chain transfer.
+
+```elixir
+alias Kadena.Pact
+
+proof = "proof"
+
+Pact.ContCommand.new() |> Pact.ContCommand.set_proof(proof)
+```
+
+#### Rollback (Continuation command)
+
+A Boolean that indicates if the continuation is:
+
+- rollback `true`
+- cancel `false`
+
+```elixir
+alias Kadena.Pact
+
+rollback = true
+
+Pact.ContCommand.new() |> Pact.ContCommand.set_rollback(rollback)
+```
+
+#### PactTxHash (Continuation command)
+
+Continuation transaction hash.
+
+```elixir
+alias Kadena.Pact
+
+pact_tx_hash = "yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4"
+
+Pact.ContCommand.new() |> Pact.ContCommand.set_pact_tx_hash(pact_tx_hash)
+```
+
+### Building an Execution Command
+
+```elixir
+alias Kadena.Cryptography
+alias Kadena.Pact
+
+# set the command attributes
+{:ok, raw_keypair} = Cryptography.KeyPair.from_secret_key("99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4")
+
+caps = Kadena.Types.CapsList.new([
+    [name: "coin.GAS", args: [raw_keypair.pub_key]]
+  ])
+
+keypair = Kadena.Types.KeyPair.add_caps(raw_keypair, caps)
+
+network_id = :testnet04
+
+code = "(+ 1 2)"
+
+metadata = Kadena.Types.MetaData.new(
+    creation_time: 1_667_249_173,
+    ttl: 28_800,
+    gas_limit: 2500,
+    gas_price: 0.01,
+    sender: "k:#{keypair.pub_key}",
+    chain_id: "0"
+  )
+
+nonce = "2023-01-01 00:00:00.000000 UTC"
+
+env_data = %{accounts_admin_keyset: [keypair.pub_key]}
+
+# build the command
+{:ok, %Kadena.Types.Command{} = command} =
+  Pact.ExecCommand.new()
+  |> Pact.ExecCommand.set_network(network_id)
+  |> Pact.ExecCommand.set_code(code)
+  |> Pact.ExecCommand.set_nonce(nonce)
+  |> Pact.ExecCommand.set_data(env_data)
+  |> Pact.ExecCommand.set_metadata(metadata)
+  |> Pact.ExecCommand.add_keypair(keypair)
+  |> Pact.ExecCommand.build()
+
+{:ok, %Kadena.Types.Command{
+  cmd: "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-01-01 00:00:00.000000 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 1 2)\",\"data\":{\"accounts-admin-keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+  hash: %Kadena.Types.PactTransactionHash{
+    hash: "TAGG_ar-gxdeOhyYAJyF4ZtTwV7_3UGHZMUzRB2nVfY"
+  },
+  sigs: %Kadena.Types.SignaturesList{
+    signatures: [
+      %Kadena.Types.Signature{
+        sig: "5f4ce544aef7c439d97720c12eb8996f013d966abdf754dc6b0d353196fc962781ed5a9b982d9b7156bcd4bf19c868053c64e7fb1ad5edf695bfbd8a3225e304"
+      }
+    ]
+  }
+}}
+```
+
+### Building a Continuation Command
+
+```elixir
+alias Kadena.Cryptography
+alias Kadena.Pact
+
+# set the command attributes
+{:ok, raw_keypair} = Cryptography.KeyPair.from_secret_key("99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4")
+
+caps = Kadena.Types.CapsList.new([
+    [name: "coin.GAS", args: [raw_keypair.pub_key]]
+  ])
+
+keypair = Kadena.Types.KeyPair.add_caps(raw_keypair, caps)
+
+network_id = :testnet04
+
+metadata = Kadena.Types.MetaData.new(
+    creation_time: 1_667_249_173,
+    ttl: 28_800,
+    gas_limit: 2500,
+    gas_price: 0.01,
+    sender: "k:#{keypair.pub_key}",
+    chain_id: "0"
+  )
+
+nonce = "2023-01-01 00:00:00.000000 UTC"
+
+env_data = %{accounts_admin_keyset: [keypair.pub_key]}
+
+pact_tx_hash = "yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4"
+
+step = 1
+
+rollback = true
+
+# build the command
+{:ok, %Kadena.Types.Command{} = command} =
+  Pact.ContCommand.new()
+  |> Pact.ContCommand.set_network(network_id)
+  |> Pact.ContCommand.set_data(env_data)
+  |> Pact.ContCommand.set_nonce(nonce)
+  |> Pact.ContCommand.set_metadata(metadata)
+  |> Pact.ContCommand.add_keypair(keypair)
+  |> Pact.ContCommand.set_pact_tx_hash(pact_tx_hash)
+  |> Pact.ContCommand.set_step(step)
+  |> Pact.ContCommand.set_rollback(rollback)
+  |> Pact.ContCommand.build()
+
+{:ok, %Kadena.Types.Command{
+  cmd: "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-01-01 00:00:00.000000 UTC\",\"payload\":{\"cont\":{\"data\":{\"accounts-admin-keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":true,\"step\":1}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+  hash: %Kadena.Types.PactTransactionHash{
+    hash: "teDAH5S3H0DgzYWL-NKOTA-D2sIT01hDYHxpKRZv6zc"
+  },
+  sigs: %Kadena.Types.SignaturesList{
+    signatures: [
+      %Kadena.Types.Signature{
+        sig: "708777a672ebf3f29d936a75677305a2a77add7380abede734696dddc4cbbfd62d8cfc1e236e7a8e1df07632233a05c697157ef7a58fcf67a91d6c4791ca7807"
+      }
+    ]
+  }
+}}
+```
+
+---
+
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.9`
+The latest updated branch to target a PR is `v0.10`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
 - [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
-- [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 
 ### Done - What we've already developed! 🚀
 
@@ -62,158 +444,9 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [Wallet types](https://github.com/kommitters/kadena.ex/issues/18)
 - [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 - [Kadena Pact](https://github.com/kommitters/kadena.ex/issues/55)
+- [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 
 </details>
-
----
-
-## Building Commands
-
-This library allows to build command payloads in a composable and semantic manner.
-These commands are intended to be used as the request body to the Pact API endpoints.
-
-There are two type of commands:
-
-- [`Execution`](#execution-command)
-- `Continuation`.
-
-### Execution Command
-
-To create an execution command is needed:
-
-- [NetworkID](#networkid)
-- [Code](#code)
-- [Nonce](#nonce)
-- [EnvData](#envdata) (optional)
-- [MetaData](#metadata)
-- [KeyPairs](#keypair)
-- [Signers](#signerslist)
-
-The following example shows how to create an execution command:
-
-```elixir
-Kadena.Pact.ExecCommand.new()
-  |> Kadena.Pact.ExecCommand.set_network(network_id)
-  |> Kadena.Pact.ExecCommand.set_code(code)
-  |> Kadena.Pact.ExecCommand.set_nonce(nonce)
-  |> Kadena.Pact.ExecCommand.set_data(env_data)
-  |> Kadena.Pact.ExecCommand.set_metadata(keypair)
-  |> Kadena.Pact.ExecCommand.add_keypair(keypair)
-  |> Kadena.Pact.ExecCommand.add_signers(signers_list)
-  |> Kadena.Pact.ExecCommand.build()
-```
-
-#### NetworkID
-
-There are three options allowed to set a NetworkID:
-
-- `:testnet04`
-- `:mainnet01`
-- `:development`
-
-#### Code
-
-String value that represents the Pact code to execute in the `Execution Command`.
-
-#### Nonce
-
-String value to ensure unique hash. You can use current timestamp.
-
-#### EnvData
-
-A map must be provided to create an environment data, for example:
-
-```elixir
-data = %{
-  accounts_admin_keyset: [
-    "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"
-  ]
-}
-
-Kadena.Types.EnvData.new(data)
-```
-
-#### MetaData
-
-To create a MetaData:
-
-```elixir
-raw_metadata = [
-  creation_time: 0,
-  ttl: 0,
-  gas_limit: 2500,
-  gas_price: 1.0e-2,
-  sender: "account_name",
-  chain_id: "0"
-]
-
-Kadena.Types.MetaData.new(raw_metadata)
-```
-
-#### KeyPairs
-
-There are two ways to get a keypair:
-
-```elixir
-# generate a random keypair
-{:ok, %Kadena.Types.KeyPair{} = keypair} = Kadena.Cryptography.KeyPair.generate()
-
-# derive a keypair from a secret key
-secret_key = "secret_key_value"
-{:ok, %Kadena.Types.KeyPair{} = keypair} = Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
-```
-
-
-**KeyPairs with Capabilites**
-
-Creating a keypair with capabilities:
-
-```elixir
-clist =
-  Kadena.Types.CapsList.new([
-    [name: "gas", args: ["COIN.gas", 0.02]],
-    [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
-  ])
-
-keypair_values = [
-  pub_key: "pub_key_value",
-  secret_key: "secret_key_value",
-  clist: clist
-]
-
-Kadena.Types.KeyPair.new(keypair_values)
-```
-
-Adding capabilities to existing keypair:
-```elixir
-clist =
-  Kadena.Types.CapsList.new([
-    [name: "gas", args: ["COIN.gas", 0.02]],
-    [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
-  ])
-
-
-secret_key = "secret_key_value"
-{:ok, %Kadena.Types.KeyPair{} = keypair} = Kadena.Cryptography.KeyPair.from_secret_key(secret_key)
-
-keypair_with_clist = Kadena.Types.KeyPair.add_caps(keypair, clist)
-```
-
-#### SignersList
-
-There are two ways to create a list of signers:
-
-```elixir
-# with Keywords
-signer1 = [pub_key: "pub_key_1"]
-signer2 = [pub_key: "pub_key_2"]
-
-# with Signer structs
-signer1 = Kadena.Types.Signer.new([pub_key: "pub_key_1"])
-signer2 = Kadena.Types.Signer.new([pub_key: "pub_key_2"])
-
-Kadena.Types.SignersList.new([signer1, signer2])
-```
 
 ---
 
@@ -255,3 +488,5 @@ Made with 💙 by [kommitters Open Source](https://kommit.co)
 [contributing]: https://github.com/kommitters/kadena.ex/blob/main/CONTRIBUTING.md
 [roadmap]: https://github.com/orgs/kommitters/projects/5/views/3
 [good-first-issues]: https://github.com/kommitters/kadena.ex/labels/%F0%9F%91%8B%20Good%20first%20issue
+[http_client_spec]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/client/spec.ex
+[jason_url]: https://github.com/michalmuskala/jason
