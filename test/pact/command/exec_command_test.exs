@@ -10,6 +10,7 @@ defmodule Kadena.Pact.ExecCommandTest do
   alias Kadena.Types.{
     CapsList,
     Command,
+    EnvData,
     KeyPair,
     MetaData,
     PactTransactionHash,
@@ -31,6 +32,12 @@ defmodule Kadena.Pact.ExecCommandTest do
 
       keypair_data = [pub_key: pub_key, secret_key: secret_key, clist: clist]
 
+      env_data = %{
+        accounts_admin_keyset: [
+          pub_key
+        ]
+      }
+
       raw_meta_data = [
         creation_time: 1_667_249_173,
         ttl: 28_800,
@@ -41,6 +48,7 @@ defmodule Kadena.Pact.ExecCommandTest do
       ]
 
       %{
+        env_data: EnvData.new(env_data),
         meta_data: MetaData.new(raw_meta_data),
         keypair: KeyPair.new(keypair_data),
         signer:
@@ -86,6 +94,38 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_metadata(meta_data)
         |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.add_signer(signer)
+        |> ExecCommand.build()
+    end
+
+    test "with a valid pipe creation, generating signers from keypairs", %{
+      meta_data: meta_data,
+      keypair: keypair,
+      nonce: nonce,
+      code: code,
+      env_data: env_data
+    } do
+      %Command{
+        cmd:
+          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{\"accountsAdminKeyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":null}]}",
+        hash: %Kadena.Types.PactTransactionHash{
+          hash: "ByluQymWgcauzShjiL2t-dxppPAV6oVOE0R0otajTgM"
+        },
+        sigs: %Kadena.Types.SignaturesList{
+          signatures: [
+            %Kadena.Types.Signature{
+              sig:
+                "2d4bef55499276ffd36b9118aa26d59113aa00cc63df52a3e35e2dbdeb50ae697d83b8d8f7be478d230ddc87bea09980c570ce0d07759ce0a6c16ed050a1a203"
+            }
+          ]
+        }
+      } =
+        ExecCommand.new()
+        |> ExecCommand.set_network(:testnet04)
+        |> ExecCommand.set_data(env_data)
+        |> ExecCommand.set_code(code)
+        |> ExecCommand.set_nonce(nonce)
+        |> ExecCommand.set_metadata(meta_data)
+        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.build()
     end
 

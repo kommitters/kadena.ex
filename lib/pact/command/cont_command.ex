@@ -74,7 +74,7 @@ defmodule Kadena.Pact.ContCommand do
     :step,
     :proof,
     :rollback,
-    :signers,
+    signers: [],
     keypairs: []
   ]
 
@@ -91,7 +91,7 @@ defmodule Kadena.Pact.ContCommand do
     proof = Keyword.get(opts, :proof)
     rollback = Keyword.get(opts, :rollback, %Rollback{})
     keypairs = Keyword.get(opts, :keypairs, [])
-    signers = Keyword.get(opts, :signers, %SignersList{})
+    signers = Keyword.get(opts, :signers, [])
 
     %__MODULE__{}
     |> set_network(network_id)
@@ -119,6 +119,9 @@ defmodule Kadena.Pact.ContCommand do
   def set_network({:error, reason}, _network), do: {:error, reason}
 
   @impl true
+  def set_data(%__MODULE__{} = cmd_request, %EnvData{} = data),
+    do: %{cmd_request | data: data}
+
   def set_data(%__MODULE__{} = cmd_request, data) do
     case EnvData.new(data) do
       %EnvData{} -> %{cmd_request | data: data}
@@ -162,7 +165,7 @@ defmodule Kadena.Pact.ContCommand do
   def add_keypairs({:error, reason}, _keypairs), do: {:error, reason}
 
   @impl true
-  def add_signer(%__MODULE__{signers: nil} = cmd_request, %Signer{} = signer),
+  def add_signer(%__MODULE__{signers: []} = cmd_request, %Signer{} = signer),
     do: %{cmd_request | signers: SignersList.new([signer])}
 
   def add_signer(%__MODULE__{signers: signer_list} = cmd_request, %Signer{} = signer) do
@@ -215,7 +218,8 @@ defmodule Kadena.Pact.ContCommand do
           keypairs: keypairs
         } = cmd_request
       ) do
-    with {:ok, payload} <- create_payload(cmd_request),
+    with {:ok, cmd_request} <- set_signers_from_keypair(cmd_request),
+         {:ok, payload} <- create_payload(cmd_request),
          {:ok, cmd} <- command_to_json_string(payload, cmd_request),
          {:ok, sig_commands} <- sign_commands([], cmd, keypairs),
          {:ok, hash} <- Hash.pull_unique(sig_commands),
@@ -226,6 +230,32 @@ defmodule Kadena.Pact.ContCommand do
   end
 
   def build(_module), do: {:error, [exec_command_request: :invalid_payload]}
+
+  @spec set_signers_from_keypair(t()) :: {:ok, t()}
+  defp set_signers_from_keypair(
+         %__MODULE__{
+           signers: signers
+         } = cmd_request
+       )
+       when signers != [],
+       do: {:ok, cmd_request}
+
+  defp set_signers_from_keypair(
+         %__MODULE__{
+           signers: signers
+         } = cmd_request
+       )
+       when signers == [],
+       do: {:ok, set_signers(cmd_request)}
+
+  @spec set_signers(t()) :: t()
+  defp set_signers(%__MODULE__{keypairs: key_pairs} = cmd_request) do
+    Enum.map(key_pairs, fn %KeyPair{pub_key: pub_key, clist: clist} ->
+      Signer.new(pub_key: pub_key, clist: clist)
+    end)
+    |> SignersList.new()
+    |> (&add_signers(cmd_request, &1)).()
+  end
 
   @spec create_payload(t()) :: valid_payload()
   defp create_payload(%__MODULE__{

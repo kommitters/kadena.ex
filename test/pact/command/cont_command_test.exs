@@ -10,6 +10,7 @@ defmodule Kadena.Pact.ContCommandTest do
   alias Kadena.Types.{
     CapsList,
     Command,
+    EnvData,
     KeyPair,
     MetaData,
     PactTransactionHash,
@@ -31,6 +32,12 @@ defmodule Kadena.Pact.ContCommandTest do
 
       keypair_data = [pub_key: pub_key, secret_key: secret_key, clist: clist]
 
+      env_data = %{
+        accounts_admin_keyset: [
+          pub_key
+        ]
+      }
+
       raw_meta_data = [
         creation_time: 1_667_249_173,
         ttl: 28_800,
@@ -42,6 +49,7 @@ defmodule Kadena.Pact.ContCommandTest do
 
       %{
         metadata: MetaData.new(raw_meta_data),
+        env_data: EnvData.new(env_data),
         keypair: KeyPair.new(keypair_data),
         signer:
           Signer.new(
@@ -85,6 +93,40 @@ defmodule Kadena.Pact.ContCommandTest do
         |> ContCommand.set_metadata(metadata)
         |> ContCommand.add_keypair(keypair)
         |> ContCommand.add_signer(signer)
+        |> ContCommand.set_pact_tx_hash(pact_tx_hash)
+        |> ContCommand.set_step(0)
+        |> ContCommand.set_rollback(false)
+        |> ContCommand.build()
+    end
+
+    test "with a valid pipe creation, generating signers from keypairs", %{
+      pact_tx_hash: pact_tx_hash,
+      metadata: metadata,
+      keypair: keypair,
+      env_data: env_data,
+      nonce: nonce
+    } do
+      %Command{
+        cmd:
+          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{\"accountsAdminKeyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":null}]}",
+        hash: %PactTransactionHash{
+          hash: "VVLT19HuCp661ySnd1B54YT__NmDvoZdeQSmelvuaZE"
+        },
+        sigs: %SignaturesList{
+          signatures: [
+            %Signature{
+              sig:
+                "0297b47a872213e929d724d8d00464572138418e6af5dac50fa8f2235f80ce056524152853cbb9c9c4f450a80644ec4b1c30ef7ac1b163a4654c9bfb24bb620f"
+            }
+          ]
+        }
+      } =
+        ContCommand.new()
+        |> ContCommand.set_network(:testnet04)
+        |> ContCommand.set_data(env_data)
+        |> ContCommand.set_nonce(nonce)
+        |> ContCommand.set_metadata(metadata)
+        |> ContCommand.add_keypair(keypair)
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_step(0)
         |> ContCommand.set_rollback(false)

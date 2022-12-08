@@ -26,7 +26,12 @@ defmodule Kadena.Types.MetaData do
           chain_id: chain_id()
         }
 
-  defstruct [:creation_time, :ttl, :gas_limit, :gas_price, :sender, :chain_id]
+  defstruct creation_time: 0,
+            ttl: 0,
+            gas_limit: 0,
+            gas_price: 0,
+            sender: "",
+            chain_id: %ChainID{id: ""}
 
   @impl true
   def new(args) when is_list(args) do
