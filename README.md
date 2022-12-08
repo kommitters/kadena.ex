@@ -245,7 +245,7 @@ alias Kadena.Pact
 
 step = 1
 
-Pact.ExecCommand.new() |> Pact.ExecCommand.set_step(step)
+Pact.ContCommand.new() |> Pact.ContCommand.set_step(step)
 ```
 
 #### Proof (Continuation command)
@@ -257,7 +257,7 @@ alias Kadena.Pact
 
 proof = "proof"
 
-Pact.ExecCommand.new() |> Pact.ExecCommand.set_proof(proof)
+Pact.ContCommand.new() |> Pact.ContCommand.set_proof(proof)
 ```
 
 #### Rollback (Continuation command)
@@ -272,7 +272,7 @@ alias Kadena.Pact
 
 rollback = true
 
-Pact.ExecCommand.new() |> Pact.ExecCommand.set_rollback(rollback)
+Pact.ContCommand.new() |> Pact.ContCommand.set_rollback(rollback)
 ```
 
 #### PactTxHash (Continuation command)
@@ -284,7 +284,7 @@ alias Kadena.Pact
 
 pact_tx_hash = "yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4"
 
-Pact.ExecCommand.new() |> Pact.ExecCommand.set_pact_tx_hash(pact_tx_hash)
+Pact.ContCommand.new() |> Pact.ContCommand.set_pact_tx_hash(pact_tx_hash)
 ```
 
 ### Building an Execution Command
@@ -488,5 +488,5 @@ Made with 💙 by [kommitters Open Source](https://kommit.co)
 [contributing]: https://github.com/kommitters/kadena.ex/blob/main/CONTRIBUTING.md
 [roadmap]: https://github.com/orgs/kommitters/projects/5/views/3
 [good-first-issues]: https://github.com/kommitters/kadena.ex/labels/%F0%9F%91%8B%20Good%20first%20issue
-[http_client_spec]: https://github.com/kommitters/kadena.ex/blob/main/lib/kadena/client/spec.ex
+[http_client_spec]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/client/spec.ex
 [jason_url]: https://github.com/michalmuskala/jason
