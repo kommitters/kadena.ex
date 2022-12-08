@@ -197,6 +197,22 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.build()
     end
 
+    test "with only code", %{
+      code: code
+    } do
+      %Command{
+        cmd:
+          "{\"meta\":{\"chainId\":\"\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":null,\"nonce\":\"\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":null}},\"signers\":[]}",
+        hash: %PactTransactionHash{
+          hash: "EOJAI1UaQZ3T4Zzv9V95Rhu89dI7gQqltTVA_qdHr4w"
+        },
+        sigs: %SignaturesList{signatures: []}
+      } =
+        ExecCommand.new()
+        |> ExecCommand.set_code(code)
+        |> ExecCommand.build()
+    end
+
     test "with a keypair list", %{
       meta_data: meta_data,
       keypair: keypair,

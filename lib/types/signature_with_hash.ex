@@ -34,6 +34,7 @@ defmodule Kadena.Types.SignatureWithHash do
 
   @spec validate_sig(sig :: sig()) :: validation()
   defp validate_sig(sig) when is_binary(sig), do: {:ok, sig}
+  defp validate_sig(nil), do: {:ok, nil}
   defp validate_sig(_sig), do: {:error, [sig: :invalid]}
 
   @spec set_signature_type(pub_key :: pub_key()) :: sig_type()
