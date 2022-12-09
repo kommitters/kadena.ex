@@ -171,6 +171,24 @@ defmodule Kadena.Pact.ContCommandTest do
       } = ContCommand.build(cont_command)
     end
 
+    test "with only requeried arguments", %{
+      pact_tx_hash: pact_tx_hash
+    } do
+      %Command{
+        cmd:
+          "{\"meta\":{\"chainId\":\"\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":null,\"nonce\":\"\",\"payload\":{\"cont\":{\"data\":null,\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[]}",
+        hash: %PactTransactionHash{
+          hash: "Ky0LUFQqbnxAE1dQ7qGIrwxc0klVQb8texV8DqlyAkY"
+        },
+        sigs: %SignaturesList{signatures: []}
+      } =
+        ContCommand.new()
+        |> ContCommand.set_pact_tx_hash(pact_tx_hash)
+        |> ContCommand.set_step(0)
+        |> ContCommand.set_rollback(false)
+        |> ContCommand.build()
+    end
+
     test "with a keypair list", %{
       pact_tx_hash: pact_tx_hash,
       metadata: metadata,

@@ -242,11 +242,15 @@ defmodule Kadena.Pact.ContCommand do
 
   defp set_signers_from_keypair(
          %__MODULE__{
-           signers: signers
+           signers: signers,
+           keypairs: keypairs
          } = cmd_request
-       )
-       when signers == [],
-       do: {:ok, set_signers(cmd_request)}
+       ) do
+    case signers == [] && keypairs != [] do
+      true -> {:ok, set_signers(cmd_request)}
+      false -> {:ok, cmd_request}
+    end
+  end
 
   @spec set_signers(t()) :: t()
   defp set_signers(%__MODULE__{keypairs: key_pairs} = cmd_request) do
@@ -303,6 +307,11 @@ defmodule Kadena.Pact.ContCommand do
 
   @spec sign_commands(signs :: list(), cmd :: json_string_payload(), keypairs()) ::
           valid_sign_commands()
+  defp sign_commands([], cmd, []) do
+    {:ok, sign_command} = Sign.sign(cmd, nil)
+    {:ok, [sign_command]}
+  end
+
   defp sign_commands(signs, _cmd, []), do: {:ok, signs}
 
   defp sign_commands(signs, cmd, [%KeyPair{} = keypair | keypairs]) do
