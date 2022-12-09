@@ -5,7 +5,7 @@ defmodule Kadena.Pact.ExecCommand do
   @behaviour Kadena.Pact.Command
 
   alias Kadena.Chainweb.Pact.JSONPayload
-  alias Kadena.Cryptography.Sign
+  alias Kadena.Cryptography.{Sign, Utils}
   alias Kadena.Pact.Command.Hash
 
   alias Kadena.Types.{
@@ -126,8 +126,10 @@ defmodule Kadena.Pact.ExecCommand do
   def set_metadata({:error, reason}, _metadata), do: {:error, reason}
 
   @impl true
-  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair),
-    do: %{cmd_request | keypairs: keypairs ++ [keypair]}
+  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair) do
+    cmd_request = %{cmd_request | keypairs: keypairs ++ [keypair]}
+    set_signers_from_keypair(cmd_request, keypair)
+  end
 
   def add_keypair(%__MODULE__{}, _keypair), do: {:error, [keypair: :invalid]}
   def add_keypair({:error, reason}, _keypair), do: {:error, reason}
@@ -157,8 +159,13 @@ defmodule Kadena.Pact.ExecCommand do
   def add_signer({:error, reason}, _signer), do: {:error, reason}
 
   @impl true
-  def add_signers(%__MODULE__{} = cmd_request, %SignersList{} = list),
+  def add_signers(%__MODULE__{signers: []} = cmd_request, %SignersList{} = list),
     do: %{cmd_request | signers: list}
+
+  def add_signers(%__MODULE__{signers: signer_list} = cmd_request, %SignersList{signers: signers}) do
+    %SignersList{signers: old_signers} = signer_list
+    %{cmd_request | signers: SignersList.new(old_signers ++ signers)}
+  end
 
   def add_signers(%__MODULE__{}, _signers), do: {:error, [signers: :invalid]}
   def add_signers({:error, reason}, _signers), do: {:error, reason}
@@ -171,8 +178,7 @@ defmodule Kadena.Pact.ExecCommand do
           data: data
         } = cmd_request
       ) do
-    with {:ok, cmd_request} <- set_signers_from_keypair(cmd_request),
-         {:ok, payload} <- create_payload(code, data),
+    with {:ok, payload} <- create_payload(code, data),
          {:ok, cmd} <- command_to_json_string(payload, cmd_request),
          {:ok, sig_commands} <- sign_commands([], cmd, keypairs),
          {:ok, hash} <- Hash.pull_unique(sig_commands),
@@ -184,34 +190,10 @@ defmodule Kadena.Pact.ExecCommand do
 
   def build(_module), do: {:error, [exec_command_request: :invalid_payload]}
 
-  @spec set_signers_from_keypair(t()) :: {:ok, t()}
-  defp set_signers_from_keypair(
-         %__MODULE__{
-           signers: signers
-         } = cmd_request
-       )
-       when signers != [],
-       do: {:ok, cmd_request}
-
-  defp set_signers_from_keypair(
-         %__MODULE__{
-           signers: signers,
-           keypairs: keypairs
-         } = cmd_request
-       ) do
-    case signers == [] && keypairs != [] do
-      true -> {:ok, set_signers(cmd_request)}
-      false -> {:ok, cmd_request}
-    end
-  end
-
-  @spec set_signers(t()) :: t()
-  defp set_signers(%__MODULE__{keypairs: key_pairs} = cmd_request) do
-    Enum.map(key_pairs, fn %KeyPair{pub_key: pub_key, clist: clist} ->
-      Signer.new(pub_key: pub_key, clist: clist, schema: :ed25519)
-    end)
-    |> SignersList.new()
-    |> (&add_signers(cmd_request, &1)).()
+  @spec set_signers_from_keypair(t(), keypair()) :: t()
+  defp set_signers_from_keypair(cmd_request, %KeyPair{pub_key: pub_key, clist: clist}) do
+    signer = Signer.new(pub_key: pub_key, clist: clist, scheme: :ed25519)
+    add_signer(cmd_request, signer)
   end
 
   @spec create_payload(code :: code(), data :: data()) :: valid_payload()
@@ -254,9 +236,12 @@ defmodule Kadena.Pact.ExecCommand do
 
   @spec sign_commands(signs :: list(), cmd :: json_string_payload(), keypairs()) ::
           valid_sign_commands()
-  defp sign_commands([], cmd, []) do
-    {:ok, sign_command} = Sign.sign(cmd, nil)
-    {:ok, [sign_command]}
+  defp sign_commands(signs, cmd, []) when signs == [] do
+    cmd
+    |> Utils.blake2b_hash(byte_size: 32)
+    |> Utils.url_encode64()
+    |> (&SignCommand.new(hash: &1)).()
+    |> (&{:ok, [&1]}).()
   end
 
   defp sign_commands(signs, _cmd, []), do: {:ok, signs}

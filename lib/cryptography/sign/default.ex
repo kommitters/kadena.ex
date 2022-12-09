@@ -19,13 +19,6 @@ defmodule Kadena.Cryptography.Sign.Default do
   @edwards_curve_ed :ed25519
 
   @impl true
-  def sign(msg, nil) do
-    with bin_msg <- blake2b_hash(msg, byte_size: 32),
-         hash <- url_encode64(bin_msg) do
-      {:ok, SignCommand.new(hash: hash)}
-    end
-  end
-
   def sign(msg, %KeyPair{pub_key: pub_key, secret_key: secret_key}) do
     with bin_msg <- blake2b_hash(msg, byte_size: 32),
          hash <- url_encode64(bin_msg),
