@@ -202,9 +202,9 @@ defmodule Kadena.Pact.ExecCommandTest do
     } do
       %Command{
         cmd:
-          "{\"meta\":{\"chainId\":\"\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":null,\"nonce\":\"\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":null}},\"signers\":[]}",
+          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":null,\"nonce\":\"\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":null}},\"signers\":[]}",
         hash: %PactTransactionHash{
-          hash: "EOJAI1UaQZ3T4Zzv9V95Rhu89dI7gQqltTVA_qdHr4w"
+          hash: "UKgNDSO6gc78eUwZf2PHLIfG4mHHth0ol52n4JtjwS0"
         },
         sigs: %SignaturesList{signatures: []}
       } =
@@ -219,15 +219,15 @@ defmodule Kadena.Pact.ExecCommandTest do
     } do
       %Command{
         cmd:
-          "{\"meta\":{\"chainId\":\"\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":null,\"nonce\":\"\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":null}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":null,\"nonce\":\"\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":null}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
         hash: %PactTransactionHash{
-          hash: "lcziFYPM4wh_Vg2GtxR9guiGbYoIHhxYiI1-quGStG4"
+          hash: "4HznR8QoUaRavOcEm9FbjO7JX7ID_LNhV5NCegYJLHQ"
         },
         sigs: %SignaturesList{
           signatures: [
             %Signature{
               sig:
-                "867ea3832b9aa32640d07be639d4ac1232fd93b26c47f50c5a82687c9ef38c6f0f9f78533fa3f2ed1028a6bdc0c0f8a980ff2a456ad42bcbac039cb50acd360a"
+                "77a0c4964ebc983a049082086f2d1fcccce32d4e72d9bdc377e21ef4dbec202813a6088ec683a13617ab723038bc4be7a122e37274b3a6f82ecc1e5a003a930f"
             }
           ]
         }
@@ -246,9 +246,9 @@ defmodule Kadena.Pact.ExecCommandTest do
 
       %Command{
         cmd:
-          "{\"meta\":{\"chainId\":\"\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":null,\"nonce\":\"\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":null}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":null,\"nonce\":\"\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":null}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
         hash: %PactTransactionHash{
-          hash: "dV65hUfxM6MELiBe0hriqtzIPEzAsXqBbpKJqsusoe0"
+          hash: "FSel8P9Mb4NhBE6eamiF_jHtQUycrKtGjeJOVL_sQV4"
         },
         sigs: %SignaturesList{
           signatures: []

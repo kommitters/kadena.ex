@@ -309,22 +309,6 @@ defmodule Kadena.Types.CommandPayloadTest do
           signers: signers
         )
     end
-
-    test "with invalid nonce", %{
-      network_id: network_id,
-      cont_payload: cont_payload,
-      signers: signers,
-      meta: meta
-    } do
-      {:error, [nonce: :not_a_string]} =
-        CommandPayload.new(
-          network_id: network_id,
-          payload: cont_payload,
-          signers: signers,
-          meta: meta,
-          nonce: 12_345
-        )
-    end
   end
 
   describe "JSONPayload.parse/1" do

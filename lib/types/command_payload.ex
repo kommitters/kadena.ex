@@ -79,7 +79,7 @@ defmodule Kadena.Types.CommandPayload do
 
   @spec validate_meta(meta :: meta()) :: validation()
   defp validate_meta(%MetaData{} = meta), do: {:ok, meta}
-  defp validate_meta(nil), do: {:ok, %MetaData{}}
+  defp validate_meta(nil), do: {:ok, MetaData.new()}
 
   defp validate_meta(meta) do
     case MetaData.new(meta) do
@@ -89,9 +89,7 @@ defmodule Kadena.Types.CommandPayload do
   end
 
   @spec validate_nonce(nonce :: nonce()) :: validation()
-  defp validate_nonce(nonce) when is_binary(nonce), do: {:ok, nonce}
-  defp validate_nonce(nil), do: {:ok, to_string(nil)}
-  defp validate_nonce(_nonce), do: {:error, [nonce: :not_a_string]}
+  defp validate_nonce(nonce), do: {:ok, to_string(nonce)}
 
   defimpl Kadena.Chainweb.Pact.JSONPayload do
     alias Kadena.Utils.MapCase

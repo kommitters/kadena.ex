@@ -31,7 +31,10 @@ defmodule Kadena.Types.MetaData do
             gas_limit: 0,
             gas_price: 0,
             sender: "",
-            chain_id: %ChainID{id: ""}
+            chain_id: %ChainID{id: "0"}
+
+  @impl true
+  def new, do: %__MODULE__{}
 
   @impl true
   def new(args) when is_list(args) do

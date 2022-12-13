@@ -236,7 +236,7 @@ defmodule Kadena.Pact.ExecCommand do
 
   @spec sign_commands(signs :: list(), cmd :: json_string_payload(), keypairs()) ::
           valid_sign_commands()
-  defp sign_commands(signs, cmd, []) when signs == [] do
+  defp sign_commands([], cmd, []) do
     cmd
     |> Utils.blake2b_hash(byte_size: 32)
     |> Utils.url_encode64()
