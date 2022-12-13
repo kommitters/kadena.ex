@@ -14,7 +14,10 @@ defmodule Kadena.Chainweb.Pact.Request do
   alias Kadena.Chainweb.Types.{
     ListenResponse,
     LocalResponse,
-    PollResponse,
+    PollResponse
+  }
+
+  alias Kadena.Chainweb.Resources.{
     SendResponse,
     SPVResponse
   }
