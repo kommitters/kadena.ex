@@ -7,11 +7,10 @@ defmodule Kadena.Chainweb.Resources.SPVResponse do
 
   @behaviour Kadena.Chainweb.Resource
 
-  @type str :: String.t()
-  @type spv_proof :: SPVProof.t()
-  @type validation :: t() | {:error, Keyword.t()}
+  @type response :: String.t()
+  @type spv_proof :: SPVProof.t() | {:error, Keyword.t()}
 
-  @type t :: %__MODULE__{response: str()}
+  @type t :: %__MODULE__{response: response()}
 
   defstruct [:response]
 
@@ -23,6 +22,6 @@ defmodule Kadena.Chainweb.Resources.SPVResponse do
   end
 
   @spec build_spv_response(spv_proof :: spv_proof()) :: t()
-  def build_spv_response(%SPVProof{value: response}), do: %__MODULE__{response: response}
-  def build_spv_response(_error), do: %__MODULE__{}
+  defp build_spv_response(%SPVProof{value: response}), do: %__MODULE__{response: response}
+  defp build_spv_response(_error), do: %__MODULE__{}
 end
