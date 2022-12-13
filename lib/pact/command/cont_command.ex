@@ -41,7 +41,7 @@ defmodule Kadena.Pact.ContCommand do
   @type signers :: SignersList.t()
   @type sign_command :: SignCommand.t()
   @type sign_commands :: list(sign_command())
-  @type step :: number()
+  @type step :: integer()
   @type valid_command :: {:ok, command()}
   @type valid_command_json_string :: {:ok, json_string_payload()}
   @type valid_payload :: {:ok, pact_payload()}
@@ -165,12 +165,6 @@ defmodule Kadena.Pact.ContCommand do
   def add_keypairs({:error, reason}, _keypairs), do: {:error, reason}
 
   @impl true
-  def add_signer(
-        %__MODULE__{signers: %SignersList{signers: []}} = cmd_request,
-        %Signer{} = signer
-      ),
-      do: %{cmd_request | signers: SignersList.new([signer])}
-
   def add_signer(%__MODULE__{signers: signer_list} = cmd_request, %Signer{} = signer) do
     %SignersList{signers: signers} = signer_list
     %{cmd_request | signers: SignersList.new(signers ++ [signer])}
@@ -180,12 +174,6 @@ defmodule Kadena.Pact.ContCommand do
   def add_signer({:error, reason}, _signer), do: {:error, reason}
 
   @impl true
-  def add_signers(
-        %__MODULE__{signers: %SignersList{signers: []}} = cmd_request,
-        %SignersList{} = list
-      ),
-      do: %{cmd_request | signers: list}
-
   def add_signers(%__MODULE__{signers: signer_list} = cmd_request, %SignersList{signers: signers}) do
     %SignersList{signers: old_signers} = signer_list
     %{cmd_request | signers: SignersList.new(old_signers ++ signers)}

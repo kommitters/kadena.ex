@@ -157,12 +157,6 @@ defmodule Kadena.Pact.ExecCommand do
   def add_keypairs({:error, reason}, _keypairs), do: {:error, reason}
 
   @impl true
-  def add_signer(
-        %__MODULE__{signers: %SignersList{signers: []}} = cmd_request,
-        %Signer{} = signer
-      ),
-      do: %{cmd_request | signers: SignersList.new([signer])}
-
   def add_signer(%__MODULE__{signers: signer_list} = cmd_request, %Signer{} = signer) do
     %SignersList{signers: signers} = signer_list
     %{cmd_request | signers: SignersList.new(signers ++ [signer])}
@@ -172,12 +166,6 @@ defmodule Kadena.Pact.ExecCommand do
   def add_signer({:error, reason}, _signer), do: {:error, reason}
 
   @impl true
-  def add_signers(
-        %__MODULE__{signers: %SignersList{signers: []}} = cmd_request,
-        %SignersList{} = list
-      ),
-      do: %{cmd_request | signers: list}
-
   def add_signers(%__MODULE__{signers: signer_list} = cmd_request, %SignersList{signers: signers}) do
     %SignersList{signers: old_signers} = signer_list
     %{cmd_request | signers: SignersList.new(old_signers ++ signers)}
