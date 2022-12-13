@@ -26,24 +26,18 @@ defmodule Kadena.Types.MetaData do
           chain_id: chain_id()
         }
 
-  defstruct creation_time: 0,
-            ttl: 0,
-            gas_limit: 0,
-            gas_price: 0,
-            sender: "",
-            chain_id: %ChainID{id: "0"}
+  defstruct [:creation_time, :ttl, :gas_limit, :gas_price, :sender, :chain_id]
 
   @impl true
-  def new, do: %__MODULE__{}
+  def new(args \\ [])
 
-  @impl true
   def new(args) when is_list(args) do
-    creation_time = Keyword.get(args, :creation_time)
-    ttl = Keyword.get(args, :ttl)
-    gas_limit = Keyword.get(args, :gas_limit)
-    gas_price = Keyword.get(args, :gas_price)
-    sender = Keyword.get(args, :sender)
-    chain_id = Keyword.get(args, :chain_id)
+    creation_time = Keyword.get(args, :creation_time, 0)
+    ttl = Keyword.get(args, :ttl, 0)
+    gas_limit = Keyword.get(args, :gas_limit, 0)
+    gas_price = Keyword.get(args, :gas_price, 0)
+    sender = Keyword.get(args, :sender, "")
+    chain_id = Keyword.get(args, :chain_id, "0")
 
     with {:ok, creation_time} <- validate_creation_time(creation_time),
          {:ok, ttl} <- validate_number(:ttl, ttl),

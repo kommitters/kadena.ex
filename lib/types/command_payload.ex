@@ -79,7 +79,7 @@ defmodule Kadena.Types.CommandPayload do
 
   @spec validate_meta(meta :: meta()) :: validation()
   defp validate_meta(%MetaData{} = meta), do: {:ok, meta}
-  defp validate_meta(nil), do: {:ok, MetaData.new()}
+  defp validate_meta(nil), do: {:ok, MetaData.new([])}
 
   defp validate_meta(meta) do
     case MetaData.new(meta) do

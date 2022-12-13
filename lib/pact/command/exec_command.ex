@@ -55,7 +55,15 @@ defmodule Kadena.Pact.ExecCommand do
           signers: signers()
         }
 
-  defstruct [:network_id, :meta_data, :code, :nonce, :data, keypairs: [], signers: []]
+  defstruct [
+    :network_id,
+    :meta_data,
+    :code,
+    :nonce,
+    :data,
+    keypairs: [],
+    signers: SignersList.new()
+  ]
 
   @impl true
   def new(opts \\ nil)
@@ -65,9 +73,9 @@ defmodule Kadena.Pact.ExecCommand do
     code = Keyword.get(opts, :code, "")
     data = Keyword.get(opts, :data)
     nonce = Keyword.get(opts, :nonce, "")
-    meta_data = Keyword.get(opts, :meta_data, %MetaData{})
+    meta_data = Keyword.get(opts, :meta_data, MetaData.new())
     keypairs = Keyword.get(opts, :keypairs, [])
-    signers = Keyword.get(opts, :signers, [])
+    signers = Keyword.get(opts, :signers, SignersList.new())
 
     %__MODULE__{}
     |> set_network(network_id)
@@ -94,6 +102,8 @@ defmodule Kadena.Pact.ExecCommand do
   @impl true
   def set_data(%__MODULE__{} = cmd_request, %EnvData{} = data),
     do: %{cmd_request | data: data}
+
+  def set_data(%__MODULE__{} = cmd_request, nil), do: cmd_request
 
   def set_data(%__MODULE__{} = cmd_request, data) do
     case EnvData.new(data) do
@@ -147,8 +157,11 @@ defmodule Kadena.Pact.ExecCommand do
   def add_keypairs({:error, reason}, _keypairs), do: {:error, reason}
 
   @impl true
-  def add_signer(%__MODULE__{signers: []} = cmd_request, %Signer{} = signer),
-    do: %{cmd_request | signers: SignersList.new([signer])}
+  def add_signer(
+        %__MODULE__{signers: %SignersList{signers: []}} = cmd_request,
+        %Signer{} = signer
+      ),
+      do: %{cmd_request | signers: SignersList.new([signer])}
 
   def add_signer(%__MODULE__{signers: signer_list} = cmd_request, %Signer{} = signer) do
     %SignersList{signers: signers} = signer_list
@@ -159,8 +172,11 @@ defmodule Kadena.Pact.ExecCommand do
   def add_signer({:error, reason}, _signer), do: {:error, reason}
 
   @impl true
-  def add_signers(%__MODULE__{signers: []} = cmd_request, %SignersList{} = list),
-    do: %{cmd_request | signers: list}
+  def add_signers(
+        %__MODULE__{signers: %SignersList{signers: []}} = cmd_request,
+        %SignersList{} = list
+      ),
+      do: %{cmd_request | signers: list}
 
   def add_signers(%__MODULE__{signers: signer_list} = cmd_request, %SignersList{signers: signers}) do
     %SignersList{signers: old_signers} = signer_list

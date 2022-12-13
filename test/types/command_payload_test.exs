@@ -287,7 +287,7 @@ defmodule Kadena.Types.CommandPayloadTest do
           network_id: network_id,
           payload: cont_payload,
           signers: signers,
-          meta: ["invalid_meta"],
+          meta: "invalid_meta",
           nonce: nonce
         )
     end

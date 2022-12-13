@@ -17,14 +17,10 @@ defmodule Kadena.Pact.ContCommand do
     MetaData,
     NetworkID,
     PactPayload,
-    PactTransactionHash,
-    Proof,
-    Rollback,
     SignaturesList,
     SignCommand,
     Signer,
-    SignersList,
-    Step
+    SignersList
   }
 
   @type cmd :: String.t()
@@ -38,14 +34,14 @@ defmodule Kadena.Pact.ContCommand do
   @type network_id :: NetworkID.t()
   @type nonce :: String.t()
   @type pact_payload :: PactPayload.t()
-  @type pact_tx_hash :: PactTransactionHash.t()
-  @type proof :: Proof.t() | nil
-  @type rollback :: Rollback.t()
+  @type pact_tx_hash :: String.t()
+  @type proof :: String.t() | nil
+  @type rollback :: boolean()
   @type signatures :: SignaturesList.t()
   @type signers :: SignersList.t()
   @type sign_command :: SignCommand.t()
   @type sign_commands :: list(sign_command())
-  @type step :: Step.t()
+  @type step :: number()
   @type valid_command :: {:ok, command()}
   @type valid_command_json_string :: {:ok, json_string_payload()}
   @type valid_payload :: {:ok, pact_payload()}
@@ -74,7 +70,7 @@ defmodule Kadena.Pact.ContCommand do
     :step,
     :proof,
     :rollback,
-    signers: [],
+    signers: SignersList.new(),
     keypairs: []
   ]
 
@@ -85,13 +81,13 @@ defmodule Kadena.Pact.ContCommand do
     network_id = Keyword.get(opts, :network_id)
     data = Keyword.get(opts, :data)
     nonce = Keyword.get(opts, :nonce, "")
-    meta_data = Keyword.get(opts, :meta_data, %MetaData{})
+    meta_data = Keyword.get(opts, :meta_data, MetaData.new())
     pact_tx_hash = Keyword.get(opts, :pact_tx_hash, "")
-    step = Keyword.get(opts, :step, %Step{})
+    step = Keyword.get(opts, :step, 0)
     proof = Keyword.get(opts, :proof)
-    rollback = Keyword.get(opts, :rollback, %Rollback{})
+    rollback = Keyword.get(opts, :rollback, true)
     keypairs = Keyword.get(opts, :keypairs, [])
-    signers = Keyword.get(opts, :signers, [])
+    signers = Keyword.get(opts, :signers, SignersList.new())
 
     %__MODULE__{}
     |> set_network(network_id)
@@ -121,6 +117,8 @@ defmodule Kadena.Pact.ContCommand do
   @impl true
   def set_data(%__MODULE__{} = cmd_request, %EnvData{} = data),
     do: %{cmd_request | data: data}
+
+  def set_data(%__MODULE__{} = cmd_request, nil), do: cmd_request
 
   def set_data(%__MODULE__{} = cmd_request, data) do
     case EnvData.new(data) do
@@ -167,8 +165,11 @@ defmodule Kadena.Pact.ContCommand do
   def add_keypairs({:error, reason}, _keypairs), do: {:error, reason}
 
   @impl true
-  def add_signer(%__MODULE__{signers: []} = cmd_request, %Signer{} = signer),
-    do: %{cmd_request | signers: SignersList.new([signer])}
+  def add_signer(
+        %__MODULE__{signers: %SignersList{signers: []}} = cmd_request,
+        %Signer{} = signer
+      ),
+      do: %{cmd_request | signers: SignersList.new([signer])}
 
   def add_signer(%__MODULE__{signers: signer_list} = cmd_request, %Signer{} = signer) do
     %SignersList{signers: signers} = signer_list
@@ -179,8 +180,11 @@ defmodule Kadena.Pact.ContCommand do
   def add_signer({:error, reason}, _signer), do: {:error, reason}
 
   @impl true
-  def add_signers(%__MODULE__{signers: []} = cmd_request, %SignersList{} = list),
-    do: %{cmd_request | signers: list}
+  def add_signers(
+        %__MODULE__{signers: %SignersList{signers: []}} = cmd_request,
+        %SignersList{} = list
+      ),
+      do: %{cmd_request | signers: list}
 
   def add_signers(%__MODULE__{signers: signer_list} = cmd_request, %SignersList{signers: signers}) do
     %SignersList{signers: old_signers} = signer_list
@@ -207,6 +211,8 @@ defmodule Kadena.Pact.ContCommand do
   @impl true
   def set_proof(%__MODULE__{} = cmd_request, proof) when is_binary(proof),
     do: %{cmd_request | proof: proof}
+
+  def set_proof(%__MODULE__{} = cmd_request, nil), do: cmd_request
 
   def set_proof(%__MODULE__{}, _proof), do: {:error, [proof: :not_a_string]}
   def set_proof({:error, reason}, _proof), do: {:error, reason}

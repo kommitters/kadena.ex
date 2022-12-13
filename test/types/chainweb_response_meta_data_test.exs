@@ -199,13 +199,13 @@ defmodule Kadena.Types.ChainwebResponseMetaDataTest do
       block_height: block_height,
       prev_block_hash: prev_block_hash
     } do
-      {:error, [public_meta: :invalid, creation_time: :invalid]} =
+      {:error, [public_meta: :invalid]} =
         ChainwebResponseMetaData.new(
           block_hash: block_hash,
           block_time: block_time,
           block_height: block_height,
           prev_block_hash: prev_block_hash,
-          public_meta: [name: "public_meta", invalid: "invalid"]
+          public_meta: "invalid"
         )
     end
   end

@@ -171,6 +171,42 @@ defmodule Kadena.Pact.ContCommandTest do
       } = ContCommand.build(cont_command)
     end
 
+    test "with a valid new args and without data and proof", %{
+      pact_tx_hash: pact_tx_hash,
+      metadata: metadata,
+      keypair: keypair,
+      signer: signer,
+      nonce: nonce
+    } do
+      cont_command =
+        ContCommand.new(
+          network_id: :testnet04,
+          nonce: nonce,
+          meta_data: metadata,
+          keypairs: [keypair],
+          signers: SignersList.new([signer]),
+          pact_tx_hash: pact_tx_hash,
+          step: 0,
+          rollback: false
+        )
+
+      %Command{
+        cmd:
+          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":null,\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+        hash: %PactTransactionHash{
+          hash: "GsUyLbh-OnOdsn6UBo7BjFV4aO7T-XN2RfdftSafZUw"
+        },
+        sigs: %SignaturesList{
+          signatures: [
+            %Signature{
+              sig:
+                "30d6d73445f05ed194d3246590cdaea0f2454fdc44a1d932c078f27ef460c8f06ecc91c06c08e22aa112556d4e0ed9a098d69425c1a9b90abf3f0a5eb9aa8203"
+            }
+          ]
+        }
+      } = ContCommand.build(cont_command)
+    end
+
     test "with only requeried arguments", %{
       pact_tx_hash: pact_tx_hash
     } do

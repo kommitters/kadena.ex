@@ -6,8 +6,5 @@ defmodule Kadena.Types.Spec do
   @type reasons :: Keyword.t()
   @type error :: {:error, reasons()}
 
-  @callback new() :: struct()
   @callback new(any()) :: struct() | error()
-
-  @optional_callbacks new: 0
 end
