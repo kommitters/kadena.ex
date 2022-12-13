@@ -1,11 +1,11 @@
-defmodule Kadena.Chainweb.Types.SPVResponse do
+defmodule Kadena.Chainweb.Resources.SPVResponse do
   @moduledoc """
   `SPVResponse` struct definition.
   """
 
   alias Kadena.Types.SPVProof
 
-  @behaviour Kadena.Types.Spec
+  @behaviour Kadena.Chainweb.Resource
 
   @type str :: String.t()
   @type spv_proof :: SPVProof.t()
@@ -22,7 +22,7 @@ defmodule Kadena.Chainweb.Types.SPVResponse do
     |> build_spv_response()
   end
 
-  @spec build_spv_response(spv_proof :: spv_proof()) :: validation()
+  @spec build_spv_response(spv_proof :: spv_proof()) :: t()
   def build_spv_response(%SPVProof{value: response}), do: %__MODULE__{response: response}
-  def build_spv_response(_error), do: {:error, [response: :invalid]}
+  def build_spv_response(_error), do: %__MODULE__{}
 end
