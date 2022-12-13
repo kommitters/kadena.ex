@@ -162,13 +162,15 @@ defmodule Kadena.MixProject do
         Kadena.Types.Step,
         Kadena.Types.Yield
       ],
+      "Chainweb Resources": [
+        Kadena.Chainweb.Resources.SendResponse,
+        Kadena.Chainweb.Resources.SPVResponse
+      ],
       "Chainweb Types": [
         Kadena.Chainweb.Types.CommandResult,
         Kadena.Chainweb.Types.ListenResponse,
         Kadena.Chainweb.Types.LocalResponse,
-        Kadena.Chainweb.Types.PollResponse,
-        Kadena.Chainweb.Types.SendResponse,
-        Kadena.Chainweb.Types.SPVResponse
+        Kadena.Chainweb.Types.PollResponse
       ],
       Utils: Kadena.Utils.MapCase
     ]
