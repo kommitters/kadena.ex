@@ -1,11 +1,11 @@
-defmodule Kadena.Chainweb.Resources.SendResponseTest do
+defmodule Kadena.Chainweb.Pact.Resources.SendResponseTest do
   @moduledoc """
   `SendResponse` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Resources.SendResponse
+  alias Kadena.Chainweb.Pact.Resources.SendResponse
   alias Kadena.Types.{Base64Url, Base64UrlsList}
 
   setup do

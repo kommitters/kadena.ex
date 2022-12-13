@@ -1,11 +1,11 @@
-defmodule Kadena.Chainweb.Resources.SPVResponseTest do
+defmodule Kadena.Chainweb.Pact.Resources.SPVResponseTest do
   @moduledoc """
   `SPVResponse` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Resources.SPVResponse
+  alias Kadena.Chainweb.Pact.Resources.SPVResponse
 
   test "new/1 with string param" do
     spv_response =

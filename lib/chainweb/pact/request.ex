@@ -17,7 +17,7 @@ defmodule Kadena.Chainweb.Pact.Request do
     PollResponse
   }
 
-  alias Kadena.Chainweb.Resources.{
+  alias Kadena.Chainweb.Pact.Resources.{
     SendResponse,
     SPVResponse
   }

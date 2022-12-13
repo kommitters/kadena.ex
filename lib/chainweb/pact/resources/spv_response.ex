@@ -1,4 +1,4 @@
-defmodule Kadena.Chainweb.Resources.SPVResponse do
+defmodule Kadena.Chainweb.Pact.Resources.SPVResponse do
   @moduledoc """
   `SPVResponse` struct definition.
   """

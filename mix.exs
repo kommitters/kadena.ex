@@ -162,9 +162,9 @@ defmodule Kadena.MixProject do
         Kadena.Types.Step,
         Kadena.Types.Yield
       ],
-      "Chainweb Resources": [
-        Kadena.Chainweb.Resources.SendResponse,
-        Kadena.Chainweb.Resources.SPVResponse
+      "Chainweb Pact Resources": [
+        Kadena.Chainweb.Pact.Resources.SendResponse,
+        Kadena.Chainweb.Pact.Resources.SPVResponse
       ],
       "Chainweb Types": [
         Kadena.Chainweb.Types.CommandResult,
