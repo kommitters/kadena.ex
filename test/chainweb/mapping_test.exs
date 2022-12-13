@@ -145,7 +145,7 @@ defmodule Kadena.Chainweb.MappingTest do
     %FakeResource{value: nil} =
       resource
       |> Mapping.build(attrs)
-      |> Mapping.parse(value: {:struct, PactValue})
+      |> Mapping.parse(value: {:struct, FakeValue})
   end
 
   test "parse/2 list_of_structs", %{resource: resource, attrs: attrs} do
