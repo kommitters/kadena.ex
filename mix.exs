@@ -94,8 +94,10 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Error,
         Kadena.Chainweb.Client.Default,
         Kadena.Chainweb.Client.Spec,
+        Kadena.Chainweb.Mapping,
         Kadena.Chainweb.Pact.Request,
-        Kadena.Chainweb.Pact.JSONPayload
+        Kadena.Chainweb.Pact.JSONPayload,
+        Kadena.Chainweb.Resource
       ],
       Cryptography: [
         Kadena.Cryptography.Sign,
@@ -120,7 +122,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.CommandPayload,
         Kadena.Types.CommandsList,
         Kadena.Types.ContPayload,
-        Kadena.Types.Continuation,
         Kadena.Types.EnvData,
         Kadena.Types.ExecPayload,
         Kadena.Types.KeyPair,
@@ -133,19 +134,13 @@ defmodule Kadena.MixProject do
         Kadena.Types.OptionalPactEventsList,
         Kadena.Types.PactCode,
         Kadena.Types.PactDecimal,
-        Kadena.Types.PactEvent,
-        Kadena.Types.PactEventModule,
-        Kadena.Types.PactEventsList,
-        Kadena.Types.PactExec,
         Kadena.Types.PactInt,
         Kadena.Types.PactPayload,
-        Kadena.Types.PactResult,
         Kadena.Types.PactTransactionHash,
         Kadena.Types.PactValue,
         Kadena.Types.PactValuesList,
         Kadena.Types.PollRequestBody,
         Kadena.Types.Proof,
-        Kadena.Types.Provenance,
         Kadena.Types.Rollback,
         Kadena.Types.SendRequestBody,
         Kadena.Types.SignCommand,
@@ -159,19 +154,9 @@ defmodule Kadena.MixProject do
         Kadena.Types.Spec,
         Kadena.Types.SPVProof,
         Kadena.Types.SPVRequestBody,
-        Kadena.Types.Step,
-        Kadena.Types.Yield
+        Kadena.Types.Step
       ],
-      "Chainweb Pact Resources": [
-        Kadena.Chainweb.Pact.Resources.SendResponse,
-        Kadena.Chainweb.Pact.Resources.SPVResponse
-      ],
-      "Chainweb Types": [
-        Kadena.Chainweb.Types.CommandResult,
-        Kadena.Chainweb.Types.ListenResponse,
-        Kadena.Chainweb.Types.LocalResponse,
-        Kadena.Chainweb.Types.PollResponse
-      ],
+      "Chainweb Pact Resources": ~r/^Kadena\.Chainweb\.Pact\.Resources\./,
       Utils: Kadena.Utils.MapCase
     ]
   end
