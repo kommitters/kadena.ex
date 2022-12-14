@@ -11,13 +11,10 @@ defmodule Kadena.Chainweb.Pact.Request do
     SPVRequestBody
   }
 
-  alias Kadena.Chainweb.Types.{
+  alias Kadena.Chainweb.Pact.Resources.{
     ListenResponse,
     LocalResponse,
-    PollResponse
-  }
-
-  alias Kadena.Chainweb.Pact.Resources.{
+    PollResponse,
     SendResponse,
     SPVResponse
   }

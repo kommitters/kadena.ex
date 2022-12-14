@@ -3,14 +3,12 @@ defmodule Kadena.Chainweb.Pact.Resources.ListenResponse do
   `ListenResponse` struct definition.
   """
 
-  alias Kadena.Types.{
-    Base64Url,
-    PactExec
-  }
+  alias Kadena.Types.Base64Url
 
   alias Kadena.Chainweb.Pact.Resources.{
     CommandResult,
     PactEventsList,
+    PactExec,
     PactResult,
     ResponseMetaData
   }
