@@ -45,6 +45,7 @@ defmodule Kadena.Types.ContPayload do
 
   @spec validate_data(data :: map()) :: validation()
   defp validate_data(nil), do: {:ok, nil}
+  defp validate_data(%EnvData{} = data), do: {:ok, data}
 
   defp validate_data(data) do
     case EnvData.new(data) do

@@ -20,6 +20,8 @@ defmodule Kadena.Types.SignaturesList do
   @spec build_list(list :: t(), signatures :: raw_signatures()) :: t() | {:error, error_list()}
   defp build_list(list, []), do: list
 
+  defp build_list(%__MODULE__{} = signature_list, [nil]), do: %{signature_list | signatures: []}
+
   defp build_list(%__MODULE__{signatures: list}, [%Signature{} = signature | rest]) do
     build_list(%__MODULE__{signatures: list ++ [signature]}, rest)
   end

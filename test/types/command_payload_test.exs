@@ -20,7 +20,7 @@ defmodule Kadena.Types.CommandPayloadTest do
   describe "new/1" do
     setup do
       # Payload args
-      data = %{}
+      data = nil
       code = "(format \"hello {}\" [\"world\"])"
       pact_id = "yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4"
       step = 2
@@ -58,6 +58,7 @@ defmodule Kadena.Types.CommandPayloadTest do
 
       %{
         network_id: :mainnet01,
+        network_id_nil: nil,
         network_id_str: "mainnet01",
         cont_payload:
           ContPayload.new(
@@ -286,24 +287,26 @@ defmodule Kadena.Types.CommandPayloadTest do
           network_id: network_id,
           payload: cont_payload,
           signers: signers,
-          meta: ["invalid_meta"],
+          meta: "invalid_meta",
           nonce: nonce
         )
     end
 
-    test "with invalid nonce", %{
-      network_id: network_id,
+    test "with required values", %{
       cont_payload: cont_payload,
-      signers: signers,
-      meta: meta
+      signers_list_struct: signers_list_struct,
+      signers: signers
     } do
-      {:error, [nonce: :not_a_string]} =
+      %CommandPayload{
+        network_id: %NetworkID{id: nil},
+        payload: %PactPayload{payload: ^cont_payload},
+        signers: ^signers_list_struct,
+        meta: %MetaData{},
+        nonce: ""
+      } =
         CommandPayload.new(
-          network_id: network_id,
           payload: cont_payload,
-          signers: signers,
-          meta: meta,
-          nonce: 12_345
+          signers: signers
         )
     end
   end
@@ -647,7 +650,7 @@ defmodule Kadena.Types.CommandPayloadTest do
           nonce: "2023-06-13 17:45:18.211131 UTC"
         )
 
-      ~s({"meta":{"chainId":"0","creationTime":1667249173,"gasLimit":1000,"gasPrice":1.0e-6,"sender":"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94","ttl":28800},"networkId":"testnet04","nonce":"2023-06-13 17:45:18.211131 UTC","payload":{"exec":{"code":"#{"(+ 5 6)"}","data":{}}},"signers":[{"addr":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","clist":[{"args":["#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}"],"name":"coin.GAS"}],"pubKey":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","scheme":"ED25519"}]}) =
+      ~s({"meta":{"chainId":"0","creationTime":1667249173,"gasLimit":1000,"gasPrice":1.0e-6,"sender":"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94","ttl":28800},"networkId":"testnet04","nonce":"2023-06-13 17:45:18.211131 UTC","payload":{"exec":{"code":"#{"(+ 5 6)"}","data":null}},"signers":[{"addr":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","clist":[{"args":["#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}"],"name":"coin.GAS"}],"pubKey":"#{"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd"}","scheme":"ED25519"}]}) =
         JSONPayload.parse(command_payload)
     end
 

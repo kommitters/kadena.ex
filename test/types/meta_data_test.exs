@@ -27,10 +27,6 @@ defmodule Kadena.Types.MetaDataTest do
         )
     end
 
-    test "with an invalid empty list" do
-      {:error, [creation_time: :invalid]} = MetaData.new([])
-    end
-
     test "with an invalid cration_time" do
       {:error, [creation_time: :invalid]} =
         MetaData.new(

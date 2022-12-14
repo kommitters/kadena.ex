@@ -38,7 +38,7 @@ defmodule Kadena.Types.SignaturesListTest do
     end
 
     test "with a list of nil" do
-      {:error, [signatures: :invalid, sig: :invalid]} = SignaturesList.new([nil])
+      %SignaturesList{signatures: []} = SignaturesList.new([nil])
     end
 
     test "when the list has invalid values" do
@@ -47,7 +47,7 @@ defmodule Kadena.Types.SignaturesListTest do
         "8c8932a6459945afb87dbce6f625d07d4bbaafcc01f570b279d41a3d0f51f18ac5f05c017581aab23459e0437b4715774dea80a67da41f3b1b3988b2d59c3c0a"
       ]
 
-      {:error, [signatures: :invalid, sig: :invalid]} = SignaturesList.new(signatures ++ [nil])
+      {:error, [signatures: :not_a_list]} = SignaturesList.new(signatures ++ "invalid")
     end
   end
 end

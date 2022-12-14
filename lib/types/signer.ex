@@ -57,6 +57,7 @@ defmodule Kadena.Types.Signer do
   @spec validate_clist(clist :: cap_list()) :: validation()
   defp validate_clist(nil), do: {:ok, OptionalCapsList.new()}
   defp validate_clist(%CapsList{} = clist), do: {:ok, OptionalCapsList.new(clist)}
+  defp validate_clist(%OptionalCapsList{} = clist), do: {:ok, clist}
 
   defp validate_clist(clist) do
     with %CapsList{} = clist <- CapsList.new(clist),

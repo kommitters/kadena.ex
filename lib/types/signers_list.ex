@@ -14,7 +14,7 @@ defmodule Kadena.Types.SignersList do
   defstruct signers: []
 
   @impl true
-  def new(signers), do: build_list(%__MODULE__{}, signers)
+  def new(signers \\ []), do: build_list(%__MODULE__{}, signers)
 
   @spec build_list(list :: t(), signers :: signers()) :: t() | {:error, Keyword.t()}
   defp build_list(list, []), do: list

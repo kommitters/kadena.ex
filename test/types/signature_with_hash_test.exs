@@ -35,8 +35,17 @@ defmodule Kadena.Types.SignatureWithHashTest do
       {:error, [hash: :invalid]} = SignatureWithHash.new(sig: sig)
     end
 
-    test "with an invalid sig value", %{hash: hash} do
-      {:error, [sig: :invalid]} = SignatureWithHash.new(hash: hash)
+    test "withan invalid sig value", %{hash: hash} do
+      {:error, [sig: :invalid]} = SignatureWithHash.new(hash: hash, sig: :invalid)
+    end
+
+    test "with a nil sig value", %{hash: hash} do
+      %SignatureWithHash{
+        hash: ^hash,
+        pub_key: nil,
+        sig: nil,
+        type: :unsigned_signature
+      } = SignatureWithHash.new(hash: hash)
     end
   end
 end
