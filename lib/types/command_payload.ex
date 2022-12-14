@@ -158,15 +158,13 @@ defmodule Kadena.Types.CommandPayload do
            {:ok, meta} <- extract_meta(meta),
            {:ok, network_id} <- extract_network_id(network_id),
            {:ok, signers} <- extract_signers_list(signers) do
-        %{
+        Jason.encode!(%{
           payload: payload,
           meta: meta,
-          network_id: network_id,
+          networkId: network_id,
           nonce: nonce,
           signers: signers
-        }
-        |> MapCase.to_camel!()
-        |> Jason.encode!()
+        })
       end
     end
 
@@ -192,7 +190,7 @@ defmodule Kadena.Types.CommandPayload do
       payload = %{
         cont: %{
           data: extract_data(data),
-          pact_id: hash,
+          pactId: hash,
           proof: extract_proof(proof),
           rollback: rollback,
           step: number
@@ -219,7 +217,7 @@ defmodule Kadena.Types.CommandPayload do
            sender: sender,
            chain_id: %ChainID{id: id}
          }) do
-      meta = %{
+      %{
         chain_id: id,
         creation_time: creation_time,
         gas_limit: gas_limit,
@@ -227,8 +225,8 @@ defmodule Kadena.Types.CommandPayload do
         sender: sender,
         ttl: ttl
       }
-
-      {:ok, meta}
+      |> MapCase.to_camel!()
+      |> (&{:ok, &1}).()
     end
 
     @spec extract_signers_list(signers :: signers_list()) :: valid_extract()
@@ -244,12 +242,12 @@ defmodule Kadena.Types.CommandPayload do
            pub_key: %Base16String{value: pub_key},
            clist: %OptionalCapsList{clist: clist}
          }) do
-      %{
+      MapCase.to_camel!(%{
         addr: extract_addr(addr),
         scheme: extract_scheme(scheme),
         pub_key: pub_key,
         clist: extract_clist(clist)
-      }
+      })
     end
 
     @spec extract_addr(addr()) :: string_value()

@@ -106,15 +106,15 @@ defmodule Kadena.Pact.ExecCommandTest do
     } do
       %Command{
         cmd:
-          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{\"accountsAdminKeyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{\"accounts_admin_keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
         hash: %Kadena.Types.PactTransactionHash{
-          hash: "0Q3sJAe5xqqQHqcp99BGPhL1AApvARVvBzE12FrAS54"
+          hash: "jXp99H0iuZBXQUCCihWSqULfwKpexB9dEKozviN4QPM"
         },
         sigs: %Kadena.Types.SignaturesList{
           signatures: [
             %Kadena.Types.Signature{
               sig:
-                "adda30e88553efa273cb640b48e5f252ccb4220b064f70164e86e7b67708bf00796fd8c5968c33c54dc2bb35a9a741da6f9c029b6f56158d6695317c9e1e2e0e"
+                "36d55e69103b266e53521b2d8d7ca1a0055b7d178970511f8319a6029315e1bf6a518c24a94f2ba20e041f7ec69e7c503a14c1c886f54d51e65674a377a5fb06"
             }
           ]
         }
