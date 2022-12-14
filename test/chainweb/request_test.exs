@@ -160,7 +160,7 @@ defmodule Kadena.Chainweb.RequestTest do
      %LocalResponse{
        result: %PactResult{
          status: :success,
-         data: %PactValue{literal: 5}
+         data: %PactValue{literal: 11}
        }
      }} = Request.results({:ok, local_response}, as: LocalResponse)
   end
