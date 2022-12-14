@@ -8,7 +8,7 @@ defmodule Kadena.Types.CapTest do
   use ExUnit.Case
 
   describe "new/1" do
-    test "with valid arguments" do
+    test "with valid Keyword arguments" do
       decimal = Decimal.new("0.01")
 
       %Cap{
@@ -17,6 +17,17 @@ defmodule Kadena.Types.CapTest do
           pact_values: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
         }
       } = Cap.new(name: "gas", args: ["COIN.gas", 1.0e-2])
+    end
+
+    test "with valid map arguments" do
+      decimal = Decimal.new("0.01")
+
+      %Cap{
+        name: "gas",
+        args: %PactValuesList{
+          pact_values: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
+        }
+      } = Cap.new(%{name: "gas", args: ["COIN.gas", 1.0e-2]})
     end
 
     test "with valid pact value list" do
