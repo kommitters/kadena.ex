@@ -1,0 +1,67 @@
+{
+  "continuation": {
+    "continuation": {
+      "args": "pact_value",
+      "def": "coin"
+    },
+    "executed": false,
+    "pactId": "yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4",
+    "step": 1,
+    "stepCount": 5,
+    "stepHasRollback": false,
+    "yield": {
+      "data": {
+        "amount": 0.01,
+        "receiver": "4f9c46df2fe874d7c1b60f68f8440a444dd716e6b2efba8ee141afdd58c993dc",
+        "receiver_guard": {
+          "keys": [
+            "4f9c46df2fe874d7c1b60f68f8440a444dd716e6b2efba8ee141afdd58c993dc"
+          ],
+          "pred": "keys-all"
+        },
+        "source_chain": 0
+      },
+      "provenance": {
+        "moduleHash": "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+        "targetChainId": "1"
+      }
+    }
+  },
+  "events": [
+    {
+      "module": {
+        "name": "coin",
+        "namespace": null
+      },
+      "moduleHash": "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+      "name": "TRANSFER",
+      "params": [
+        "account1",
+        "account2",
+        5.0e-5
+      ]
+    }
+  ],
+  "gas": 5,
+  "logs": "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
+  "metaData": {
+    "blockHash": "kZCKTbL3ubONngiGQsJh4fGtP1xrhAoUvcTsqi3uCGg",
+    "blockHeight": 2708,
+    "blockTime": 1656709048955370,
+    "prevBlockHash": "LD_o60RB4xnMgLyzkedNV6v-hbCCnx6WXRQy9WDKTgs",
+    "publicMeta": {
+      "chainId": "",
+      "creationTime": 0,
+      "gasLimit": 10,
+      "gasPrice": 0,
+      "sender": "",
+      "ttl": 0
+    }
+  },
+  "reqKey": "uolsidh4DWN-D44FoElnosL8e5-cGCGn_0l2Nct5mq8",
+  "result": {
+    "data": 3,
+    "status": "success"
+  },
+  "txId": 123456
+}
