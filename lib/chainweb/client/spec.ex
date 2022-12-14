@@ -19,8 +19,8 @@ defmodule Kadena.Chainweb.Client.Spec do
   @callback request(
               method :: method(),
               url :: binary(),
-              body :: binary(),
               headers :: headers(),
+              body :: binary(),
               options :: options()
             ) :: response() | response_error()
 end

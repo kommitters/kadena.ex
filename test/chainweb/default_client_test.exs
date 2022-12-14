@@ -51,9 +51,9 @@ defmodule Kadena.Chainweb.DefaultClientTest do
     test "success", %{url: url, header: header, body: body} do
       {:ok,
        %{
-         result: %{
-           status: "success",
-           data: 5
+         "result" => %{
+           "status" => "success",
+           "data" => 5
          }
        }} = Client.request(:post, url <> "/local", header, body)
     end
