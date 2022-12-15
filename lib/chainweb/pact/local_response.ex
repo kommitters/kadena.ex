@@ -3,6 +3,8 @@ defmodule Kadena.Chainweb.Pact.LocalResponse do
   `LocalResponse` struct definition.
   """
 
+  @behaviour Kadena.Chainweb.Pact.Resource
+
   @type req_key :: String.t()
   @type tx_id :: number() | nil
   @type result :: map()

@@ -3,6 +3,8 @@ defmodule Kadena.Chainweb.Pact.ListenResponse do
   `ListenResponse` struct definition.
   """
 
+  @behaviour Kadena.Chainweb.Pact.Resource
+
   @type req_key :: String.t()
   @type tx_id :: number() | nil
   @type result :: map()

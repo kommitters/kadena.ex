@@ -3,6 +3,8 @@ defmodule Kadena.Chainweb.Pact.PollResponse do
   `PollResponse` struct definition.
   """
 
+  @behaviour Kadena.Chainweb.Pact.Resource
+
   alias Kadena.Chainweb.Pact.CommandResult
 
   @type results :: list(CommandResult.t())
