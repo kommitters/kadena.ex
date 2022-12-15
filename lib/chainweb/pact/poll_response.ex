@@ -13,6 +13,7 @@ defmodule Kadena.Chainweb.Pact.PollResponse do
 
   defstruct [:results]
 
+  @impl true
   def new(attrs) do
     results =
       attrs

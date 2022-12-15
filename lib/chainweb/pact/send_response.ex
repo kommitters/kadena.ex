@@ -11,5 +11,6 @@ defmodule Kadena.Chainweb.Pact.SendResponse do
 
   defstruct request_keys: []
 
+  @impl true
   def new(attrs), do: struct(%__MODULE__{}, attrs)
 end

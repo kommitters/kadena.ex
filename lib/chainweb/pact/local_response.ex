@@ -27,5 +27,6 @@ defmodule Kadena.Chainweb.Pact.LocalResponse do
 
   defstruct [:req_key, :tx_id, :result, :gas, :logs, :continuation, :meta_data, :events]
 
+  @impl true
   def new(attrs), do: struct(%__MODULE__{}, attrs)
 end

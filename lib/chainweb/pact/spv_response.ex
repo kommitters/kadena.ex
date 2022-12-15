@@ -11,5 +11,6 @@ defmodule Kadena.Chainweb.Pact.SPVResponse do
 
   defstruct [:response]
 
+  @impl true
   def new(response) when is_binary(response), do: struct(%__MODULE__{}, response: response)
 end
