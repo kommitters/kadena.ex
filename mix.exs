@@ -94,12 +94,10 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Error,
         Kadena.Chainweb.Client.Default,
         Kadena.Chainweb.Client.Spec,
-        Kadena.Chainweb.Mapping,
         Kadena.Chainweb.Network,
         Kadena.Chainweb.Pact.Request,
         Kadena.Chainweb.Pact.JSONPayload,
-        Kadena.Chainweb.Request,
-        Kadena.Chainweb.Resource
+        Kadena.Chainweb.Request
       ],
       Cryptography: [
         Kadena.Cryptography.Sign,
@@ -158,7 +156,15 @@ defmodule Kadena.MixProject do
         Kadena.Types.SPVRequestBody,
         Kadena.Types.Step
       ],
-      "Chainweb Pact Resources": ~r/^Kadena\.Chainweb\.Pact\.Resources\./,
+      "Chainweb Pact Resources": [
+        Kadena.Chainweb.Pact.Resource,
+        Kadena.Chainweb.Pact.CommandResult,
+        Kadena.Chainweb.Pact.ListenResponse,
+        Kadena.Chainweb.Pact.LocalResponse,
+        Kadena.Chainweb.Pact.PollResponse,
+        Kadena.Chainweb.Pact.SendResponse,
+        Kadena.Chainweb.Pact.SPVResponse
+      ],
       Utils: Kadena.Utils.MapCase
     ]
   end
