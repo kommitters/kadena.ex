@@ -1,0 +1,24 @@
+{
+  "continuation": null,
+  "gas": 7,
+  "logs": "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
+  "metaData": {
+    "blockHeight": 2815727,
+    "blockTime": 1671054330981668,
+    "prevBlockHash": "asisNr3nuU0t357i2bxMVUiIWDVHAMtncJHtmyENbio",
+    "publicMeta": {
+      "chainId": "0",
+      "creationTime": 1667249173,
+      "gasLimit": 1000,
+      "gasPrice": 1.0e-6,
+      "sender": "k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94",
+      "ttl": 28800
+    }
+  },
+  "reqKey": "-1npoTU2Mi71pKE_oteJiJuHuXTXxoObJm8zzVRK2pk",
+  "result": {
+    "data": 11,
+    "status": "success"
+  },
+  "txId": null
+}
