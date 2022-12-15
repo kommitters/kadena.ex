@@ -78,38 +78,23 @@ defmodule Kadena.Chainweb.Request do
   end
 
   @spec set_chain_id(t(), chain_id :: chain_id()) :: t()
-  def set_chain_id(%__MODULE__{} = request, chain_id) do
-    %{request | chain_id: chain_id}
-  end
+  def set_chain_id(%__MODULE__{} = request, chain_id), do: %{request | chain_id: chain_id}
 
   @spec set_network(t(), network :: network_id()) :: t()
-  def set_network(%__MODULE__{} = request, network) do
-    %{request | network_id: network}
-  end
+  def set_network(%__MODULE__{} = request, network), do: %{request | network_id: network}
 
   @spec add_body(request :: t(), body :: body()) :: t()
-  def add_body(%__MODULE__{} = request, body) do
-    %{request | body: body}
-  end
+  def add_body(%__MODULE__{} = request, body), do: %{request | body: body}
 
   @spec add_headers(request :: t(), headers :: headers()) :: t()
-  def add_headers(%__MODULE__{} = request, headers) do
-    %{request | headers: headers}
-  end
+  def add_headers(%__MODULE__{} = request, headers), do: %{request | headers: headers}
 
   @spec add_query(request :: t(), params :: params()) :: t()
-  def add_query(%__MODULE__{} = request, params) do
-    %{request | query: params, encoded_query: build_query_string(params)}
-  end
+  def add_query(%__MODULE__{} = request, params),
+    do: %{request | query: params, encoded_query: build_query_string(params)}
 
   @spec perform(request :: t()) :: response()
-  def perform(
-        %__MODULE__{
-          method: method,
-          headers: headers,
-          body: body
-        } = request
-      ) do
+  def perform(%__MODULE__{method: method, headers: headers, body: body} = request) do
     request
     |> build_request_url()
     |> (&Client.request(method, &1, headers, body)).()
@@ -117,7 +102,12 @@ defmodule Kadena.Chainweb.Request do
 
   @spec results(response :: response(), opts :: opts()) :: parsed_response()
   def results({:ok, results}, as: resource) do
-    {:ok, results |> MapCase.to_snake!() |> resource.new()}
+    resource =
+      results
+      |> MapCase.to_snake!()
+      |> resource.new()
+
+    {:ok, resource}
   end
 
   def results({:error, error}, _resource), do: {:error, error}
