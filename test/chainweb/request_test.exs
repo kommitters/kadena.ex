@@ -23,8 +23,7 @@ defmodule Kadena.Chainweb.RequestTest do
 
   alias Kadena.Chainweb.Client.CannedRequestImpl
   alias Kadena.Chainweb.{Error, Request}
-  alias Kadena.Chainweb.Pact.Resources.{LocalResponse, PactResult}
-  alias Kadena.Types.PactValue
+  alias Kadena.Chainweb.Pact.LocalResponse
 
   alias Kadena.Test.Fixtures.Chainweb
 
@@ -154,14 +153,11 @@ defmodule Kadena.Chainweb.RequestTest do
   end
 
   test "results/2 success" do
-    local_response = Chainweb.fixture("local", to_snake: true)
+    local_response = Chainweb.fixture("local")
 
     {:ok,
      %LocalResponse{
-       result: %PactResult{
-         status: :success,
-         data: %PactValue{literal: 11}
-       }
+       result: %{data: 11, status: "success"}
      }} = Request.results({:ok, local_response}, as: LocalResponse)
   end
 

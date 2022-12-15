@@ -22,7 +22,7 @@ defmodule Kadena.Chainweb.CannedHTTPClient do
     do: {:error, :timeout}
 
   def request(:post, _url, _headers, _body, _opt) do
-    json_body = Chainweb.fixture("200")
+    json_body = Chainweb.fixture("200", raw_data: true)
     {:ok, 200, [], json_body}
   end
 end
@@ -51,9 +51,9 @@ defmodule Kadena.Chainweb.DefaultClientTest do
     test "success", %{url: url, header: header, body: body} do
       {:ok,
        %{
-         "result" => %{
-           "status" => "success",
-           "data" => 5
+         result: %{
+           status: "success",
+           data: 5
          }
        }} = Client.request(:post, url <> "/local", header, body)
     end

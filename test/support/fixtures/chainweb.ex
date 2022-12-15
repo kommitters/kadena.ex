@@ -3,21 +3,20 @@ defmodule Kadena.Test.Fixtures.Chainweb do
   Mocks Chainweb API responses.
   """
 
-  alias Kadena.Utils.MapCase
-
   @type fixture :: String.t() | atom()
-  @type opts :: Keyword.t()
 
   @fixtures_path "./test/support/fixtures/chainweb/"
 
-  @spec fixture(fixture :: fixture(), opts :: opts()) :: binary()
+  @spec fixture(fixture :: fixture()) :: binary()
   def fixture(fixture_name, opts \\ []) do
-    to_snake = Keyword.get(opts, :to_snake, false)
+    raw = Keyword.get(opts, :raw_data, false)
 
-    fixture_name
-    |> to_string()
-    |> read_json_file()
-    |> parse_to_snake(to_snake)
+    body =
+      fixture_name
+      |> to_string()
+      |> read_json_file()
+
+    if(raw, do: body, else: Jason.decode!(body, keys: &snake_case_atom/1))
   end
 
   @spec read_json_file(filename :: String.t()) :: binary()
@@ -26,7 +25,10 @@ defmodule Kadena.Test.Fixtures.Chainweb do
     with {:ok, body} <- File.read(file), do: body
   end
 
-  @spec parse_to_snake(body :: binary(), to_snake :: boolean()) :: map() | binary()
-  defp parse_to_snake(body, true), do: body |> Jason.decode!() |> MapCase.to_snake!()
-  defp parse_to_snake(body, false), do: body
+  @spec snake_case_atom(string :: String.t()) :: atom()
+  defp snake_case_atom(string) do
+    string
+    |> Macro.underscore()
+    |> String.to_atom()
+  end
 end

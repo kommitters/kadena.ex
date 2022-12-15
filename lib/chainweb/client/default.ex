@@ -26,17 +26,17 @@ defmodule Kadena.Chainweb.Client.Default do
   }
 
   @impl true
-  def request(method, path, headers \\ [], body \\ "", opts \\ []) do
+  def request(method, url, headers \\ [], body \\ "", opts \\ []) do
     options = http_options(opts)
 
     method
-    |> http_client().request(path, headers, body, options)
+    |> http_client().request(url, headers, body, options)
     |> handle_response()
   end
 
   @spec handle_response(response :: client_response()) :: parsed_response()
   defp handle_response({:ok, status, _headers, body}) when status in 200..299 do
-    decoded_body = json_library().decode!(body)
+    decoded_body = json_library().decode!(body, keys: &snake_case_atom/1)
     {:ok, decoded_body}
   end
 
@@ -54,6 +54,13 @@ defmodule Kadena.Chainweb.Client.Default do
     do: {:error, Error.new({:chainweb, %{status: status, title: body}})}
 
   defp handle_response({:error, reason}), do: {:error, Error.new({:network, reason})}
+
+  @spec snake_case_atom(string :: String.t()) :: atom()
+  defp snake_case_atom(string) do
+    string
+    |> Macro.underscore()
+    |> String.to_atom()
+  end
 
   @spec http_client() :: atom()
   defp http_client, do: Application.get_env(:kadena, :http_client, :hackney)

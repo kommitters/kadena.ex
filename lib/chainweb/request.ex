@@ -6,7 +6,6 @@ defmodule Kadena.Chainweb.Request do
   """
 
   alias Kadena.Chainweb.{Client, Error, Network}
-  alias Kadena.Utils.MapCase
 
   @type api_type :: :pact | :p2p
   @type network_id :: :testnet04 | :mainnet01
@@ -101,15 +100,7 @@ defmodule Kadena.Chainweb.Request do
   end
 
   @spec results(response :: response(), opts :: opts()) :: parsed_response()
-  def results({:ok, results}, as: resource) do
-    resource =
-      results
-      |> MapCase.to_snake!()
-      |> resource.new()
-
-    {:ok, resource}
-  end
-
+  def results({:ok, results}, as: resource), do: {:ok, resource.new(results)}
   def results({:error, error}, _resource), do: {:error, error}
 
   @spec build_request_url(request :: t()) :: binary()
