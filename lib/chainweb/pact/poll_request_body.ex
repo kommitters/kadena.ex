@@ -1,4 +1,4 @@
-defmodule Kadena.Types.PollRequestBody do
+defmodule Kadena.Chainweb.Pact.PollRequestBody do
   @moduledoc """
   `PollRequestBody` struct definition.
   """
@@ -7,7 +7,7 @@ defmodule Kadena.Types.PollRequestBody do
   alias Kadena.Types.Base64UrlsList
   alias Kadena.Utils.MapCase
 
-  @behaviour Kadena.Types.Spec
+  @behaviour Kadena.Chainweb.Pact.Type
 
   @type request_keys :: Base64UrlsList.t()
 
@@ -27,10 +27,8 @@ defmodule Kadena.Types.PollRequestBody do
   def new(_request_keys), do: {:error, [request_keys: :not_a_list]}
 
   defimpl JSONPayload do
-    alias Kadena.Types.{
-      Base64Url,
-      PollRequestBody
-    }
+    alias Kadena.Chainweb.Pact.PollRequestBody
+    alias Kadena.Types.Base64Url
 
     @type urls :: list(Base64Url.t())
     @type base64_urls :: Base64UrlsList.t()

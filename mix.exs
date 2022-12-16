@@ -119,7 +119,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.ChainID,
         Kadena.Types.ChainwebResponseMetaData,
         Kadena.Types.Command,
-        Kadena.Types.CommandPayload,
         Kadena.Types.CommandsList,
         Kadena.Types.ContPayload,
         Kadena.Types.EnvData,
@@ -156,13 +155,19 @@ defmodule Kadena.MixProject do
         Kadena.Types.SPVRequestBody,
         Kadena.Types.Step
       ],
-      "Chainweb Pact Resources": [
-        Kadena.Chainweb.Pact.Resource,
+      "Chainweb Pact Types": [
+        Kadena.Chainweb.Pact.Type,
+        Kadena.Chainweb.Pact.CommandPayload,
         Kadena.Chainweb.Pact.CommandResult,
+        Kadena.Chainweb.Pact.ListenRequestBody,
         Kadena.Chainweb.Pact.ListenResponse,
+        Kadena.Chainweb.Pact.LocalRequestBody,
         Kadena.Chainweb.Pact.LocalResponse,
+        Kadena.Chainweb.Pact.PollRequestBody,
         Kadena.Chainweb.Pact.PollResponse,
+        Kadena.Chainweb.Pact.SendRequestBody,
         Kadena.Chainweb.Pact.SendResponse,
+        Kadena.Chainweb.Pact.SPVRequestBody,
         Kadena.Chainweb.Pact.SPVResponse
       ],
       Utils: Kadena.Utils.MapCase

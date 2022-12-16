@@ -1,5 +1,5 @@
 defprotocol Kadena.Chainweb.Pact.JSONPayload do
-  alias Kadena.Types.{
+  alias Kadena.Chainweb.Pact.{
     CommandPayload,
     ListenRequestBody,
     LocalRequestBody,

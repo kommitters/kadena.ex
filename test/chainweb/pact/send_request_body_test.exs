@@ -1,12 +1,12 @@
-defmodule Kadena.Types.SendRequestBodyTest do
+defmodule Kadena.Chainweb.Pact.SendRequestBodyTest do
   @moduledoc """
   `SendRequestBody` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.JSONPayload
-  alias Kadena.Types.{Command, CommandsList, SendRequestBody}
+  alias Kadena.Chainweb.Pact.{JSONPayload, SendRequestBody}
+  alias Kadena.Types.{Command, CommandsList}
 
   setup do
     command =

@@ -1,14 +1,13 @@
-defmodule Kadena.Types.CommandPayloadTest do
+defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
   @moduledoc """
   `CommandPayload` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.JSONPayload
+  alias Kadena.Chainweb.Pact.{CommandPayload, JSONPayload}
 
   alias Kadena.Types.{
-    CommandPayload,
     ContPayload,
     ExecPayload,
     MetaData,

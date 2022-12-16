@@ -3,19 +3,16 @@ defmodule Kadena.Chainweb.Pact.Request do
   Requests specification for `Chainweb.Pact` contracts.
   """
 
-  alias Kadena.Types.{
-    ListenRequestBody,
-    LocalRequestBody,
-    PollRequestBody,
-    SendRequestBody,
-    SPVRequestBody
-  }
-
   alias Kadena.Chainweb.Pact.{
+    ListenRequestBody,
     ListenResponse,
+    LocalRequestBody,
     LocalResponse,
+    PollRequestBody,
     PollResponse,
+    SendRequestBody,
     SendResponse,
+    SPVRequestBody,
     SPVResponse
   }
 

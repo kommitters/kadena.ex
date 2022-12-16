@@ -1,4 +1,4 @@
-defmodule Kadena.Types.ListenRequestBody do
+defmodule Kadena.Chainweb.Pact.ListenRequestBody do
   @moduledoc """
   `ListenRequestBody` struct definition.
   """
@@ -6,7 +6,7 @@ defmodule Kadena.Types.ListenRequestBody do
   alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.Base64Url
 
-  @behaviour Kadena.Types.Spec
+  @behaviour Kadena.Chainweb.Pact.Type
 
   @type listen :: Base64Url.t()
 
@@ -25,7 +25,7 @@ defmodule Kadena.Types.ListenRequestBody do
   end
 
   defimpl JSONPayload do
-    alias Kadena.Types.ListenRequestBody
+    alias Kadena.Chainweb.Pact.ListenRequestBody
     @type url :: String.t()
     @type base_64_url :: Base64Url.t()
 

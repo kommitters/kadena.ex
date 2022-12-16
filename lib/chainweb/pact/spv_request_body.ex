@@ -1,4 +1,4 @@
-defmodule Kadena.Types.SPVRequestBody do
+defmodule Kadena.Chainweb.Pact.SPVRequestBody do
   @moduledoc """
   `SPVRequestBody` struct definition.
   """
@@ -6,7 +6,7 @@ defmodule Kadena.Types.SPVRequestBody do
   alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Base64Url, ChainID}
 
-  @behaviour Kadena.Types.Spec
+  @behaviour Kadena.Chainweb.Pact.Type
 
   @type request_key :: Base64Url.t()
   @type target_chain_id :: ChainID.t()
@@ -51,7 +51,7 @@ defmodule Kadena.Types.SPVRequestBody do
   end
 
   defimpl JSONPayload do
-    alias Kadena.Types.SPVRequestBody
+    alias Kadena.Chainweb.Pact.SPVRequestBody
     alias Kadena.Utils.MapCase
 
     @type request_key :: Base64Url.t()

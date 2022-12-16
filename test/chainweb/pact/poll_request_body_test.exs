@@ -1,12 +1,12 @@
-defmodule Kadena.Types.PollRequestBodyTest do
+defmodule Kadena.Chainweb.Pact.PollRequestBodyTest do
   @moduledoc """
   `PollRequestBody` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.JSONPayload
-  alias Kadena.Types.{Base64Url, Base64UrlsList, PollRequestBody}
+  alias Kadena.Chainweb.Pact.{JSONPayload, PollRequestBody}
+  alias Kadena.Types.{Base64Url, Base64UrlsList}
 
   describe "new/1" do
     test "with a valid list" do

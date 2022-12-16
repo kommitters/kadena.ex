@@ -1,4 +1,4 @@
-defmodule Kadena.Types.SendRequestBody do
+defmodule Kadena.Chainweb.Pact.SendRequestBody do
   @moduledoc """
   `SendRequestBody` struct definition.
   """
@@ -6,7 +6,7 @@ defmodule Kadena.Types.SendRequestBody do
   alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.CommandsList
 
-  @behaviour Kadena.Types.Spec
+  @behaviour Kadena.Chainweb.Pact.Type
 
   @type cmds :: CommandsList.t()
 
@@ -26,10 +26,11 @@ defmodule Kadena.Types.SendRequestBody do
   def new(_cmds), do: {:error, [commands: :not_a_list]}
 
   defimpl JSONPayload do
+    alias Kadena.Chainweb.Pact.SendRequestBody
+
     alias Kadena.Types.{
       Command,
       PactTransactionHash,
-      SendRequestBody,
       SignaturesList
     }
 

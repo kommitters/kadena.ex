@@ -1,12 +1,12 @@
-defmodule Kadena.Types.SPVRequestBodyTest do
+defmodule Kadena.Chainweb.Pact.SPVRequestBodyTest do
   @moduledoc """
   `SPVRequestBody` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.JSONPayload
-  alias Kadena.Types.{Base64Url, ChainID, SPVRequestBody}
+  alias Kadena.Chainweb.Pact.{JSONPayload, SPVRequestBody}
+  alias Kadena.Types.{Base64Url, ChainID}
 
   describe "new/1" do
     test "with a valid list" do
