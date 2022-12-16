@@ -4,7 +4,7 @@ defmodule Kadena.Pact.ExecCommand do
   """
   @behaviour Kadena.Pact.Command
 
-  alias Kadena.Chainweb.Pact.{CommandPayload, JSONPayload}
+  alias Kadena.Chainweb.Pact.CommandPayload
   alias Kadena.Cryptography.{Sign, Utils}
   alias Kadena.Pact.Command.Hash
 
@@ -222,7 +222,7 @@ defmodule Kadena.Pact.ExecCommand do
       nonce: nonce
     ]
     |> CommandPayload.new()
-    |> JSONPayload.parse()
+    |> CommandPayload.to_json!()
     |> (&{:ok, &1}).()
   end
 

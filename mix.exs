@@ -96,7 +96,6 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Client.Spec,
         Kadena.Chainweb.Network,
         Kadena.Chainweb.Pact.Request,
-        Kadena.Chainweb.Pact.JSONPayload,
         Kadena.Chainweb.Request
       ],
       Cryptography: [
