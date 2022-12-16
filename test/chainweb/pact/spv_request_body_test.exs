@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.Pact.SPVRequestBodyTest do
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.{JSONPayload, SPVRequestBody}
+  alias Kadena.Chainweb.Pact.SPVRequestBody
   alias Kadena.Types.{Base64Url, ChainID}
 
   describe "new/1" do
@@ -55,13 +55,13 @@ defmodule Kadena.Chainweb.Pact.SPVRequestBodyTest do
     test "with a valid SPVRequestBody", %{
       json_result: json_result
     } do
-      spv_request_body =
-        SPVRequestBody.new(
+      ^json_result =
+        [
           request_key: "7af34f24d55d2fcf5de6fccfeeb837698ebff4598303237c64348a47806c8646",
           target_chain_id: "1"
-        )
-
-      ^json_result = JSONPayload.parse(spv_request_body)
+        ]
+        |> SPVRequestBody.new()
+        |> SPVRequestBody.to_json!()
     end
   end
 end

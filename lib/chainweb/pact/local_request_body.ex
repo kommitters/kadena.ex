@@ -3,7 +3,6 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
   `LocalRequestBody` struct definition.
   """
 
-  alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Command, PactTransactionHash, SignaturesList}
 
   @behaviour Kadena.Chainweb.Pact.Type
@@ -12,7 +11,8 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
   @type hash :: PactTransactionHash.t()
   @type sigs :: SignaturesList.t()
   @type cmd :: String.t()
-  @type errors :: {:error, Keyword.t()}
+  @type error :: {:error, Keyword.t()}
+  @type raw_sigs :: list(map())
 
   @type t :: %__MODULE__{hash: hash(), sigs: sigs(), cmd: cmd()}
 
@@ -25,7 +25,15 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
     |> build_local_request_body()
   end
 
-  @spec build_local_request_body(command :: command() | errors()) :: t() | errors()
+  @impl true
+  def to_json!(%__MODULE__{hash: hash, sigs: sigs, cmd: cmd}) do
+    with %PactTransactionHash{hash: hash} <- hash,
+         {:ok, sigs} <- to_signature_list(sigs) do
+      Jason.encode!(%{hash: hash, sigs: sigs, cmd: cmd})
+    end
+  end
+
+  @spec build_local_request_body(command :: command() | error()) :: t() | error()
   defp build_local_request_body(%Command{} = command) do
     attrs = Map.from_struct(command)
     struct(%__MODULE__{}, attrs)
@@ -36,28 +44,9 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
 
   defp build_local_request_body({:error, reason}), do: {:error, reason}
 
-  defimpl JSONPayload do
-    alias Kadena.Utils.MapCase
-
-    alias Kadena.Chainweb.Pact.LocalRequestBody
-
-    @type signatures_list :: SignaturesList.t()
-    @type signatures :: list(map())
-
-    @impl true
-    def parse(%LocalRequestBody{hash: hash, sigs: sigs, cmd: cmd}) do
-      with %PactTransactionHash{hash: hash} <- hash,
-           {:ok, sigs} <- to_signature_list(sigs) do
-        %{hash: hash, sigs: sigs, cmd: cmd}
-        |> MapCase.to_camel!()
-        |> Jason.encode!()
-      end
-    end
-
-    @spec to_signature_list(signatures :: signatures_list()) :: {:ok, signatures()}
-    defp to_signature_list(%SignaturesList{signatures: list}) do
-      sigs = Enum.map(list, fn sig -> Map.from_struct(sig) end)
-      {:ok, sigs}
-    end
+  @spec to_signature_list(signatures :: sigs()) :: {:ok, raw_sigs()}
+  defp to_signature_list(%SignaturesList{signatures: list}) do
+    sigs = Enum.map(list, fn sig -> Map.from_struct(sig) end)
+    {:ok, sigs}
   end
 end

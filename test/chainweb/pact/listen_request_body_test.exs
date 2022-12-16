@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.Pact.ListenRequestBodyTest do
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.{JSONPayload, ListenRequestBody}
+  alias Kadena.Chainweb.Pact.ListenRequestBody
   alias Kadena.Types.Base64Url
 
   describe "new/1" do
@@ -26,7 +26,7 @@ defmodule Kadena.Chainweb.Pact.ListenRequestBodyTest do
     end
   end
 
-  describe "parse/1" do
+  describe "to_json!/1" do
     setup do
       %{
         json_result: "{\"listen\":\"y3aWL72-3wAy7vL9wcegGXnstH0lHi-q-cfxkhD5JCw\"}"
@@ -36,8 +36,10 @@ defmodule Kadena.Chainweb.Pact.ListenRequestBodyTest do
     test "with a valid ListenRequestBody", %{
       json_result: json_result
     } do
-      listen_request_body = ListenRequestBody.new("y3aWL72-3wAy7vL9wcegGXnstH0lHi-q-cfxkhD5JCw")
-      ^json_result = JSONPayload.parse(listen_request_body)
+      ^json_result =
+        "y3aWL72-3wAy7vL9wcegGXnstH0lHi-q-cfxkhD5JCw"
+        |> ListenRequestBody.new()
+        |> ListenRequestBody.to_json!()
     end
   end
 end

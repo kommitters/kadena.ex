@@ -3,7 +3,6 @@ defmodule Kadena.Chainweb.Pact.SPVRequestBody do
   `SPVRequestBody` struct definition.
   """
 
-  alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Base64Url, ChainID}
 
   @behaviour Kadena.Chainweb.Pact.Type
@@ -30,6 +29,14 @@ defmodule Kadena.Chainweb.Pact.SPVRequestBody do
 
   def new(_args), do: {:error, [spv_request_body: :not_a_list]}
 
+  @impl true
+  def to_json!(%__MODULE__{
+        request_key: %Base64Url{url: request_key},
+        target_chain_id: %ChainID{id: target_chain_id}
+      }) do
+    Jason.encode!(%{requestKey: request_key, targetChainId: target_chain_id})
+  end
+
   @spec validate_request_key(request_key :: request_key()) :: validation()
   defp validate_request_key(%Base64Url{} = request_key), do: {:ok, request_key}
 
@@ -48,30 +55,5 @@ defmodule Kadena.Chainweb.Pact.SPVRequestBody do
       %ChainID{} = target_chain_id -> {:ok, target_chain_id}
       {:error, reasons} -> {:error, [target_chain_id: :invalid] ++ reasons}
     end
-  end
-
-  defimpl JSONPayload do
-    alias Kadena.Chainweb.Pact.SPVRequestBody
-    alias Kadena.Utils.MapCase
-
-    @type request_key :: Base64Url.t()
-    @type target_chain_id :: ChainID.t()
-    @type value :: String.t()
-
-    @impl true
-    def parse(%SPVRequestBody{request_key: request_key, target_chain_id: chain_id}) do
-      request_key = extract_key(request_key)
-      chain_id = extract_chain_id(chain_id)
-
-      %{request_key: request_key, target_chain_id: chain_id}
-      |> MapCase.to_camel!()
-      |> Jason.encode!()
-    end
-
-    @spec extract_key(request_key()) :: value()
-    defp extract_key(%Base64Url{url: url}), do: url
-
-    @spec extract_chain_id(target_chain_id()) :: value()
-    defp extract_chain_id(%ChainID{id: id}), do: id
   end
 end

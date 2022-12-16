@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBodyTest do
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.{JSONPayload, LocalRequestBody}
+  alias Kadena.Chainweb.Pact.LocalRequestBody
 
   alias Kadena.Types.{PactTransactionHash, SignaturesList}
 
@@ -61,8 +61,10 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBodyTest do
       cmd: cmd,
       json_result: json_result
     } do
-      local_request_body = LocalRequestBody.new(hash: hash, sigs: sigs, cmd: cmd)
-      ^json_result = JSONPayload.parse(local_request_body)
+      ^json_result =
+        [hash: hash, sigs: sigs, cmd: cmd]
+        |> LocalRequestBody.new()
+        |> LocalRequestBody.to_json!()
     end
   end
 end

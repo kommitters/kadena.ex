@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.Pact.PollRequestBodyTest do
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.{JSONPayload, PollRequestBody}
+  alias Kadena.Chainweb.Pact.PollRequestBody
   alias Kadena.Types.{Base64Url, Base64UrlsList}
 
   describe "new/1" do
@@ -56,8 +56,10 @@ defmodule Kadena.Chainweb.Pact.PollRequestBodyTest do
     test "with a valid PollRequestBody", %{
       json_result: json_result
     } do
-      poll = PollRequestBody.new(["jr6N7jQ9nVH0A_gRxe3RfKxR7rHn-IG-GosWz6WnMXQ"])
-      ^json_result = JSONPayload.parse(poll)
+      ^json_result =
+        ["jr6N7jQ9nVH0A_gRxe3RfKxR7rHn-IG-GosWz6WnMXQ"]
+        |> PollRequestBody.new()
+        |> PollRequestBody.to_json!()
     end
   end
 end
