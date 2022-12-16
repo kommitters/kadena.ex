@@ -27,6 +27,7 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
 
   defimpl JSONPayload do
     alias Kadena.Chainweb.Pact.SendRequestBody
+
     alias Kadena.Types.{
       Command,
       PactTransactionHash,
