@@ -1,11 +1,11 @@
-defmodule Kadena.Types.CommandPayload do
+defmodule Kadena.Chainweb.Pact.CommandPayload do
   @moduledoc """
   `CommandPayload` struct definition.
   """
 
   alias Kadena.Types.{MetaData, NetworkID, PactPayload, SignersList}
 
-  @behaviour Kadena.Types.Spec
+  @behaviour Kadena.Chainweb.Pact.Type
 
   @type network_id :: NetworkID.t() | nil
   @type payload :: PactPayload.t()
@@ -92,6 +92,7 @@ defmodule Kadena.Types.CommandPayload do
   defp validate_nonce(nonce), do: {:ok, to_string(nonce)}
 
   defimpl Kadena.Chainweb.Pact.JSONPayload do
+    alias Kadena.Chainweb.Pact.CommandPayload
     alias Kadena.Utils.MapCase
 
     alias Kadena.Types.{
@@ -99,7 +100,6 @@ defmodule Kadena.Types.CommandPayload do
       Cap,
       CapsList,
       ChainID,
-      CommandPayload,
       ContPayload,
       EnvData,
       ExecPayload,

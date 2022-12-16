@@ -1,4 +1,4 @@
-defmodule Kadena.Types.LocalRequestBody do
+defmodule Kadena.Chainweb.Pact.LocalRequestBody do
   @moduledoc """
   `LocalRequestBody` struct definition.
   """
@@ -6,7 +6,7 @@ defmodule Kadena.Types.LocalRequestBody do
   alias Kadena.Chainweb.Pact.JSONPayload
   alias Kadena.Types.{Command, PactTransactionHash, SignaturesList}
 
-  @behaviour Kadena.Types.Spec
+  @behaviour Kadena.Chainweb.Pact.Type
 
   @type command :: String.t()
   @type hash :: PactTransactionHash.t()
@@ -39,7 +39,7 @@ defmodule Kadena.Types.LocalRequestBody do
   defimpl JSONPayload do
     alias Kadena.Utils.MapCase
 
-    alias Kadena.Types.LocalRequestBody
+    alias Kadena.Chainweb.Pact.LocalRequestBody
 
     @type signatures_list :: SignaturesList.t()
     @type signatures :: list(map())

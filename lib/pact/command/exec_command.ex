@@ -4,13 +4,12 @@ defmodule Kadena.Pact.ExecCommand do
   """
   @behaviour Kadena.Pact.Command
 
-  alias Kadena.Chainweb.Pact.JSONPayload
+  alias Kadena.Chainweb.Pact.{CommandPayload, JSONPayload}
   alias Kadena.Cryptography.{Sign, Utils}
   alias Kadena.Pact.Command.Hash
 
   alias Kadena.Types.{
     Command,
-    CommandPayload,
     EnvData,
     ExecPayload,
     KeyPair,

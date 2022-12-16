@@ -3,7 +3,7 @@ defmodule Kadena.Chainweb.Pact.SendResponse do
   `SendResponse` struct definition.
   """
 
-  @behaviour Kadena.Chainweb.Pact.Resource
+  @behaviour Kadena.Chainweb.Pact.Type
 
   @type request_keys :: list(String.t())
 

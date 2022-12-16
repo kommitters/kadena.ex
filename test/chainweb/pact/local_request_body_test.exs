@@ -1,17 +1,13 @@
-defmodule Kadena.Types.LocalRequestBodyTest do
+defmodule Kadena.Chainweb.Pact.LocalRequestBodyTest do
   @moduledoc """
   `LocalRequestBody` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.JSONPayload
+  alias Kadena.Chainweb.Pact.{JSONPayload, LocalRequestBody}
 
-  alias Kadena.Types.{
-    LocalRequestBody,
-    PactTransactionHash,
-    SignaturesList
-  }
+  alias Kadena.Types.{PactTransactionHash, SignaturesList}
 
   setup do
     %{

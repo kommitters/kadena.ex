@@ -1,12 +1,12 @@
-defmodule Kadena.Types.ListenRequestBodyTest do
+defmodule Kadena.Chainweb.Pact.ListenRequestBodyTest do
   @moduledoc """
   `ListenRequestBody` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Pact.JSONPayload
-  alias Kadena.Types.{Base64Url, ListenRequestBody}
+  alias Kadena.Chainweb.Pact.{JSONPayload, ListenRequestBody}
+  alias Kadena.Types.Base64Url
 
   describe "new/1" do
     test "with a valid list" do
