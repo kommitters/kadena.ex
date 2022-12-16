@@ -5,7 +5,6 @@ defmodule Kadena.Chainweb.Pact.LocalTest do
 
   alias Kadena.Types.{
     Command,
-    CommandsList,
     PactTransactionHash,
     Signature,
     SignaturesList
@@ -31,35 +30,49 @@ defmodule Kadena.Chainweb.Pact.LocalTest do
 
       %{
         exec_command: exec_command,
-        local_response:
-          {:ok,
-           %Kadena.Chainweb.Pact.LocalResponse{
-             continuation: nil,
-             events: nil,
-             gas: 7,
-             logs: "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
-             meta_data: %{
-               block_height: 2_820_655,
-               block_time: 1_671_202_287_339_852,
-               prev_block_hash: "gpJ3rn9hyE5eGMuooSdnlEMNuvjvGZtkV37IsEVtffw",
-               public_meta: %{
-                 chain_id: "0",
-                 creation_time: 1_667_249_173,
-                 gas_limit: 1000,
-                 gas_price: 1.0e-6,
-                 sender: "k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94",
-                 ttl: 28_800
-               }
-             },
-             req_key: "-1npoTU2Mi71pKE_oteJiJuHuXTXxoObJm8zzVRK2pk",
-             result: %{data: 11, status: "success"},
-             tx_id: nil
-           }}
+        continuation: nil,
+        events: nil,
+        gas: 7,
+        logs: "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
+        meta_data: %{
+          #   block_height: 2_815_727,
+          #   block_time: 1_671_054_330_981_668,
+          #   prev_block_hash: "asisNr3nuU0t357i2bxMVUiIWDVHAMtncJHtmyENbio",
+          public_meta: %{
+            chain_id: "0",
+            creation_time: 1_667_249_173,
+            gas_limit: 1000,
+            gas_price: 1.0e-6,
+            sender: "k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94",
+            ttl: 28_800
+          }
+        },
+        req_key: "-1npoTU2Mi71pKE_oteJiJuHuXTXxoObJm8zzVRK2pk",
+        result: %{data: 11, status: "success"},
+        tx_id: nil
       }
     end
 
-    test "with a exec Command", %{exec_command: exec_command, local_response: local_response} do
-      ^local_response = Pact.local(exec_command)
+    test "with a exec Command", %{
+      exec_command: exec_command,
+      continuation: continuation,
+      events: events,
+      gas: gas,
+      logs: logs,
+      meta_data: meta_data,
+      req_key: req_key,
+      result: result,
+      tx_id: tx_id
+    } do
+      {:ok, response} = Pact.local(exec_command)
+      assert(continuation == response.continuation)
+      assert(events == response.events)
+      assert(gas == response.gas)
+      assert(logs == response.logs)
+      assert(meta_data.public_meta == response.meta_data.public_meta)
+      assert(req_key == response.req_key)
+      assert(result == response.result)
+      assert(tx_id == response.tx_id)
     end
 
     test "with a invalid Command", %{} do

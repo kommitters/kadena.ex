@@ -15,7 +15,6 @@ defmodule Kadena.Chainweb.Pact.Local do
   @headers [{"Content-Type", "application/json"}]
 
   @impl true
-
   def process(%Command{} = cmd, network, chain_id) do
     request_body = get_json_request_body(cmd)
 
