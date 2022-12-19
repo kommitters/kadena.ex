@@ -128,7 +128,7 @@ alias Kadena.Pact
 
 code = "(+ 1 2)"
 
-{:ok, %Command{} = command} =
+%Command{} = command =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_code(code)
   |> Pact.ExecCommand.add_keypair(keypair)
@@ -320,7 +320,7 @@ nonce = "2023-01-01 00:00:00.000000 UTC"
 env_data = %{accounts_admin_keyset: [keypair.pub_key]}
 
 # build the command
-{:ok, %Kadena.Types.Command{} = command} =
+%Kadena.Types.Command{} = command =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_network(network_id)
   |> Pact.ExecCommand.set_code(code)
@@ -382,7 +382,7 @@ step = 1
 rollback = true
 
 # build the command
-{:ok, %Kadena.Types.Command{} = command} =
+%Kadena.Types.Command{} = command =
   Pact.ContCommand.new()
   |> Pact.ContCommand.set_network(network_id)
   |> Pact.ContCommand.set_data(env_data)
@@ -407,6 +407,35 @@ rollback = true
     ]
   }
 }}
+```
+
+## Chainweb Pact API
+
+The interaction with Chainweb Pact API is done through the [**Kadena.Chainweb.Pact**][chainweb_pact_api] module using simple functions to interact with the endpoints.
+
+Each function receives the following parameters:
+- `data` - Specific to each endpoint.
+- `network_opts` - Network options where the request will be sent.
+  - `network_id` - Defaults to `:testnet04`.
+  - `chain_id` - Defaults to `0`.
+
+### Send endpoint
+
+The `send` function receives a list of commands and returns a `SendResponse` struct with the `request_keys` that represent an unique ID of each pact transaction consisting of its hash.
+
+```elixir
+alias Kadena.Chainweb.Pact
+
+cmds = [%Command{}, %Command{}, ...]
+Pact.send(cmds, [network_id: network_id, chain_id: chain_id])
+
+{:ok,
+ %SendResponse{
+   request_keys: [
+     "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
+     "gyShUgtFBk5xDoiBoLURbU_5vUG0benKroNDRhz8wqA"
+   ]
+ }}
 ```
 
 ---
@@ -490,3 +519,4 @@ Made with 💙 by [kommitters Open Source](https://kommit.co)
 [good-first-issues]: https://github.com/kommitters/kadena.ex/labels/%F0%9F%91%8B%20Good%20first%20issue
 [http_client_spec]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/client/spec.ex
 [jason_url]: https://github.com/michalmuskala/jason
+[chainweb_pact_api]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/pact.ex
