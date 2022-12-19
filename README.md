@@ -421,7 +421,7 @@ Each function receives the following parameters:
 
 ### Send endpoint
 
-The `send` function receives a list of commands and returns a `SendResponse` struct with the `request_keys` that represent an unique ID of each pact transaction consisting of its hash.
+The `send` function receives a list of commands and returns a `SendResponse` struct with the `request_keys` representing a unique ID of each pact transaction consisting of its hash.
 
 ```elixir
 alias Kadena.Chainweb.Pact
