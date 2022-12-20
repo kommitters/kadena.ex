@@ -1,39 +1,38 @@
 defmodule Kadena.Chainweb.Pact.Local do
   @moduledoc """
-  Send endpoint implementation
+  Local endpoint implementation
   """
 
   alias Kadena.Chainweb.Request
-  alias Kadena.Chainweb.Pact.{Endpoints, JSONPayload, LocalResponse}
-  alias Kadena.Types.{Command, LocalRequestBody}
+  alias Kadena.Chainweb.Pact.{LocalRequestBody, LocalResponse, Spec}
+  alias Kadena.Types.Command
 
-  @type cmd :: Command.t()
-  @type json_request_body :: String.t()
-  @behaviour Endpoints
+  @behaviour Spec
 
   @endpoint "local"
-  @headers [{"Content-Type", "application/json"}]
+
+  @type cmd :: Command.t()
+  @type json :: String.t()
 
   @impl true
-  def process(%Command{} = cmd, network, chain_id) do
-    request_body = get_json_request_body(cmd)
+  def process(%Command{} = cmd, network_id: network_id, chain_id: chain_id) do
+    request_body = json_request_body(cmd)
+    headers = [{"Content-Type", "application/json"}]
 
     :post
     |> Request.new(pact: [endpoint: @endpoint])
     |> Request.set_chain_id(chain_id)
-    |> Request.set_network(network)
+    |> Request.set_network(network_id)
     |> Request.add_body(request_body)
-    |> Request.add_headers(@headers)
+    |> Request.add_headers(headers)
     |> Request.perform()
     |> Request.results(as: LocalResponse)
   end
 
-  def process(_cmds, _network, _chain_id), do: {:error, [command: :invalid_command]}
-
-  @spec get_json_request_body(cmd :: cmd()) :: json_request_body()
-  defp get_json_request_body(cmd) do
+  @spec json_request_body(cmd :: cmd()) :: json()
+  defp json_request_body(cmd) do
     cmd
     |> LocalRequestBody.new()
-    |> JSONPayload.parse()
+    |> LocalRequestBody.to_json!()
   end
 end

@@ -7,17 +7,12 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBodyTest do
 
   alias Kadena.Chainweb.Pact.LocalRequestBody
 
-<<<<<<< HEAD:test/chainweb/pact/local_request_body_test.exs
-  alias Kadena.Types.{PactTransactionHash, SignaturesList}
-=======
   alias Kadena.Types.{
     Command,
-    LocalRequestBody,
     PactTransactionHash,
     Signature,
     SignaturesList
   }
->>>>>>> 4e12645 (Add local endpoitn and PACT API):test/types/local_request_body_test.exs
 
   setup do
     cmd =
@@ -46,7 +41,9 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBodyTest do
       command: command,
       cmd: cmd,
       hash: hash,
-      sigs: sigs
+      sigs: sigs,
+      json_result:
+        "{\"cmd\":\"{\\\"meta\\\":{\\\"chainId\\\":\\\"0\\\",\\\"creationTime\\\":1667249173,\\\"gasLimit\\\":1000,\\\"gasPrice\\\":1.0e-6,\\\"sender\\\":\\\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\\\",\\\"ttl\\\":28800},\\\"networkId\\\":\\\"testnet04\\\",\\\"nonce\\\":\\\"2023-06-13 17:45:18.211131 UTC\\\",\\\"payload\\\":{\\\"exec\\\":{\\\"code\\\":\\\"(+ 5 6)\\\",\\\"data\\\":{}}},\\\"signers\\\":[{\\\"addr\\\":\\\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\\\",\\\"clist\\\":[{\\\"args\\\":[\\\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\\\"],\\\"name\\\":\\\"coin.GAS\\\"}],\\\"pubKey\\\":\\\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\\\",\\\"scheme\\\":\\\"ED25519\\\"}]}\",\"hash\":\"-1npoTU2Mi71pKE_oteJiJuHuXTXxoObJm8zzVRK2pk\",\"sigs\":[{\"sig\":\"8b234b83570359e52188cceb301036a2a7b255171e856fd550cac687a946f18fbfc0e769fd8393dda44d6d04c31b531eaf35efb3b78b5e40fd857a743133030d\"}]}"
     }
   end
 
@@ -65,43 +62,14 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBodyTest do
   end
 
   describe "JSONPayload.parse/1" do
-    setup do
-      command = %Command{
-        cmd:
-          "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{}}},\"signers\":[{\"addr\":\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\",\"clist\":[{\"args\":[\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\",\"scheme\":\"ED25519\"}]}",
-        hash: %PactTransactionHash{
-          hash: "-1npoTU2Mi71pKE_oteJiJuHuXTXxoObJm8zzVRK2pk"
-        },
-        sigs: %SignaturesList{
-          signatures: [
-            %Signature{
-              sig:
-                "8b234b83570359e52188cceb301036a2a7b255171e856fd550cac687a946f18fbfc0e769fd8393dda44d6d04c31b531eaf35efb3b78b5e40fd857a743133030d"
-            }
-          ]
-        }
-      }
-
-      %{
-        command: command,
-        json_result:
-          "{\"cmd\":\"{\\\"meta\\\":{\\\"chainId\\\":\\\"0\\\",\\\"creationTime\\\":1667249173,\\\"gasLimit\\\":1000,\\\"gasPrice\\\":1.0e-6,\\\"sender\\\":\\\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\\\",\\\"ttl\\\":28800},\\\"networkId\\\":\\\"testnet04\\\",\\\"nonce\\\":\\\"2023-06-13 17:45:18.211131 UTC\\\",\\\"payload\\\":{\\\"exec\\\":{\\\"code\\\":\\\"(+ 5 6)\\\",\\\"data\\\":{}}},\\\"signers\\\":[{\\\"addr\\\":\\\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\\\",\\\"clist\\\":[{\\\"args\\\":[\\\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\\\"],\\\"name\\\":\\\"coin.GAS\\\"}],\\\"pubKey\\\":\\\"85bef77ea3570387cac57da34938f246c7460dc533a67823f065823e327b2afd\\\",\\\"scheme\\\":\\\"ED25519\\\"}]}\",\"hash\":\"-1npoTU2Mi71pKE_oteJiJuHuXTXxoObJm8zzVRK2pk\",\"sigs\":[{\"sig\":\"8b234b83570359e52188cceb301036a2a7b255171e856fd550cac687a946f18fbfc0e769fd8393dda44d6d04c31b531eaf35efb3b78b5e40fd857a743133030d\"}]}"
-      }
-    end
-
     test "with a valid LocalRequestBody", %{
       command: command,
       json_result: json_result
     } do
-<<<<<<< HEAD:test/chainweb/pact/local_request_body_test.exs
       ^json_result =
-        [hash: hash, sigs: sigs, cmd: cmd]
+        command
         |> LocalRequestBody.new()
         |> LocalRequestBody.to_json!()
-=======
-      local_request_body = LocalRequestBody.new(command)
-      ^json_result = JSONPayload.parse(local_request_body)
->>>>>>> 4e12645 (Add local endpoitn and PACT API):test/types/local_request_body_test.exs
     end
   end
 end

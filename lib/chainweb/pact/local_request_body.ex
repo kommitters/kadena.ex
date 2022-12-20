@@ -7,7 +7,7 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
 
   @behaviour Kadena.Chainweb.Pact.Type
 
-  @type command :: String.t()
+  @type command :: Command.t()
   @type hash :: PactTransactionHash.t()
   @type sigs :: SignaturesList.t()
   @type cmd :: String.t()
@@ -19,11 +19,8 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
   defstruct [:hash, :sigs, :cmd]
 
   @impl true
-  def new(args) do
-    args
-    |> Command.new()
-    |> build_local_request_body()
-  end
+  def new(%Command{} = cmd), do: build_local_request_body(cmd)
+  def new(_cmd), do: {:error, [arg: :not_a_command]}
 
   @impl true
   def to_json!(%__MODULE__{hash: hash, sigs: sigs, cmd: cmd}) do
@@ -33,16 +30,11 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
     end
   end
 
-  @spec build_local_request_body(command :: command() | error()) :: t() | error()
+  @spec build_local_request_body(command :: command()) :: t()
   defp build_local_request_body(%Command{} = command) do
     attrs = Map.from_struct(command)
     struct(%__MODULE__{}, attrs)
   end
-
-  defp build_local_request_body({:error, [command: :not_a_list]}),
-    do: {:error, [local_request_body: :not_a_list]}
-
-  defp build_local_request_body({:error, reason}), do: {:error, reason}
 
   @spec to_signature_list(signatures :: sigs()) :: {:ok, raw_sigs()}
   defp to_signature_list(%SignaturesList{signatures: list}) do
