@@ -17,8 +17,8 @@ defmodule Kadena.Chainweb.Pact.SendResponseTest do
   test "new/1", %{attrs: attrs} do
     %SendResponse{
       request_keys: [
-        "ATGCYPMNzdGcFh9Iik73KfMkgURIxaF91Ze4sHFsH8Q",
-        "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM"
+        "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
+        "gyShUgtFBk5xDoiBoLURbU_5vUG0benKroNDRhz8wqA"
       ]
     } = SendResponse.new(attrs)
   end

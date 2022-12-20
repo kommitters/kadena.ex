@@ -9,7 +9,7 @@ defmodule Kadena.Chainweb.Request do
 
   @type api_type :: :pact | :p2p
   @type network_id :: :testnet04 | :mainnet01
-  @type chain_id :: String.t() | nil
+  @type chain_id :: 0..19 | String.t() | nil
   @type method :: :get | :post | :put
   @type headers :: [{binary(), binary()}]
   @type body :: String.t() | nil
