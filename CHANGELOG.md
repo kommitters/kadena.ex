@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0 (20.12.2022)
+- Refactored [PACT Commands](https://github.com/kommitters/kadena.ex/issues/159)
+- Added [Composing functional Chainweb requests](https://github.com/kommitters/kadena.ex/issues/144)
+- Added [new function in Cap and modify JSON format](https://github.com/kommitters/kadena.ex/issues/167)
+- Renamed [resource definition for Chainweb Pact types](https://github.com/kommitters/kadena.ex/issues/178)
+- Refactored [Pact request bodies and CommandPayload](https://github.com/kommitters/kadena.ex/issues/179)
+- Implemented [Send endpoint](https://github.com/kommitters/kadena.ex/issues/97)
+
 ## 0.9.0 (08.12.2022)
 - Added [Continuation Command](https://github.com/kommitters/kadena.ex/issues/133)
 - Relocated Chainweb types

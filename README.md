@@ -22,7 +22,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.9.0"}
+    {:kadena, "~> 0.10.0"}
   ]
 end
 ```
@@ -491,13 +491,13 @@ Chainweb.Pact.send(cmds, network_id: :testnet04, chain_id: 1)
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.10`
+The latest updated branch to target a PR is `v0.11`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
+- [Chainweb PACT API Consumer](https://github.com/kommitters/kadena.ex/issues/58)
 
 ### Done - What we've already developed! 🚀
 
