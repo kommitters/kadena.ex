@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.9.0"
+  @version "0.10.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -94,8 +94,12 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Error,
         Kadena.Chainweb.Client.Default,
         Kadena.Chainweb.Client.Spec,
+        Kadena.Chainweb.Network,
+        Kadena.Chainweb.Pact,
         Kadena.Chainweb.Pact.Request,
-        Kadena.Chainweb.Pact.JSONPayload
+        Kadena.Chainweb.Pact.Send,
+        Kadena.Chainweb.Pact.Spec,
+        Kadena.Chainweb.Request
       ],
       Cryptography: [
         Kadena.Cryptography.Sign,
@@ -117,10 +121,8 @@ defmodule Kadena.MixProject do
         Kadena.Types.ChainID,
         Kadena.Types.ChainwebResponseMetaData,
         Kadena.Types.Command,
-        Kadena.Types.CommandPayload,
         Kadena.Types.CommandsList,
         Kadena.Types.ContPayload,
-        Kadena.Types.Continuation,
         Kadena.Types.EnvData,
         Kadena.Types.ExecPayload,
         Kadena.Types.KeyPair,
@@ -133,19 +135,13 @@ defmodule Kadena.MixProject do
         Kadena.Types.OptionalPactEventsList,
         Kadena.Types.PactCode,
         Kadena.Types.PactDecimal,
-        Kadena.Types.PactEvent,
-        Kadena.Types.PactEventModule,
-        Kadena.Types.PactEventsList,
-        Kadena.Types.PactExec,
         Kadena.Types.PactInt,
         Kadena.Types.PactPayload,
-        Kadena.Types.PactResult,
         Kadena.Types.PactTransactionHash,
         Kadena.Types.PactValue,
         Kadena.Types.PactValuesList,
         Kadena.Types.PollRequestBody,
         Kadena.Types.Proof,
-        Kadena.Types.Provenance,
         Kadena.Types.Rollback,
         Kadena.Types.SendRequestBody,
         Kadena.Types.SignCommand,
@@ -159,16 +155,22 @@ defmodule Kadena.MixProject do
         Kadena.Types.Spec,
         Kadena.Types.SPVProof,
         Kadena.Types.SPVRequestBody,
-        Kadena.Types.Step,
-        Kadena.Types.Yield
+        Kadena.Types.Step
       ],
-      "Chainweb Types": [
-        Kadena.Chainweb.Types.CommandResult,
-        Kadena.Chainweb.Types.ListenResponse,
-        Kadena.Chainweb.Types.LocalResponse,
-        Kadena.Chainweb.Types.PollResponse,
-        Kadena.Chainweb.Types.SendResponse,
-        Kadena.Chainweb.Types.SPVResponse
+      "Chainweb Pact Types": [
+        Kadena.Chainweb.Pact.Type,
+        Kadena.Chainweb.Pact.CommandPayload,
+        Kadena.Chainweb.Pact.CommandResult,
+        Kadena.Chainweb.Pact.ListenRequestBody,
+        Kadena.Chainweb.Pact.ListenResponse,
+        Kadena.Chainweb.Pact.LocalRequestBody,
+        Kadena.Chainweb.Pact.LocalResponse,
+        Kadena.Chainweb.Pact.PollRequestBody,
+        Kadena.Chainweb.Pact.PollResponse,
+        Kadena.Chainweb.Pact.SendRequestBody,
+        Kadena.Chainweb.Pact.SendResponse,
+        Kadena.Chainweb.Pact.SPVRequestBody,
+        Kadena.Chainweb.Pact.SPVResponse
       ],
       Utils: Kadena.Utils.MapCase
     ]

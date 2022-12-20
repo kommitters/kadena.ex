@@ -4,13 +4,12 @@ defmodule Kadena.Pact.ExecCommand do
   """
   @behaviour Kadena.Pact.Command
 
-  alias Kadena.Chainweb.Pact.JSONPayload
-  alias Kadena.Cryptography.Sign
+  alias Kadena.Chainweb.Pact.CommandPayload
+  alias Kadena.Cryptography.{Sign, Utils}
   alias Kadena.Pact.Command.Hash
 
   alias Kadena.Types.{
     Command,
-    CommandPayload,
     EnvData,
     ExecPayload,
     KeyPair,
@@ -55,7 +54,15 @@ defmodule Kadena.Pact.ExecCommand do
           signers: signers()
         }
 
-  defstruct [:network_id, :meta_data, :code, :nonce, :signers, :data, keypairs: []]
+  defstruct [
+    :network_id,
+    :meta_data,
+    :code,
+    :nonce,
+    :data,
+    keypairs: [],
+    signers: SignersList.new()
+  ]
 
   @impl true
   def new(opts \\ nil)
@@ -65,9 +72,9 @@ defmodule Kadena.Pact.ExecCommand do
     code = Keyword.get(opts, :code, "")
     data = Keyword.get(opts, :data)
     nonce = Keyword.get(opts, :nonce, "")
-    meta_data = Keyword.get(opts, :meta_data, %MetaData{})
+    meta_data = Keyword.get(opts, :meta_data, MetaData.new())
     keypairs = Keyword.get(opts, :keypairs, [])
-    signers = Keyword.get(opts, :signers, %SignersList{})
+    signers = Keyword.get(opts, :signers, SignersList.new())
 
     %__MODULE__{}
     |> set_network(network_id)
@@ -92,6 +99,11 @@ defmodule Kadena.Pact.ExecCommand do
   def set_network({:error, reason}, _network), do: {:error, reason}
 
   @impl true
+  def set_data(%__MODULE__{} = cmd_request, %EnvData{} = data),
+    do: %{cmd_request | data: data}
+
+  def set_data(%__MODULE__{} = cmd_request, nil), do: cmd_request
+
   def set_data(%__MODULE__{} = cmd_request, data) do
     case EnvData.new(data) do
       %EnvData{} -> %{cmd_request | data: data}
@@ -123,8 +135,10 @@ defmodule Kadena.Pact.ExecCommand do
   def set_metadata({:error, reason}, _metadata), do: {:error, reason}
 
   @impl true
-  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair),
-    do: %{cmd_request | keypairs: keypairs ++ [keypair]}
+  def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair) do
+    cmd_request = %{cmd_request | keypairs: keypairs ++ [keypair]}
+    set_signers_from_keypair(cmd_request, keypair)
+  end
 
   def add_keypair(%__MODULE__{}, _keypair), do: {:error, [keypair: :invalid]}
   def add_keypair({:error, reason}, _keypair), do: {:error, reason}
@@ -142,9 +156,6 @@ defmodule Kadena.Pact.ExecCommand do
   def add_keypairs({:error, reason}, _keypairs), do: {:error, reason}
 
   @impl true
-  def add_signer(%__MODULE__{signers: nil} = cmd_request, %Signer{} = signer),
-    do: %{cmd_request | signers: SignersList.new([signer])}
-
   def add_signer(%__MODULE__{signers: signer_list} = cmd_request, %Signer{} = signer) do
     %SignersList{signers: signers} = signer_list
     %{cmd_request | signers: SignersList.new(signers ++ [signer])}
@@ -154,8 +165,10 @@ defmodule Kadena.Pact.ExecCommand do
   def add_signer({:error, reason}, _signer), do: {:error, reason}
 
   @impl true
-  def add_signers(%__MODULE__{} = cmd_request, %SignersList{} = list),
-    do: %{cmd_request | signers: list}
+  def add_signers(%__MODULE__{signers: signer_list} = cmd_request, %SignersList{signers: signers}) do
+    %SignersList{signers: old_signers} = signer_list
+    %{cmd_request | signers: SignersList.new(old_signers ++ signers)}
+  end
 
   def add_signers(%__MODULE__{}, _signers), do: {:error, [signers: :invalid]}
   def add_signers({:error, reason}, _signers), do: {:error, reason}
@@ -180,6 +193,12 @@ defmodule Kadena.Pact.ExecCommand do
 
   def build(_module), do: {:error, [exec_command_request: :invalid_payload]}
 
+  @spec set_signers_from_keypair(t(), keypair()) :: t()
+  defp set_signers_from_keypair(cmd_request, %KeyPair{pub_key: pub_key, clist: clist}) do
+    signer = Signer.new(pub_key: pub_key, clist: clist, scheme: :ed25519)
+    add_signer(cmd_request, signer)
+  end
+
   @spec create_payload(code :: code(), data :: data()) :: valid_payload()
   defp create_payload(code, data) do
     [code: code, data: data]
@@ -203,7 +222,7 @@ defmodule Kadena.Pact.ExecCommand do
       nonce: nonce
     ]
     |> CommandPayload.new()
-    |> JSONPayload.parse()
+    |> CommandPayload.to_json!()
     |> (&{:ok, &1}).()
   end
 
@@ -220,6 +239,14 @@ defmodule Kadena.Pact.ExecCommand do
 
   @spec sign_commands(signs :: list(), cmd :: json_string_payload(), keypairs()) ::
           valid_sign_commands()
+  defp sign_commands([], cmd, []) do
+    cmd
+    |> Utils.blake2b_hash(byte_size: 32)
+    |> Utils.url_encode64()
+    |> (&SignCommand.new(hash: &1)).()
+    |> (&{:ok, [&1]}).()
+  end
+
   defp sign_commands(signs, _cmd, []), do: {:ok, signs}
 
   defp sign_commands(signs, cmd, [%KeyPair{} = keypair | keypairs]) do

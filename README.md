@@ -1,6 +1,6 @@
 # Kadena.ex
 
-![Build Badge](https://img.shields.io/github/workflow/status/kommitters/kadena.ex/Kadena%20CI/main?style=for-the-badge)
+![Build Badge](https://img.shields.io/github/actions/workflow/status/kommitters/kadena.ex/ci.yml?branch=main&style=for-the-badge)
 [![Coverage Status](https://img.shields.io/coveralls/github/kommitters/kadena.ex?style=for-the-badge)](https://coveralls.io/github/kommitters/kadena.ex)
 [![Version Badge](https://img.shields.io/hexpm/v/kadena?style=for-the-badge)](https://hexdocs.pm/kadena)
 ![Downloads Badge](https://img.shields.io/hexpm/dt/kadena?style=for-the-badge)
@@ -22,7 +22,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.9.0"}
+    {:kadena, "~> 0.10.0"}
   ]
 end
 ```
@@ -128,7 +128,7 @@ alias Kadena.Pact
 
 code = "(+ 1 2)"
 
-{:ok, %Command{} = command} =
+%Command{} = command =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_code(code)
   |> Pact.ExecCommand.add_keypair(keypair)
@@ -320,7 +320,7 @@ nonce = "2023-01-01 00:00:00.000000 UTC"
 env_data = %{accounts_admin_keyset: [keypair.pub_key]}
 
 # build the command
-{:ok, %Kadena.Types.Command{} = command} =
+%Kadena.Types.Command{} = command =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_network(network_id)
   |> Pact.ExecCommand.set_code(code)
@@ -382,7 +382,7 @@ step = 1
 rollback = true
 
 # build the command
-{:ok, %Kadena.Types.Command{} = command} =
+%Kadena.Types.Command{} = command =
   Pact.ContCommand.new()
   |> Pact.ContCommand.set_network(network_id)
   |> Pact.ContCommand.set_data(env_data)
@@ -409,17 +409,95 @@ rollback = true
 }}
 ```
 
+## Chainweb Pact API
+
+Interaction with [Chainweb Pact API][chainweb_pact_api_doc] is done through the [**Kadena.Chainweb.Pact**][chainweb_pact_api] module using simple functions to access endpoints.
+
+### Send endpoint
+
+Retrieves the request keys of the Pact transactions sent to the network.
+
+```elixir
+Kadena.Chainweb.Pact.send(cmds, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
+**Parameters**
+
+- `cmds`: List of [PACT commands](#pact-commands).
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+alias Kadena.Cryptography
+alias Kadena.Pact
+
+{:ok, keypair} =
+  Cryptography.KeyPair.from_secret_key(
+    "28834b7a0d6d1f84ae2c2efcb5b1de28122e07e2e4caad04a32988a3c79c547c"
+  )
+
+network_id = :testnet04
+
+metadata =
+  Kadena.Types.MetaData.new(
+    creation_time: 1_671_462_208,
+    ttl: 28_800,
+    gas_limit: 1000,
+    gas_price: 0.000001,
+    sender: "k:#{keypair.pub_key}",
+    chain_id: "1"
+  )
+
+code = "(+ 1 2)"
+
+cmd1 =
+  Pact.ExecCommand.new()
+  |> Pact.ExecCommand.set_network(network_id)
+  |> Pact.ExecCommand.set_code(code)
+  |> Pact.ExecCommand.set_metadata(metadata)
+  |> Pact.ExecCommand.add_keypair(keypair)
+  |> Pact.ExecCommand.build()
+
+code = "(+ 2 2)"
+
+cmd2 =
+  Pact.ExecCommand.new()
+  |> Pact.ExecCommand.set_network(network_id)
+  |> Pact.ExecCommand.set_code(code)
+  |> Pact.ExecCommand.set_metadata(metadata)
+  |> Pact.ExecCommand.add_keypair(keypair)
+  |> Pact.ExecCommand.build()
+
+cmds = [cmd1, cmd2]
+
+Chainweb.Pact.send(cmds, network_id: :testnet04, chain_id: 1)
+
+{:ok,
+ %Kadena.Chainweb.Pact.SendResponse{
+   request_keys: [
+     "rz03l9cXJTLNzBJoTitum7yyBq3amdAqM5sopw5gZyQ",
+     "dS3UDAnJBKwReOFiyNU6qUwuclvXKDMYSPT6YDCkrJY"
+   ]
+ }}
+```
+
 ---
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.10`
+The latest updated branch to target a PR is `v0.11`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
+- [Chainweb PACT API Consumer](https://github.com/kommitters/kadena.ex/issues/58)
 
 ### Done - What we've already developed! 🚀
 
@@ -490,3 +568,5 @@ Made with 💙 by [kommitters Open Source](https://kommit.co)
 [good-first-issues]: https://github.com/kommitters/kadena.ex/labels/%F0%9F%91%8B%20Good%20first%20issue
 [http_client_spec]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/client/spec.ex
 [jason_url]: https://github.com/michalmuskala/jason
+[chainweb_pact_api_doc]: https://api.chainweb.com/openapi/pact.html
+[chainweb_pact_api]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/pact.ex

@@ -22,7 +22,7 @@ defmodule Kadena.Chainweb.CannedHTTPClient do
     do: {:error, :timeout}
 
   def request(:post, _url, _headers, _body, _opt) do
-    json_body = Chainweb.fixture("200")
+    json_body = Chainweb.fixture("200", raw_data: true)
     {:ok, 200, [], json_body}
   end
 end

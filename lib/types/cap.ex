@@ -27,6 +27,16 @@ defmodule Kadena.Types.Cap do
     end
   end
 
+  def new(args) when is_map(args) do
+    name = Map.get(args, :name)
+    args = Map.get(args, :args)
+
+    with {:ok, name} <- validate_name(name),
+         {:ok, args} <- validate_args(args) do
+      %__MODULE__{name: name, args: args}
+    end
+  end
+
   def new(_args), do: {:error, [args: :invalid]}
 
   @spec validate_name(name :: name()) :: validation()

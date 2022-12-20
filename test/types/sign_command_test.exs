@@ -36,7 +36,7 @@ defmodule Kadena.Types.SignCommandTest do
     end
 
     test "with an invalid sig value", %{hash: hash} do
-      {:error, [sig: :invalid]} = SignCommand.new(hash: hash)
+      {:error, [sig: :invalid]} = SignCommand.new(hash: hash, sig: :invalid)
     end
   end
 end
