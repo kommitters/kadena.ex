@@ -8,7 +8,6 @@
 - Refactored [Pact request bodies and CommandPayload](https://github.com/kommitters/kadena.ex/issues/179)
 - Implemented [Send endpoint](https://github.com/kommitters/kadena.ex/issues/97)
 
-
 ## 0.9.0 (08.12.2022)
 - Added [Continuation Command](https://github.com/kommitters/kadena.ex/issues/133)
 - Relocated Chainweb types
