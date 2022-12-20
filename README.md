@@ -1,6 +1,6 @@
 # Kadena.ex
 
-![Build Badge](https://img.shields.io/github/workflow/status/kommitters/kadena.ex/Kadena%20CI/main?style=for-the-badge)
+![Build Badge](https://img.shields.io/github/actions/workflow/status/kommitters/kadena.ex/ci.yml?branch=main&style=for-the-badge)
 [![Coverage Status](https://img.shields.io/coveralls/github/kommitters/kadena.ex?style=for-the-badge)](https://coveralls.io/github/kommitters/kadena.ex)
 [![Version Badge](https://img.shields.io/hexpm/v/kadena?style=for-the-badge)](https://hexdocs.pm/kadena)
 ![Downloads Badge](https://img.shields.io/hexpm/dt/kadena?style=for-the-badge)
@@ -411,29 +411,78 @@ rollback = true
 
 ## Chainweb Pact API
 
-The interaction with Chainweb Pact API is done through the [**Kadena.Chainweb.Pact**][chainweb_pact_api] module using simple functions to interact with the endpoints.
-
-Each function receives the following parameters:
-- `data` - Specific to each endpoint.
-- `network_opts` - Network options where the request will be sent.
-  - `network_id` - Defaults to `:testnet04`.
-  - `chain_id` - Defaults to `0`.
+Interaction with [Chainweb Pact API][chainweb_pact_api_doc] is done through the [**Kadena.Chainweb.Pact**][chainweb_pact_api] module using simple functions to access endpoints.
 
 ### Send endpoint
 
-The `send` function receives a list of commands and returns a `SendResponse` struct with the `request_keys` representing a unique ID of each pact transaction consisting of its hash.
+Retrieves the request keys of the Pact transactions sent to the network.
 
 ```elixir
-alias Kadena.Chainweb.Pact
+Kadena.Chainweb.Pact.send(cmds, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
 
-cmds = [%Command{}, %Command{}, ...]
-Pact.send(cmds, [network_id: network_id, chain_id: chain_id])
+**Parameters**
+
+- `cmds`: List of [PACT commands](#pact-commands).
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+alias Kadena.Cryptography
+alias Kadena.Pact
+
+{:ok, keypair} =
+  Cryptography.KeyPair.from_secret_key(
+    "28834b7a0d6d1f84ae2c2efcb5b1de28122e07e2e4caad04a32988a3c79c547c"
+  )
+
+network_id = :testnet04
+
+metadata =
+  Kadena.Types.MetaData.new(
+    creation_time: 1_671_462_208,
+    ttl: 28_800,
+    gas_limit: 1000,
+    gas_price: 0.000001,
+    sender: "k:#{keypair.pub_key}",
+    chain_id: "1"
+  )
+
+code = "(+ 1 2)"
+
+cmd1 =
+  Pact.ExecCommand.new()
+  |> Pact.ExecCommand.set_network(network_id)
+  |> Pact.ExecCommand.set_code(code)
+  |> Pact.ExecCommand.set_metadata(metadata)
+  |> Pact.ExecCommand.add_keypair(keypair)
+  |> Pact.ExecCommand.build()
+
+code = "(+ 2 2)"
+
+cmd2 =
+  Pact.ExecCommand.new()
+  |> Pact.ExecCommand.set_network(network_id)
+  |> Pact.ExecCommand.set_code(code)
+  |> Pact.ExecCommand.set_metadata(metadata)
+  |> Pact.ExecCommand.add_keypair(keypair)
+  |> Pact.ExecCommand.build()
+
+cmds = [cmd1, cmd2]
+
+Chainweb.Pact.send(cmds, network_id: :testnet04, chain_id: 1)
 
 {:ok,
- %SendResponse{
+ %Kadena.Chainweb.Pact.SendResponse{
    request_keys: [
-     "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
-     "gyShUgtFBk5xDoiBoLURbU_5vUG0benKroNDRhz8wqA"
+     "rz03l9cXJTLNzBJoTitum7yyBq3amdAqM5sopw5gZyQ",
+     "dS3UDAnJBKwReOFiyNU6qUwuclvXKDMYSPT6YDCkrJY"
    ]
  }}
 ```
@@ -519,4 +568,5 @@ Made with 💙 by [kommitters Open Source](https://kommit.co)
 [good-first-issues]: https://github.com/kommitters/kadena.ex/labels/%F0%9F%91%8B%20Good%20first%20issue
 [http_client_spec]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/client/spec.ex
 [jason_url]: https://github.com/michalmuskala/jason
+[chainweb_pact_api_doc]: https://api.chainweb.com/openapi/pact.html
 [chainweb_pact_api]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/pact.ex
