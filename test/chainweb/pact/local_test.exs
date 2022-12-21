@@ -35,7 +35,9 @@ defmodule Kadena.Chainweb.Pact.LocalTest do
   @moduledoc """
   `Local` endpoint implementation tests.
   """
+
   use ExUnit.Case
+
   alias Kadena.Chainweb.Client.CannedLocalRequests
   alias Kadena.Chainweb.{Error, Pact}
   alias Kadena.Chainweb.Pact.LocalResponse
@@ -50,59 +52,58 @@ defmodule Kadena.Chainweb.Pact.LocalTest do
       Application.delete_env(:kadena, :http_client_impl)
     end)
 
-    code = "(+ 5 6)"
-    bad_code = "(coin.get-balance 'bad')"
-    cmd = create_command(code)
-    cmd_for_error = create_command(bad_code)
+    success_cmd = create_command("(+ 5 6)")
+    error_cmd = create_command("(coin.get-balance 'bad')")
+
+    success_response =
+      {:ok,
+       %LocalResponse{
+         continuation: nil,
+         events: nil,
+         gas: 6,
+         logs: "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
+         meta_data: %{
+           block_height: 3_303_861,
+           block_time: 1_671_546_034_831_940,
+           prev_block_hash: "Y6Wj0sxJpdV8M-3ihAbzUka57Wv5ZV2Uez6H_6_WeeY",
+           public_meta: %{
+             chain_id: "1",
+             creation_time: 1_671_462_208,
+             gas_limit: 1000,
+             gas_price: 1.0e-6,
+             sender: "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+             ttl: 28_800
+           }
+         },
+         req_key: "bTrbGGOdhzA_lwmMoXkqozNe_YKsww7uTNW913B79bs",
+         result: %{data: 11, status: "success"},
+         tx_id: nil
+       }}
+
+    error_response =
+      {:error,
+       %Error{
+         status: 400,
+         title: "Validation failed: Invalid command: Failed reading: empty"
+       }}
 
     %{
-      cmd: cmd,
-      cmd_for_error: cmd_for_error,
-      local_response:
-        {:ok,
-         %LocalResponse{
-           continuation: nil,
-           events: nil,
-           gas: 6,
-           logs: "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
-           meta_data: %{
-             block_height: 3_303_861,
-             block_time: 1_671_546_034_831_940,
-             prev_block_hash: "Y6Wj0sxJpdV8M-3ihAbzUka57Wv5ZV2Uez6H_6_WeeY",
-             public_meta: %{
-               chain_id: "1",
-               creation_time: 1_671_462_208,
-               gas_limit: 1000,
-               gas_price: 1.0e-6,
-               sender: "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
-               ttl: 28_800
-             }
-           },
-           req_key: "SvVzKL5KC0r1JdIkJDhMHT8vZhmO2CdTxPKX-6YmGG0",
-           result: %{data: 11, status: "success"},
-           tx_id: nil
-         }}
+      success: %{cmd: success_cmd, response: success_response},
+      error: %{cmd: error_cmd, response: error_response}
     }
   end
 
-  test "process/2", %{
-    cmd: cmd,
-    local_response: local_response
-  } do
-    ^local_response = Pact.local(cmd, network_id: :testnet04, chain_id: 1)
+  test "process/2", %{success: %{cmd: cmd, response: response}} do
+    ^response = Pact.local(cmd, network_id: :testnet04, chain_id: 1)
   end
 
-  test "process/2 error", %{cmd_for_error: cmd_for_error} do
-    {:error,
-     %Error{
-       status: 400,
-       title: "Validation failed: Invalid command: Failed reading: empty"
-     }} = Pact.local(cmd_for_error, network_id: :testnet04, chain_id: 1)
+  test "process/2 error", %{error: %{cmd: cmd, response: response}} do
+    ^response = Pact.local(cmd, network_id: :testnet04, chain_id: 1)
   end
 
   defp create_command(code) do
     network_id = :testnet04
-    nonce = "2023-06-13 17:45:18.211131 UTC"
+    nonce = "2023-01-01 00:00:00.000000 UTC"
 
     {:ok, keypair} =
       Cryptography.KeyPair.from_secret_key(
