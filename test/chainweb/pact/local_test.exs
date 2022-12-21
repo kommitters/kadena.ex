@@ -52,8 +52,8 @@ defmodule Kadena.Chainweb.Pact.LocalTest do
       Application.delete_env(:kadena, :http_client_impl)
     end)
 
-    success_cmd = create_command("(+ 5 6)")
-    error_cmd = create_command("(coin.get-balance 'bad')")
+    {:ok, success_cmd} = create_command("(+ 5 6)")
+    {:ok, error_cmd} = create_command("(coin.get-balance 'bad')")
 
     success_response =
       {:ok,

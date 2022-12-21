@@ -6,7 +6,7 @@ defmodule Kadena.Pact.Command do
   alias Kadena.Pact.ExecCommand
   alias Kadena.Types.{ChainID, Command, KeyPair, MetaData, NetworkID, Signer, SignersList}
 
-  @type cmd :: Command.t()
+  @type cmd :: {:ok, Command.t()}
   @type network_id :: NetworkID.t()
   @type chain_id :: ChainID.t()
   @type cont_request :: struct()

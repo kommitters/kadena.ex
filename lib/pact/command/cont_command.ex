@@ -222,9 +222,8 @@ defmodule Kadena.Pact.ContCommand do
          {:ok, cmd} <- command_to_json_string(payload, cmd_request),
          {:ok, sig_commands} <- sign_commands([], cmd, keypairs),
          {:ok, hash} <- Hash.pull_unique(sig_commands),
-         {:ok, signatures} <- build_signatures(sig_commands, []),
-         {:ok, command} <- create_command(hash, signatures, cmd) do
-      command
+         {:ok, signatures} <- build_signatures(sig_commands, []) do
+      create_command(hash, signatures, cmd)
     end
   end
 

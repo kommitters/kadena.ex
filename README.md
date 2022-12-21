@@ -128,7 +128,7 @@ alias Kadena.Pact
 
 code = "(+ 1 2)"
 
-%Command{} = command =
+{:ok, %Command{} = command} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_code(code)
   |> Pact.ExecCommand.add_keypair(keypair)
@@ -320,7 +320,7 @@ nonce = "2023-01-01 00:00:00.000000 UTC"
 env_data = %{accounts_admin_keyset: [keypair.pub_key]}
 
 # build the command
-%Kadena.Types.Command{} = command =
+{:ok, %Kadena.Types.Command{} = command} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_network(network_id)
   |> Pact.ExecCommand.set_code(code)
@@ -382,7 +382,7 @@ step = 1
 rollback = true
 
 # build the command
-%Kadena.Types.Command{} = command =
+{:ok, %Kadena.Types.Command{} = command} =
   Pact.ContCommand.new()
   |> Pact.ContCommand.set_network(network_id)
   |> Pact.ContCommand.set_data(env_data)
@@ -456,7 +456,7 @@ metadata =
 
 code = "(+ 1 2)"
 
-cmd1 =
+{:ok, cmd1} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_network(network_id)
   |> Pact.ExecCommand.set_code(code)
@@ -466,7 +466,7 @@ cmd1 =
 
 code = "(+ 2 2)"
 
-cmd2 =
+{:ok, cmd2} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_network(network_id)
   |> Pact.ExecCommand.set_code(code)
@@ -531,7 +531,7 @@ metadata =
 
 code = "(+ 1 2)"
 
-cmd =
+{:ok, cmd} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_code(code)
   |> Pact.ExecCommand.set_metadata(metadata)
