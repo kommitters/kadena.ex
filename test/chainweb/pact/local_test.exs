@@ -1,17 +1,33 @@
 defmodule Kadena.Chainweb.Client.CannedLocalRequests do
   @moduledoc false
 
+  alias Kadena.Chainweb.Error
   alias Kadena.Test.Fixtures.Chainweb
 
   def request(
         :post,
         "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/1/pact/api/v1/local",
         _headers,
-        _body,
+        body,
         _options
       ) do
-    response = Chainweb.fixture("local")
-    {:ok, response}
+    case String.contains?(body, "(coin.get-balance 'bad')") do
+      true ->
+        response =
+          Error.new(
+            {:chainweb,
+             %{
+               status: 400,
+               title: "Validation failed: Invalid command: Failed reading: empty"
+             }}
+          )
+
+        {:error, response}
+
+      false ->
+        response = Chainweb.fixture("local")
+        {:ok, response}
+    end
   end
 end
 
@@ -21,7 +37,7 @@ defmodule Kadena.Chainweb.Pact.LocalTest do
   """
   use ExUnit.Case
   alias Kadena.Chainweb.Client.CannedLocalRequests
-  alias Kadena.Chainweb.Pact
+  alias Kadena.Chainweb.{Error, Pact}
   alias Kadena.Chainweb.Pact.LocalResponse
   alias Kadena.Cryptography
   alias Kadena.Pact.ExecCommand
@@ -34,36 +50,14 @@ defmodule Kadena.Chainweb.Pact.LocalTest do
       Application.delete_env(:kadena, :http_client_impl)
     end)
 
-    network_id = :testnet04
     code = "(+ 5 6)"
-    nonce = "2023-06-13 17:45:18.211131 UTC"
-
-    {:ok, keypair} =
-      Cryptography.KeyPair.from_secret_key(
-        "28834b7a0d6d1f84ae2c2efcb5b1de28122e07e2e4caad04a32988a3c79c547c"
-      )
-
-    meta_data =
-      MetaData.new(
-        creation_time: 1_671_462_208,
-        ttl: 28_800,
-        gas_limit: 1000,
-        gas_price: 1.0e-6,
-        sender: "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
-        chain_id: "1"
-      )
-
-    cmd =
-      ExecCommand.new()
-      |> ExecCommand.set_network(network_id)
-      |> ExecCommand.set_code(code)
-      |> ExecCommand.set_nonce(nonce)
-      |> ExecCommand.set_metadata(meta_data)
-      |> ExecCommand.add_keypair(keypair)
-      |> ExecCommand.build()
+    bad_code = "(coin.get-balance 'bad')"
+    cmd = create_command(code)
+    cmd_for_error = create_command(bad_code)
 
     %{
       cmd: cmd,
+      cmd_for_error: cmd_for_error,
       local_response:
         {:ok,
          %LocalResponse{
@@ -96,5 +90,41 @@ defmodule Kadena.Chainweb.Pact.LocalTest do
     local_response: local_response
   } do
     ^local_response = Pact.local(cmd, network_id: :testnet04, chain_id: 1)
+  end
+
+  test "process/2 error", %{cmd_for_error: cmd_for_error} do
+    {:error,
+     %Error{
+       status: 400,
+       title: "Validation failed: Invalid command: Failed reading: empty"
+     }} = Pact.local(cmd_for_error, network_id: :testnet04, chain_id: 1)
+  end
+
+  defp create_command(code) do
+    network_id = :testnet04
+    nonce = "2023-06-13 17:45:18.211131 UTC"
+
+    {:ok, keypair} =
+      Cryptography.KeyPair.from_secret_key(
+        "28834b7a0d6d1f84ae2c2efcb5b1de28122e07e2e4caad04a32988a3c79c547c"
+      )
+
+    meta_data =
+      MetaData.new(
+        creation_time: 1_671_462_208,
+        ttl: 28_800,
+        gas_limit: 1000,
+        gas_price: 1.0e-6,
+        sender: "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+        chain_id: "1"
+      )
+
+    ExecCommand.new()
+    |> ExecCommand.set_network(network_id)
+    |> ExecCommand.set_code(code)
+    |> ExecCommand.set_nonce(nonce)
+    |> ExecCommand.set_metadata(meta_data)
+    |> ExecCommand.add_keypair(keypair)
+    |> ExecCommand.build()
   end
 end

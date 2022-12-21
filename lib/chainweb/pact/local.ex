@@ -16,14 +16,14 @@ defmodule Kadena.Chainweb.Pact.Local do
 
   @impl true
   def process(%Command{} = cmd, network_id: network_id, chain_id: chain_id) do
-    request_body = json_request_body(cmd)
     headers = [{"Content-Type", "application/json"}]
+    body = json_request_body(cmd)
 
     :post
     |> Request.new(pact: [endpoint: @endpoint])
     |> Request.set_chain_id(chain_id)
     |> Request.set_network(network_id)
-    |> Request.add_body(request_body)
+    |> Request.add_body(body)
     |> Request.add_headers(headers)
     |> Request.perform()
     |> Request.results(as: LocalResponse)
