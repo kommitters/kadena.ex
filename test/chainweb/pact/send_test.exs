@@ -76,7 +76,7 @@ defmodule Kadena.Chainweb.Pact.SendTest do
         chain_id: "1"
       )
 
-    cmd1 =
+    {:ok, cmd1} =
       ExecCommand.new()
       |> ExecCommand.set_network(network_id)
       |> ExecCommand.set_code(code)
@@ -87,7 +87,7 @@ defmodule Kadena.Chainweb.Pact.SendTest do
 
     code = "(+ 2 2)"
 
-    cmd2 =
+    {:ok, cmd2} =
       ExecCommand.new()
       |> ExecCommand.set_network(network_id)
       |> ExecCommand.set_code(code)
