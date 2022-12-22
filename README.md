@@ -564,7 +564,63 @@ Chainweb.Pact.local(cmd, network_id: :testnet04, chain_id: 1)
    tx_id: nil
  }}
 ```
+### Poll endpoint
 
+Retrieves the result of a transaction or multiple transactions, you will need to include the request Keys.
+
+```elixir
+Kadena.Chainweb.Pact.poll(request_keys, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
+**Parameters**
+
+- `request_keys`: Unique ID of a pact transaction consisting of its hash, are the result of sending commands to the send endpoint.
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+
+request_keys = ["VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc"]
+
+Chainweb.Pact.poll(request_keys, network_id: :testnet04, chain_id: 1)
+
+{:ok,
+ %Kadena.Chainweb.Pact.PollResponse{
+   results: [
+     %Kadena.Chainweb.Pact.CommandResult{
+       continuation: nil,
+       events: [
+         %{
+           module: %{name: "coin", namespace: nil},
+           module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+           name: "TRANSFER",
+           params: ["k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+            "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
+            2.33e-4]
+         }
+       ],
+       gas: 233,
+       logs: "P3CDVUbCSSsXukPztkmLjJL7tsxNNIuPHKyhGMD_0wE",
+       meta_data: %{
+         block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
+         block_height: 2829780,
+         block_time: 1671476220495690,
+         prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
+       },
+       req_key: "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
+       result: %{data: 3, status: "success"},
+       tx_id: 4272500
+     }
+   ]
+ }}
+```
 ---
 
 ## Roadmap

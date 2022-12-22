@@ -1,6 +1,6 @@
 defmodule Kadena.Chainweb.Pact.Poll do
   @moduledoc """
-  Send endpoint implementation for `Chainweb.Pact` contracts.
+  Poll endpoint implementation for `Chainweb.Pact` contracts.
   """
 
   alias Kadena.Chainweb.Request
