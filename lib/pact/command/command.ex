@@ -3,14 +3,15 @@ defmodule Kadena.Pact.Command do
   Specifies contracts to build PACT command requests.
   """
 
-  alias Kadena.Pact.ExecCommand
+  alias Kadena.Pact.{ContCommand, ExecCommand}
   alias Kadena.Types.{ChainID, Command, KeyPair, MetaData, NetworkID, Signer, SignersList}
 
   @type cmd :: {:ok, Command.t()}
   @type network_id :: NetworkID.t()
   @type chain_id :: ChainID.t()
-  @type cont_request :: struct()
+  @type cont_request :: ContCommand.t()
   @type exec_request :: ExecCommand.t()
+  @type error :: {:error, Keyword.t()}
   @type cmd_request :: cont_request() | exec_request()
 
   @type string_value :: String.t()
@@ -35,7 +36,7 @@ defmodule Kadena.Pact.Command do
   @callback set_step(cmd :: cont_request(), step :: integer()) :: cont_request()
   @callback set_proof(cmd :: cont_request(), proof :: string_value()) :: cont_request()
   @callback set_rollback(cmd :: cont_request(), rollback :: boolean()) :: cont_request()
-  @callback build(cmd :: cmd_request()) :: cmd()
+  @callback build(cmd :: cmd_request()) :: cmd() | error()
 
   @optional_callbacks set_code: 2,
                       set_pact_tx_hash: 2,
