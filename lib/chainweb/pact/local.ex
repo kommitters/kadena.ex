@@ -1,6 +1,6 @@
 defmodule Kadena.Chainweb.Pact.Local do
   @moduledoc """
-  Local endpoint implementation
+  Local endpoint implementation for `Chainweb.Pact` contracts.
   """
 
   alias Kadena.Chainweb.Request

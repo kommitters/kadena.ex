@@ -8,26 +8,60 @@ defmodule Kadena.Chainweb.Client.CannedPollRequests do
         :post,
         "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/0/pact/api/v1/poll",
         _headers,
-        body,
+        "{\"requestKeys\":[\"bKT10kNSeAyE4LgfFInhorKpK_tNLcNjsaWgug4v82s\",\"ysx7BoerE0QpflZKkFhSjDZmvMf4xtZ0OxSL1EOckz0\"]}",
         _options
       ) do
-    case body == "{\"requestKeys\":[\"bad_length\"]}" do
-      true ->
-        response =
-          Error.new(
-            {:chainweb,
-             %{
-               status: 400,
-               title: "Request Key  has incorrect hash of length 0"
-             }}
-          )
+    response = Chainweb.fixture("poll")
+    {:ok, response}
+  end
 
-        {:error, response}
+  def request(
+        :post,
+        "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/0/pact/api/v1/poll",
+        _headers,
+        "{\"requestKeys\":[\"Msx7BoeZE0QpflZKkFhSjDZmvMf4xtZ0OxSL1EOckzM\"]}",
+        _options
+      ) do
+    {:ok, %{}}
+  end
 
-      false ->
-        response = Chainweb.fixture("poll")
-        {:ok, response}
-    end
+  def request(
+        :post,
+        "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/0/pact/api/v1/poll",
+        _headers,
+        "{\"requestKeys\":[\"bad_length\"]}",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title: "Request Key bad_lengtg has incorrect hash of length 7"
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/0/pact/api/v1/poll",
+        _headers,
+        "{\"requestKeys\":[\"hello\"]}",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title:
+             "Error in $.requestKeys[0]: Base64URL decode failed: invalid padding near offset 4"
+         }}
+      )
+
+    {:error, response}
   end
 end
 
@@ -50,10 +84,15 @@ defmodule Kadena.Chainweb.Pact.PollTest do
     end)
 
     %{
-      request_keys: [
+      request_keys_success: [
         "bKT10kNSeAyE4LgfFInhorKpK_tNLcNjsaWgug4v82s",
         "ysx7BoerE0QpflZKkFhSjDZmvMf4xtZ0OxSL1EOckz0"
       ],
+      request_keys_errors: %{
+        length: ["bad_length"],
+        decoding: ["hello"],
+        no_result: ["Msx7BoeZE0QpflZKkFhSjDZmvMf4xtZ0OxSL1EOckzM"]
+      },
       response:
         {:ok,
          %PollResponse{
@@ -115,15 +154,31 @@ defmodule Kadena.Chainweb.Pact.PollTest do
     }
   end
 
-  test "process/2", %{request_keys: request_keys, response: response} do
-    ^response = Pact.poll(request_keys, network_id: :mainnet01, chain_id: 0)
+  test "process/2", %{request_keys_success: request_keys_success, response: response} do
+    ^response = Pact.poll(request_keys_success, network_id: :mainnet01, chain_id: 0)
   end
 
-  test "process/2 error" do
+  test "process/2 no result", %{request_keys_errors: %{no_result: no_result}} do
+    {:ok, %Kadena.Chainweb.Pact.PollResponse{results: []}} =
+      Pact.poll(no_result,
+        network_id: :mainnet01,
+        chain_id: 0
+      )
+  end
+
+  test "process/2 length error", %{request_keys_errors: %{length: length}} do
     {:error,
      %Error{
        status: 400,
-       title: "Request Key  has incorrect hash of length 0"
-     }} = Pact.poll(["bad_length"], network_id: :mainnet01, chain_id: 0)
+       title: "Request Key bad_lengtg has incorrect hash of length 7"
+     }} = Pact.poll(length, network_id: :mainnet01, chain_id: 0)
+  end
+
+  test "process/2 decoding error", %{request_keys_errors: %{decoding: decoding}} do
+    {:error,
+     %Error{
+       status: 400,
+       title: "Error in $.requestKeys[0]: Base64URL decode failed: invalid padding near offset 4"
+     }} = Pact.poll(decoding, network_id: :mainnet01, chain_id: 0)
   end
 end
