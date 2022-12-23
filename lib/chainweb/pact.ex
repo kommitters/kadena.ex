@@ -3,7 +3,7 @@ defmodule Kadena.Chainweb.Pact do
   Exposes functions to interact with the Pact API endpoints.
   """
 
-  alias Kadena.Chainweb.Pact.{Listen, Local, Poll, Send}
+  alias Kadena.Chainweb.Pact.{Listen, Local, Poll, Send, SPV}
 
   @default_network_opts [network_id: :testnet04, chain_id: 0]
 
@@ -11,4 +11,5 @@ defmodule Kadena.Chainweb.Pact do
   defdelegate local(cmd, network_opts \\ @default_network_opts), to: Local, as: :process
   defdelegate poll(request_keys, network_opts \\ @default_network_opts), to: Poll, as: :process
   defdelegate listen(request_key, network_opts \\ @default_network_opts), to: Listen, as: :process
+  defdelegate spv(args, network_opts \\ @default_network_opts), to: SPV, as: :process
 end
