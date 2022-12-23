@@ -568,6 +568,10 @@ Chainweb.Pact.local(cmd, network_id: :testnet04, chain_id: 1)
 
 Retrieves one or more transaction results per request key.
 
+```elixir
+Kadena.Chainweb.Pact.poll(request_keys, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
 **Parameters**
 
 - `request_keys`: List of strings. A request key is the unique id of a Pact transaction consisting of its hash, it is obtained from submitting a command via the  [Send endpoint](#send-endpoint).
