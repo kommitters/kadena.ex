@@ -517,8 +517,6 @@ alias Kadena.Pact
     "28834b7a0d6d1f84ae2c2efcb5b1de28122e07e2e4caad04a32988a3c79c547c"
   )
 
-network_id = :testnet04
-
 metadata =
   Kadena.Types.MetaData.new(
     creation_time: 1_671_462_208,
@@ -541,28 +539,28 @@ code = "(+ 1 2)"
 Chainweb.Pact.local(cmd, network_id: :testnet04, chain_id: 1)
 
 {:ok,
-     %Kadena.Chainweb.Pact.LocalResponse{
-       continuation: nil,
-       events: nil,
-       gas: 5,
-       logs: "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
-       meta_data: %{
-         block_height: 2_833_149,
-         block_time: 1_671_577_178_603_103,
-         prev_block_hash: "7aURwajZ0pBMGEKmOUJ9oLq9MK7QiZeiDPGPb0cXs5c",
-         public_meta: %{
-           chain_id: "1",
-           creation_time: 1_671_462_208,
-           gas_limit: 1000,
-           gas_price: 1.0e-6,
-           sender: "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
-           ttl: 28800
-         }
-       },
-       req_key: "8qnotzzhbfe_SSmZcDVQGDpALjQjYqzYYrHc6D-2D_g",
-       result: %{data: 3, status: "success"},
-       tx_id: nil
-     }}
+ %Kadena.Chainweb.Pact.LocalResponse{
+   continuation: nil,
+   events: nil,
+   gas: 5,
+   logs: "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
+   meta_data: %{
+     block_height: 2_833_149,
+     block_time: 1_671_577_178_603_103,
+     prev_block_hash: "7aURwajZ0pBMGEKmOUJ9oLq9MK7QiZeiDPGPb0cXs5c",
+     public_meta: %{
+       chain_id: "1",
+       creation_time: 1_671_462_208,
+       gas_limit: 1000,
+       gas_price: 1.0e-6,
+       sender: "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+       ttl: 28800
+     }
+   },
+   req_key: "8qnotzzhbfe_SSmZcDVQGDpALjQjYqzYYrHc6D-2D_g",
+   result: %{data: 3, status: "success"},
+   tx_id: nil
+ }}
 ```
 ### Poll endpoint
 
@@ -594,63 +592,63 @@ request_keys = [
 
 Chainweb.Pact.poll(request_keys, network_id: :testnet04, chain_id: 1)
 
-  {:ok,
-   %Kadena.Chainweb.Pact.PollResponse{
-     results: [
-       %Kadena.Chainweb.Pact.CommandResult{
-         continuation: nil,
-         events: [
-           %{
-             module: %{name: "coin", namespace: nil},
-             module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
-             name: "TRANSFER",
-             params: [
-               "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
-               "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
-               2.33e-4
-             ]
-           }
-         ],
-         gas: 233,
-         logs: "3I4ueiuyFy2m_z6PHpOe9yqXIt9tfDjMoUlPnqg_jas",
-         meta_data: %{
-           block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
-           block_height: 2_829_780,
-           block_time: 1_671_476_220_495_690,
-           prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
-         },
-         req_key: "gyShUgtFBk5xDoiBoLURbU_5vUG0benKroNDRhz8wqA",
-         result: %{data: 4, status: "success"},
-         tx_id: 4_272_497
+{:ok,
+ %Kadena.Chainweb.Pact.PollResponse{
+   results: [
+     %Kadena.Chainweb.Pact.CommandResult{
+       continuation: nil,
+       events: [
+         %{
+           module: %{name: "coin", namespace: nil},
+           module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+           name: "TRANSFER",
+           params: [
+             "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+             "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
+             2.33e-4
+           ]
+         }
+       ],
+       gas: 233,
+       logs: "3I4ueiuyFy2m_z6PHpOe9yqXIt9tfDjMoUlPnqg_jas",
+       meta_data: %{
+         block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
+         block_height: 2_829_780,
+         block_time: 1_671_476_220_495_690,
+         prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
        },
-       %Kadena.Chainweb.Pact.CommandResult{
-         continuation: nil,
-         events: [
-           %{
-             module: %{name: "coin", namespace: nil},
-             module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
-             name: "TRANSFER",
-             params: [
-               "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
-               "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
-               2.33e-4
-             ]
-           }
-         ],
-         gas: 233,
-         logs: "P3CDVUbCSSsXukPztkmLjJL7tsxNNIuPHKyhGMD_0wE",
-         meta_data: %{
-           block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
-           block_height: 2_829_780,
-           block_time: 1_671_476_220_495_690,
-           prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
-         },
-         req_key: "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
-         result: %{data: 3, status: "success"},
-         tx_id: 4_272_500
-       }
-     ]
-   }}
+       req_key: "gyShUgtFBk5xDoiBoLURbU_5vUG0benKroNDRhz8wqA",
+       result: %{data: 4, status: "success"},
+       tx_id: 4_272_497
+     },
+     %Kadena.Chainweb.Pact.CommandResult{
+       continuation: nil,
+       events: [
+         %{
+           module: %{name: "coin", namespace: nil},
+           module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+           name: "TRANSFER",
+           params: [
+             "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+             "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
+             2.33e-4
+           ]
+         }
+       ],
+       gas: 233,
+       logs: "P3CDVUbCSSsXukPztkmLjJL7tsxNNIuPHKyhGMD_0wE",
+       meta_data: %{
+         block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
+         block_height: 2_829_780,
+         block_time: 1_671_476_220_495_690,
+         prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
+       },
+       req_key: "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
+       result: %{data: 3, status: "success"},
+       tx_id: 4_272_500
+     }
+   ]
+ }}  
 ```
 
 ---
