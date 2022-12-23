@@ -159,7 +159,7 @@ defmodule Kadena.Chainweb.Pact.PollTest do
   end
 
   test "process/2 no result", %{request_keys_errors: %{no_result: no_result}} do
-    {:ok, %Kadena.Chainweb.Pact.PollResponse{results: []}} =
+    {:ok, %PollResponse{results: []}} =
       Pact.poll(no_result,
         network_id: :mainnet01,
         chain_id: 0
