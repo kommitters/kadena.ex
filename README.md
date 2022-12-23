@@ -705,6 +705,46 @@ Chainweb.Pact.listen(request_key, network_id: :testnet04, chain_id: 1)
    tx_id: 4_272_500
  }}
 ```
+### SPV endpoint
+
+Retrieves a SPV proof of a cross chain transaction. Request must be sent to the chain where the transaction is initiated.
+
+```elixir
+Kadena.Chainweb.Pact.spv(payload_opts, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
+**Parameters**
+
+- `payload_opts`: Payload options. Keyword list with:
+
+  - `request_key` (required): String value. Request Key of an initiated cross chain transaction at the source chain.
+
+  - `target_chain_id` (required): String-encoded integer from 0 to 19. Target chain id of the cross chain transaction.
+
+
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+
+payload_opts = [request_key: "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc", target_chain_id: "1"]
+
+Chainweb.Pact.spv(payload_opts, network_id: :testnet04, chain_id: 1)
+
+{:ok,
+ %Kadena.Chainweb.Pact.SPVResponse{
+   response:
+     "eyJjaGFpbiI6MSwib2JqZWN0IjoiQUFBQUJnQUFBQUFBQUFBQ0FBRm5kSVUwc0tpRHJvUWQ0LWJxbHA4dThxd3BpdXRvdXVFXzFxY1JteUNsQUtBN1BRSGxRcTlPMmpQT0E3VlI5bXhVZm4yVDhGdjcxTFFfVTM3eEw5Q3hBYTdkN0lnWUFUZUgxLWNEb3RJbnVyRFZMX1FjYzJyTzFtR3BvY21TcWlfeUFiR1JrXzVnT0Jka0JXVWVLS0lnRHN1YWlmbGt4S0R0alJfSndSSmxPd2w3QUZ0ZWxrZXNWVkZ6aUMyUXgwUFczSmJPY3pQOFVINjRteVNWTTNHUGhxUE5BYWdtUEpTenRsUlNSOTJhNUl5d1dZYVlmREVweUljLWNwSG9VSDdSWTBWZiIsInN1YmplY3QiOnsiaW5wdXQiOiJBQlI3SW1kaGN5STZNak16TENKeVpYTjFiSFFpT25zaWMzUmhkSFZ6SWpvaWMzVmpZMlZ6Y3lJc0ltUmhkR0VpT2pOOUxDSnlaWEZMWlhraU9pSldRalJhUzI5aWVuVnZOVU4zZGpWTVZEbHJWMHRuTFRNMGRUZExXakJQYnpnMGFtNUphWFZxVkVkaklpd2liRzluY3lJNklsQXpRMFJXVldKRFUxTnpXSFZyVUhwMGEyMU1ha3BNTjNSemVFNU9TWFZRU0V0NWFFZE5SRjh3ZDBVaUxDSmxkbVZ1ZEhNaU9sdDdJbkJoY21GdGN5STZXeUpyT21ReFlUTTJNV1EzTWpGalpqZ3haR0pqTWpGbU5qYzJaVFk0T1RkbU4yVTNZVE16TmpZM01XTXdaRFZrTWpWbU9EZGpNVEE1TXpOallXTTJaRGhqWmpjaUxDSnJPbVJpTnpjMk56a3pZbVV3Wm1ObU9HVTNObU0zTldKa1lqTTFZVE0yWlRZM1pqSTVPREV4TVdSak5qRTBOV00yTmpZNU0ySXdNVE16TVRreVpUSTJNVFlpTERJdU16TmxMVFJkTENKdVlXMWxJam9pVkZKQlRsTkdSVklpTENKdGIyUjFiR1VpT25zaWJtRnRaWE53WVdObElqcHVkV3hzTENKdVlXMWxJam9pWTI5cGJpSjlMQ0p0YjJSMWJHVklZWE5vSWpvaWNrVTNSRlU0YW14UlREbDRYMDFRV1hWdWFWcEtaalZKUTBKVVFVVklRVWxHVVVOQ05HSnNiMlpRTkNKOVhTd2liV1YwWVVSaGRHRWlPbTUxYkd3c0ltTnZiblJwYm5WaGRHbHZiaUk2Ym5Wc2JDd2lkSGhKWkNJNk5ESTNNalV3TUgwIn0sImFsZ29yaXRobSI6IlNIQTUxMnRfMjU2In0"
+ }}
+ 
+```
 ---
 
 ## Roadmap
