@@ -96,6 +96,7 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Client.Spec,
         Kadena.Chainweb.Network,
         Kadena.Chainweb.Pact,
+        Kadena.Chainweb.Pact.Listen,
         Kadena.Chainweb.Pact.Local,
         Kadena.Chainweb.Pact.Poll,
         Kadena.Chainweb.Pact.Send,

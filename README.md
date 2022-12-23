@@ -650,7 +650,61 @@ Chainweb.Pact.poll(request_keys, network_id: :testnet04, chain_id: 1)
    ]
  }}  
 ```
+### Listen endpoint
 
+Retrieves the transaction result of the given request key.
+
+```elixir
+Kadena.Chainweb.Pact.listen(request_key, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
+**Parameters**
+
+- `request_key`: String value. A request key is the unique id of a Pact transaction consisting of its hash, it is obtained from submitting a command via the [Send endpoint](#send-endpoint).
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+
+request_key = "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc"
+
+Chainweb.Pact.listen(request_key, network_id: :testnet04, chain_id: 1)
+
+{:ok,
+ %Kadena.Chainweb.Pact.ListenResponse{
+   continuation: nil,
+   events: [
+     %{
+       module: %{name: "coin", namespace: nil},
+       module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+       name: "TRANSFER",
+       params: [
+         "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+         "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
+         2.33e-4
+       ]
+     }
+   ],
+   gas: 233,
+   logs: "P3CDVUbCSSsXukPztkmLjJL7tsxNNIuPHKyhGMD_0wE",
+   meta_data: %{
+     block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
+     block_height: 2_829_780,
+     block_time: 1_671_476_220_495_690,
+     prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
+   },
+   req_key: "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
+   result: %{data: 3, status: "success"},
+   tx_id: 4_272_500
+ }}
+```
 ---
 
 ## Roadmap

@@ -134,11 +134,11 @@ defmodule Kadena.Chainweb.Pact.ListenTest do
   end
 
   test "process/2 no result", %{request_keys_errors: %{no_result: no_result}} do
-    {:error, %Kadena.Chainweb.Error{status: :network_error, title: :timeout}} =
-      Pact.listen(no_result,
-        network_id: :mainnet01,
-        chain_id: 0
-      )
+    {:error,
+     %Error{
+       status: :network_error,
+       title: :timeout
+     }} = Pact.listen(no_result, network_id: :mainnet01, chain_id: 0)
   end
 
   test "process/2 length error", %{request_keys_errors: %{length: length}} do
