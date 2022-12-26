@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.10.0"
+  @version "0.11.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -96,9 +96,12 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Client.Spec,
         Kadena.Chainweb.Network,
         Kadena.Chainweb.Pact,
-        Kadena.Chainweb.Pact.Request,
+        Kadena.Chainweb.Pact.Listen,
+        Kadena.Chainweb.Pact.Local,
+        Kadena.Chainweb.Pact.Poll,
         Kadena.Chainweb.Pact.Send,
         Kadena.Chainweb.Pact.Spec,
+        Kadena.Chainweb.Pact.SPV,
         Kadena.Chainweb.Request
       ],
       Cryptography: [
@@ -119,20 +122,15 @@ defmodule Kadena.MixProject do
         Kadena.Types.Cap,
         Kadena.Types.CapsList,
         Kadena.Types.ChainID,
-        Kadena.Types.ChainwebResponseMetaData,
         Kadena.Types.Command,
         Kadena.Types.CommandsList,
         Kadena.Types.ContPayload,
         Kadena.Types.EnvData,
         Kadena.Types.ExecPayload,
         Kadena.Types.KeyPair,
-        Kadena.Types.ListenRequestBody,
-        Kadena.Types.LocalRequestBody,
         Kadena.Types.MetaData,
         Kadena.Types.NetworkID,
         Kadena.Types.OptionalCapsList,
-        Kadena.Types.OptionalMetaData,
-        Kadena.Types.OptionalPactEventsList,
         Kadena.Types.PactCode,
         Kadena.Types.PactDecimal,
         Kadena.Types.PactInt,
@@ -140,10 +138,8 @@ defmodule Kadena.MixProject do
         Kadena.Types.PactTransactionHash,
         Kadena.Types.PactValue,
         Kadena.Types.PactValuesList,
-        Kadena.Types.PollRequestBody,
         Kadena.Types.Proof,
         Kadena.Types.Rollback,
-        Kadena.Types.SendRequestBody,
         Kadena.Types.SignCommand,
         Kadena.Types.SignatureWithHash,
         Kadena.Types.Signature,
@@ -153,8 +149,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.SignersList,
         Kadena.Types.SigningCap,
         Kadena.Types.Spec,
-        Kadena.Types.SPVProof,
-        Kadena.Types.SPVRequestBody,
         Kadena.Types.Step
       ],
       "Chainweb Pact Types": [

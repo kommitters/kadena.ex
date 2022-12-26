@@ -5,6 +5,8 @@
 [![Version Badge](https://img.shields.io/hexpm/v/kadena?style=for-the-badge)](https://hexdocs.pm/kadena)
 ![Downloads Badge](https://img.shields.io/hexpm/dt/kadena?style=for-the-badge)
 [![License badge](https://img.shields.io/hexpm/l/kadena?style=for-the-badge)](https://github.com/kommitters/kadena.ex/blob/main/LICENSE)
+[![OpenSSF Best Practices](https://img.shields.io/cii/summary/6474?label=openssf%20best%20practices&style=for-the-badge)](https://bestpractices.coreinfrastructure.org/projects/6474)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/kommitters/kadena.ex?label=openssf%20scorecard&style=for-the-badge)](https://api.securityscorecards.dev/projects/github.com/kommitters/kadena.ex)
 
 **Kadena.ex** is an open source library for Elixir that allows developers to interact with Kadena Chainweb.
 
@@ -22,7 +24,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.10.0"}
+    {:kadena, "~> 0.11.0"}
   ]
 end
 ```
@@ -128,7 +130,7 @@ alias Kadena.Pact
 
 code = "(+ 1 2)"
 
-%Command{} = command =
+{:ok, %Command{} = command} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_code(code)
   |> Pact.ExecCommand.add_keypair(keypair)
@@ -320,7 +322,7 @@ nonce = "2023-01-01 00:00:00.000000 UTC"
 env_data = %{accounts_admin_keyset: [keypair.pub_key]}
 
 # build the command
-%Kadena.Types.Command{} = command =
+{:ok, %Kadena.Types.Command{} = command} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_network(network_id)
   |> Pact.ExecCommand.set_code(code)
@@ -382,7 +384,7 @@ step = 1
 rollback = true
 
 # build the command
-%Kadena.Types.Command{} = command =
+{:ok, %Kadena.Types.Command{} = command} =
   Pact.ContCommand.new()
   |> Pact.ContCommand.set_network(network_id)
   |> Pact.ContCommand.set_data(env_data)
@@ -425,7 +427,7 @@ Kadena.Chainweb.Pact.send(cmds, network_opts \\ [network_id: :testnet04, chain_i
 
 - `cmds`: List of [PACT commands](#pact-commands).
 - `network_opts`: Network options. Keyword list with:
-  - `network_id` (required): Allowed values: `:testnet04` `mainnet01`.
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
   - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
 
   Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
@@ -456,7 +458,7 @@ metadata =
 
 code = "(+ 1 2)"
 
-cmd1 =
+{:ok, cmd1} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_network(network_id)
   |> Pact.ExecCommand.set_code(code)
@@ -466,7 +468,7 @@ cmd1 =
 
 code = "(+ 2 2)"
 
-cmd2 =
+{:ok, cmd2} =
   Pact.ExecCommand.new()
   |> Pact.ExecCommand.set_network(network_id)
   |> Pact.ExecCommand.set_code(code)
@@ -487,17 +489,275 @@ Chainweb.Pact.send(cmds, network_id: :testnet04, chain_id: 1)
  }}
 ```
 
+### Local endpoint
+
+Executes a single command on the local server and retrieves the transaction result. Useful with code that queries from blockchain. It does not impact the blockchain when returning transaction results.
+
+```elixir
+Kadena.Chainweb.Pact.local(cmd, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
+**Parameters**
+
+- `cmd`: [PACT command](#pact-commands).
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+alias Kadena.Cryptography
+alias Kadena.Pact
+
+{:ok, keypair} =
+  Cryptography.KeyPair.from_secret_key(
+    "28834b7a0d6d1f84ae2c2efcb5b1de28122e07e2e4caad04a32988a3c79c547c"
+  )
+
+metadata =
+  Kadena.Types.MetaData.new(
+    creation_time: 1_671_462_208,
+    ttl: 28_800,
+    gas_limit: 1000,
+    gas_price: 0.000001,
+    sender: "k:#{keypair.pub_key}",
+    chain_id: "1"
+  )
+
+code = "(+ 1 2)"
+
+{:ok, cmd} =
+  Pact.ExecCommand.new()
+  |> Pact.ExecCommand.set_code(code)
+  |> Pact.ExecCommand.set_metadata(metadata)
+  |> Pact.ExecCommand.add_keypair(keypair)
+  |> Pact.ExecCommand.build()
+
+Chainweb.Pact.local(cmd, network_id: :testnet04, chain_id: 1)
+
+{:ok,
+ %Kadena.Chainweb.Pact.LocalResponse{
+   continuation: nil,
+   events: nil,
+   gas: 5,
+   logs: "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
+   meta_data: %{
+     block_height: 2_833_149,
+     block_time: 1_671_577_178_603_103,
+     prev_block_hash: "7aURwajZ0pBMGEKmOUJ9oLq9MK7QiZeiDPGPb0cXs5c",
+     public_meta: %{
+       chain_id: "1",
+       creation_time: 1_671_462_208,
+       gas_limit: 1000,
+       gas_price: 1.0e-6,
+       sender: "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+       ttl: 28800
+     }
+   },
+   req_key: "8qnotzzhbfe_SSmZcDVQGDpALjQjYqzYYrHc6D-2D_g",
+   result: %{data: 3, status: "success"},
+   tx_id: nil
+ }}
+```
+### Poll endpoint
+
+Retrieves one or more transaction results per request key.
+
+```elixir
+Kadena.Chainweb.Pact.poll(request_keys, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
+**Parameters**
+
+- `request_keys`: List of strings. A request key is the unique id of a Pact transaction consisting of its hash, it is obtained from submitting a command via the  [Send endpoint](#send-endpoint).
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+
+request_keys = [
+  "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
+  "gyShUgtFBk5xDoiBoLURbU_5vUG0benKroNDRhz8wqA"
+]
+
+Chainweb.Pact.poll(request_keys, network_id: :testnet04, chain_id: 1)
+
+{:ok,
+ %Kadena.Chainweb.Pact.PollResponse{
+   results: [
+     %Kadena.Chainweb.Pact.CommandResult{
+       continuation: nil,
+       events: [
+         %{
+           module: %{name: "coin", namespace: nil},
+           module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+           name: "TRANSFER",
+           params: [
+             "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+             "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
+             2.33e-4
+           ]
+         }
+       ],
+       gas: 233,
+       logs: "3I4ueiuyFy2m_z6PHpOe9yqXIt9tfDjMoUlPnqg_jas",
+       meta_data: %{
+         block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
+         block_height: 2_829_780,
+         block_time: 1_671_476_220_495_690,
+         prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
+       },
+       req_key: "gyShUgtFBk5xDoiBoLURbU_5vUG0benKroNDRhz8wqA",
+       result: %{data: 4, status: "success"},
+       tx_id: 4_272_497
+     },
+     %Kadena.Chainweb.Pact.CommandResult{
+       continuation: nil,
+       events: [
+         %{
+           module: %{name: "coin", namespace: nil},
+           module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+           name: "TRANSFER",
+           params: [
+             "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+             "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
+             2.33e-4
+           ]
+         }
+       ],
+       gas: 233,
+       logs: "P3CDVUbCSSsXukPztkmLjJL7tsxNNIuPHKyhGMD_0wE",
+       meta_data: %{
+         block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
+         block_height: 2_829_780,
+         block_time: 1_671_476_220_495_690,
+         prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
+       },
+       req_key: "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
+       result: %{data: 3, status: "success"},
+       tx_id: 4_272_500
+     }
+   ]
+ }}  
+```
+### Listen endpoint
+
+Retrieves the transaction result of the given request key.
+
+```elixir
+Kadena.Chainweb.Pact.listen(request_key, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
+**Parameters**
+
+- `request_key`: String value. A request key is the unique id of a Pact transaction consisting of its hash, it is obtained from submitting a command via the [Send endpoint](#send-endpoint).
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+
+request_key = "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc"
+
+Chainweb.Pact.listen(request_key, network_id: :testnet04, chain_id: 1)
+
+{:ok,
+ %Kadena.Chainweb.Pact.ListenResponse{
+   continuation: nil,
+   events: [
+     %{
+       module: %{name: "coin", namespace: nil},
+       module_hash: "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4",
+       name: "TRANSFER",
+       params: [
+         "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7",
+         "k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616",
+         2.33e-4
+       ]
+     }
+   ],
+   gas: 233,
+   logs: "P3CDVUbCSSsXukPztkmLjJL7tsxNNIuPHKyhGMD_0wE",
+   meta_data: %{
+     block_hash: "Z9fszmqYV7s_rLyvvdAw5nbLqdMIj-_P4lPGFMLRy3M",
+     block_height: 2_829_780,
+     block_time: 1_671_476_220_495_690,
+     prev_block_hash: "9LKeJBo1REDwbVUYjxKKvbuHN4kFRDmjxEqatUUPu8g"
+   },
+   req_key: "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc",
+   result: %{data: 3, status: "success"},
+   tx_id: 4_272_500
+ }}
+```
+### SPV endpoint
+
+Retrieves a SPV proof of a cross chain transaction. Request must be sent to the chain where the transaction is initiated.
+
+```elixir
+Kadena.Chainweb.Pact.spv(payload, network_opts \\ [network_id: :testnet04, chain_id: 0])
+```
+
+**Parameters**
+
+- `payload`: Keyword list with:
+
+  - `request_key` (required): String value. Request Key of an initiated cross chain transaction at the source chain.
+
+  - `target_chain_id` (required): String-encoded integer from 0 to 19. Target chain id of the cross chain transaction.
+
+
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+
+payload = [request_key: "VB4ZKobzuo5Cwv5LT9kWKg-34u7KZ0Oo84jnIiujTGc", target_chain_id: "2"]
+
+Chainweb.Pact.spv(payload, network_id: :testnet04, chain_id: 1)
+
+{:ok,
+ %Kadena.Chainweb.Pact.SPVResponse{
+   proof:
+     "eyJjaGFpbiI6Miwib2JqZWN0IjoiQUFBQUVBQUFBQUFBQUFBQ0FBRm5kSVUwc0tpRHJvUWQ0LWJxbHA4dThxd3BpdXRvdXVFXzFxY1JteUNsQUtBN1BRSGxRcTlPMmpQT0E3VlI5bXhVZm4yVDhGdjcxTFFfVTM3eEw5Q3hBYTdkN0lnWUFUZUgxLWNEb3RJbnVyRFZMX1FjYzJyTzFtR3BvY21TcWlfeUFiR1JrXzVnT0Jka0JXVWVLS0lnRHN1YWlmbGt4S0R0alJfSndSSmxPd2w3QUZ0ZWxrZXNWVkZ6aUMyUXgwUFczSmJPY3pQOFVINjRteVNWTTNHUGhxUE5BYWdtUEpTenRsUlNSOTJhNUl5d1dZYVlmREVweUljLWNwSG9VSDdSWTBWZkFGVmVlZG1qbUFZS1l4RTdoS1VZa0gtLWN0dkFWbUFuQWlPYm1xUmFsUnlfQUt0RWJnOU9BSzNyTUZfM01STUpkODFpZmJCdnBHT2Jxckk5bXZEU1U0cEpBYjMtcTdXYU9hTWVVVk9XdlI4NUxLQW9qbFdXLVRmeVdrRXJMLXBreGZtNkFPOURadkNIOExiZkwzYlFXOWRKbUN0VHRteXI3N3pNZGxNaGVvb1k5OHNDQWRKcF9rN0hNUXJpLUtSTEFWeHJkT1dCOEt4dk13UldsaDNHQTRFa2ZFTnhBSW83N29OWGlKb3hLOUdqWFVwcGJXWnhDY1Q5TVJwQ0NHTURsVndmdkpaREFOMlpWZW8wSUxVOXd1XzNlOTRLUUEtUk9SNk1LUFFBeWJ4VHczUzVLbFg4QVg2aFhmODljMGpLRzBqeUQ0cVZxR2hhaGp0ZjNsRGdaekdPbEhDY3FNd2NBQ01yVTEyM3VHbnRUTnpUVVljREF5bTZnU1c2MUxWeFp5SjZxMjBoQzRSR0FPQUxJbGVBVy1tYVlBdXVkN08xeGhQbVFlcFg0MzhrWXJCOVd1Z3ZRUXg4Iiwic3ViamVjdCI6eyJpbnB1dCI6IkFCUjdJbWRoY3lJNk1qTXpMQ0p5WlhOMWJIUWlPbnNpYzNSaGRIVnpJam9pYzNWalkyVnpjeUlzSW1SaGRHRWlPak45TENKeVpYRkxaWGtpT2lKV1FqUmFTMjlpZW5Wdk5VTjNkalZNVkRsclYwdG5MVE0wZFRkTFdqQlBiemcwYW01SmFYVnFWRWRqSWl3aWJHOW5jeUk2SWxBelEwUldWV0pEVTFOeldIVnJVSHAwYTIxTWFrcE1OM1J6ZUU1T1NYVlFTRXQ1YUVkTlJGOHdkMFVpTENKbGRtVnVkSE1pT2x0N0luQmhjbUZ0Y3lJNld5SnJPbVF4WVRNMk1XUTNNakZqWmpneFpHSmpNakZtTmpjMlpUWTRPVGRtTjJVM1lUTXpOalkzTVdNd1pEVmtNalZtT0Rkak1UQTVNek5qWVdNMlpEaGpaamNpTENKck9tUmlOemMyTnprelltVXdabU5tT0dVM05tTTNOV0prWWpNMVlUTTJaVFkzWmpJNU9ERXhNV1JqTmpFME5XTTJOalk1TTJJd01UTXpNVGt5WlRJMk1UWWlMREl1TXpObExUUmRMQ0p1WVcxbElqb2lWRkpCVGxOR1JWSWlMQ0p0YjJSMWJHVWlPbnNpYm1GdFpYTndZV05sSWpwdWRXeHNMQ0p1WVcxbElqb2lZMjlwYmlKOUxDSnRiMlIxYkdWSVlYTm9Jam9pY2tVM1JGVTRhbXhSVERsNFgwMVFXWFZ1YVZwS1pqVkpRMEpVUVVWSVFVbEdVVU5DTkdKc2IyWlFOQ0o5WFN3aWJXVjBZVVJoZEdFaU9tNTFiR3dzSW1OdmJuUnBiblZoZEdsdmJpSTZiblZzYkN3aWRIaEpaQ0k2TkRJM01qVXdNSDAifSwiYWxnb3JpdGhtIjoiU0hBNTEydF8yNTYifQ"
+ }}
+ 
+```
 ---
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.11`
+The latest updated branch to target a PR is `v0.12`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Chainweb PACT API Consumer](https://github.com/kommitters/kadena.ex/issues/58)
+- [Remove List Types](https://github.com/kommitters/kadena.ex/issues/169)
 
 ### Done - What we've already developed! 🚀
 
@@ -523,6 +783,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 - [Kadena Pact](https://github.com/kommitters/kadena.ex/issues/55)
 - [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
+- [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
 
 </details>
 
