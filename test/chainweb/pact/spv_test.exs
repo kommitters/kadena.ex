@@ -8,7 +8,7 @@ defmodule Kadena.Chainweb.Client.CannedSPVRequests do
         :post,
         "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/0/pact/spv",
         _headers,
-        "{\"requestKey\":\"bKT10kNSeAyE4LgfFInhorKpK_tNLcNjsaWgug4v82s\",\"targetChainId\":\"0\"}",
+        "{\"requestKey\":\"bKT10kNSeAyE4LgfFInhorKpK_tNLcNjsaWgug4v82s\",\"targetChainId\":\"1\"}",
         _options
       ) do
     response = Chainweb.fixture("spv")
@@ -19,7 +19,7 @@ defmodule Kadena.Chainweb.Client.CannedSPVRequests do
         :post,
         "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/0/pact/spv",
         _headers,
-        "{\"requestKey\":\"Msx7BoeZE0QpflZKkFhSjDZmvMf4xtZ0OxSL1EOckzM\",\"targetChainId\":\"0\"}",
+        "{\"requestKey\":\"Msx7BoeZE0QpflZKkFhSjDZmvMf4xtZ0OxSL1EOckzM\",\"targetChainId\":\"1\"}",
         _options
       ) do
     response =
@@ -38,7 +38,7 @@ defmodule Kadena.Chainweb.Client.CannedSPVRequests do
         :post,
         "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/0/pact/spv",
         _headers,
-        "{\"requestKey\":\"bad_length\",\"targetChainId\":\"0\"}",
+        "{\"requestKey\":\"bad_length\",\"targetChainId\":\"1\"}",
         _options
       ) do
     response =
@@ -57,7 +57,7 @@ defmodule Kadena.Chainweb.Client.CannedSPVRequests do
         :post,
         "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/0/pact/spv",
         _headers,
-        "{\"requestKey\":\"hello\",\"targetChainId\":\"0\"}",
+        "{\"requestKey\":\"hello\",\"targetChainId\":\"1\"}",
         _options
       ) do
     response =
@@ -93,7 +93,7 @@ defmodule Kadena.Chainweb.Pact.SPVTest do
 
     %{
       request_key: "bKT10kNSeAyE4LgfFInhorKpK_tNLcNjsaWgug4v82s",
-      target_chain_id: "0",
+      target_chain_id: "1",
       request_keys_errors: %{
         length: "bad_length",
         decoding: "hello",
@@ -102,8 +102,8 @@ defmodule Kadena.Chainweb.Pact.SPVTest do
       response:
         {:ok,
          %SPVResponse{
-           response:
-             "eyJjaGFpbiI6MCwib2JqZWN0IjoiQUFBQUJ3QUFBQUFBQUFBRkFNY3duU1VVOC1kbDV6RjI2MndtUFJmdTJtYWdsUXY3LTA3TzF1Um5VTTlnQUlVek9KVXRmTHNBTURnZVNPVUlGUmpZcjlsZGNLSU01LU1YNFRRbHRMRzRBTG1CMUk5ZFRXTkx5Vm1haWpwX0FuOTZjelRrT1Z4cEtPUXdFX3NlVElaUUFlaE9ST3hXQXJCYnV6ZXZ2S01HUGUwdUZVX1BPMnozN1QtLWNLYXQ2dXd6QWFnNUIxN1VDdlFPRHo2SWpsUDB4Mkc3cUdCZzZYakQ0Z1RZLTF3dWtZWWVBTTJMdENBbzJaejQ0U0JTSnZWd2hqNDliYzFfSUc4ZGF6Y3ZLaFpFaGdyX0FVUVg3cXFVV2MtX2licWNaS043TUdlZGdwQ3VIbkoyLTYyOFVPeTNfY0JoIiwic3ViamVjdCI6eyJpbnB1dCI6IkFCUjdJbWRoY3lJNk5qQTNMQ0p5WlhOMWJIUWlPbnNpYzNSaGRIVnpJam9pYzNWalkyVnpjeUlzSW1SaGRHRWlPaUpYY21sMFpTQnpkV05qWldWa1pXUWlmU3dpY21WeFMyVjVJam9pWWt0VU1UQnJUbE5sUVhsRk5FeG5aa1pKYm1odmNrdHdTMTkwVGt4alRtcHpZVmRuZFdjMGRqZ3ljeUlzSW14dlozTWlPaUpQVVhwRFRFMUlNSGxqV2pCSVVHOU9NVVl0TWxKamFXWmpORkoxVWpSU2JXTlBOblF5YVVwSk5rRTRJaXdpWlhabGJuUnpJanBiZXlKd1lYSmhiWE1pT2xzaWF6cGpPRGt4WkRZM05qRmxaREpqTkdOallXUmlaVFpoTVRFME1qZ3dNMlprTXpSbVpXUm1aVGxrWWpFeE1ERTBPV05rTVdRNFpUSmhOMkpqT1RCa1l6Sm1JaXdpTm1RNE4yWmtObVUxWlRRM01UZzFZMkkwTWpFME5UbGtNamc0T0dKa1pHSmhOMkUyWXpCbU1tTTBZV1UxTWpRMlpEVm1NemhtT1Rrek9ERTRZbUk0T1NJc05pNHdOMlV0TkYwc0ltNWhiV1VpT2lKVVVrRk9VMFpGVWlJc0ltMXZaSFZzWlNJNmV5SnVZVzFsYzNCaFkyVWlPbTUxYkd3c0ltNWhiV1VpT2lKamIybHVJbjBzSW0xdlpIVnNaVWhoYzJnaU9pSnlSVGRFVlRocWJGRk1PWGhmVFZCWmRXNXBXa3BtTlVsRFFsUkJSVWhCU1VaUlEwSTBZbXh2WmxBMEluMWRMQ0p0WlhSaFJHRjBZU0k2Ym5Wc2JDd2lZMjl1ZEdsdWRXRjBhVzl1SWpwdWRXeHNMQ0owZUVsa0lqb3lNREUyTURFNE1IMCJ9LCJhbGdvcml0aG0iOiJTSEE1MTJ0XzI1NiJ9"
+           proof:
+             "eyJjaGFpbiI6MSwib2JqZWN0IjoiQUFBQUVRQUFBQUFBQUFBRkFNY3duU1VVOC1kbDV6RjI2MndtUFJmdTJtYWdsUXY3LTA3TzF1Um5VTTlnQUlVek9KVXRmTHNBTURnZVNPVUlGUmpZcjlsZGNLSU01LU1YNFRRbHRMRzRBTG1CMUk5ZFRXTkx5Vm1haWpwX0FuOTZjelRrT1Z4cEtPUXdFX3NlVElaUUFlaE9ST3hXQXJCYnV6ZXZ2S01HUGUwdUZVX1BPMnozN1QtLWNLYXQ2dXd6QWFnNUIxN1VDdlFPRHo2SWpsUDB4Mkc3cUdCZzZYakQ0Z1RZLTF3dWtZWWVBTTJMdENBbzJaejQ0U0JTSnZWd2hqNDliYzFfSUc4ZGF6Y3ZLaFpFaGdyX0FVUVg3cXFVV2MtX2licWNaS043TUdlZGdwQ3VIbkoyLTYyOFVPeTNfY0JoQU43enBTaHFlVS1fU1Q3amU2RXRDQVFtdWhWaW5ZRUM1UE5YN1lmMlRxSW5BSVNXdENHZWk3SWhEYUJqTDFkUlREQXlrVDdmUTNUQW5iWUh1dTVLWHljSEFVU1lhSm40SHlXVHFvVFBBSHk5V3VENDh5LWxHSWVKRUJOMHhZLXg3dk1zQUkwLVVyNXViVkVBbFFvUTBBS3pIck40Nm5CeFExRE5oWWdMSXJldG1qOWhBVlV4dndmYUNVeFBzU0ZUWUF0U1JPcF9yZklMYnA5S1gxeDBkTTFKMEh3RUFQbXFaQ0ZzajRiTDJPSTZzaUxkMmJrUmFGUmRNX0hNWWJaZDBOaGpyUXRmQU1NSWFBQzEzbnBETkNQM3FVaU1rdzlFMU0yMXpRLUM1eEFTUTREaGd1R3dBZVV3RW1BRUxDWEFja0gzeExDcGM1ZzdsU0dVaFN5VktfZVFjeUM1RlN2RUFNOW5iWWl1ODNBQnVxMVAydlpta1k5LWJGSTRoTjd5N2FzaldyQXJCeVBVQURTMnV3Y3ZHR2h3Wmx5dlhsaVRQaTFlelJhZ1lQeWowbnJ0LXcwYlFEci0iLCJzdWJqZWN0Ijp7ImlucHV0IjoiQUJSN0ltZGhjeUk2TmpBM0xDSnlaWE4xYkhRaU9uc2ljM1JoZEhWeklqb2ljM1ZqWTJWemN5SXNJbVJoZEdFaU9pSlhjbWwwWlNCemRXTmpaV1ZrWldRaWZTd2ljbVZ4UzJWNUlqb2lZa3RVTVRCclRsTmxRWGxGTkV4blprWkpibWh2Y2t0d1MxOTBUa3hqVG1wellWZG5kV2MwZGpneWN5SXNJbXh2WjNNaU9pSlBVWHBEVEUxSU1IbGpXakJJVUc5T01VWXRNbEpqYVdaak5GSjFValJTYldOUE5uUXlhVXBKTmtFNElpd2laWFpsYm5SeklqcGJleUp3WVhKaGJYTWlPbHNpYXpwak9Ea3haRFkzTmpGbFpESmpOR05qWVdSaVpUWmhNVEUwTWpnd00yWmtNelJtWldSbVpUbGtZakV4TURFME9XTmtNV1E0WlRKaE4ySmpPVEJrWXpKbUlpd2lObVE0TjJaa05tVTFaVFEzTVRnMVkySTBNakUwTlRsa01qZzRPR0prWkdKaE4yRTJZekJtTW1NMFlXVTFNalEyWkRWbU16aG1PVGt6T0RFNFltSTRPU0lzTmk0d04yVXRORjBzSW01aGJXVWlPaUpVVWtGT1UwWkZVaUlzSW0xdlpIVnNaU0k2ZXlKdVlXMWxjM0JoWTJVaU9tNTFiR3dzSW01aGJXVWlPaUpqYjJsdUluMHNJbTF2WkhWc1pVaGhjMmdpT2lKeVJUZEVWVGhxYkZGTU9YaGZUVkJaZFc1cFdrcG1OVWxEUWxSQlJVaEJTVVpSUTBJMFlteHZabEEwSW4xZExDSnRaWFJoUkdGMFlTSTZiblZzYkN3aVkyOXVkR2x1ZFdGMGFXOXVJanB1ZFd4c0xDSjBlRWxrSWpveU1ERTJNREU0TUgwIn0sImFsZ29yaXRobSI6IlNIQTUxMnRfMjU2In0"
          }}
     }
   end

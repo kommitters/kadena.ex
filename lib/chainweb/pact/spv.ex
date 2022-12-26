@@ -10,13 +10,13 @@ defmodule Kadena.Chainweb.Pact.SPV do
 
   @endpoint "spv"
 
-  @type payload_opts :: list()
+  @type payload :: [request_key: String.t(), target_chain_id: String.t()]
   @type json :: String.t()
 
   @impl true
-  def process(payload_opts, network_id: network_id, chain_id: chain_id) do
+  def process(payload, network_id: network_id, chain_id: chain_id) do
     headers = [{"Content-Type", "application/json"}]
-    body = json_request_body(payload_opts)
+    body = json_request_body(payload)
 
     :post
     |> Request.new(pact: [endpoint: @endpoint])
@@ -28,9 +28,9 @@ defmodule Kadena.Chainweb.Pact.SPV do
     |> Request.results(as: SPVResponse)
   end
 
-  @spec json_request_body(payload_opts :: payload_opts()) :: json()
-  defp json_request_body(payload_opts) do
-    payload_opts
+  @spec json_request_body(payload :: payload()) :: json()
+  defp json_request_body(payload) do
+    payload
     |> SPVRequestBody.new()
     |> SPVRequestBody.to_json!()
   end

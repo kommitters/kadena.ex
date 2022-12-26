@@ -14,7 +14,8 @@ defmodule Kadena.Chainweb.Pact.Spec do
   alias Kadena.Chainweb.Error
   alias Kadena.Types.Command
 
-  @type data :: list(Command.t()) | Command.t() | list(String.t()) | String.t() | list()
+  @type data ::
+          list(Command.t()) | Command.t() | list(String.t()) | String.t() | list(Keyword.t())
   @type error :: {:error, Error.t()}
   @type chain_id :: 0..19 | String.t()
   @type network_opts :: [network_id: atom(), chain_id: chain_id()]
