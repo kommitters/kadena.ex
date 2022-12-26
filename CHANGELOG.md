@@ -1,6 +1,16 @@
 # Changelog
 
+## 0.11.0 (26.12.2022)
+
+- Implemented [Local endpoint](https://github.com/kommitters/kadena.ex/issues/100)
+- Refactored [Pact Commands](https://github.com/kommitters/kadena.ex/issues/183)
+- Implemented [Poll endpoint](https://github.com/kommitters/kadena.ex/issues/101)
+- Implemented [Listen endpoint](https://github.com/kommitters/kadena.ex/issues/102)
+- Implemented [SPV endpoint](https://github.com/kommitters/kadena.ex/issues/103)
+- Add OpenSSF BestPractices and Scorecard badges in README
+
 ## 0.10.0 (20.12.2022)
+
 - Refactored [PACT Commands](https://github.com/kommitters/kadena.ex/issues/159)
 - Added [Composing functional Chainweb requests](https://github.com/kommitters/kadena.ex/issues/144)
 - Added [new function in Cap and modify JSON format](https://github.com/kommitters/kadena.ex/issues/167)
@@ -9,6 +19,7 @@
 - Implemented [Send endpoint](https://github.com/kommitters/kadena.ex/issues/97)
 
 ## 0.9.0 (08.12.2022)
+
 - Added [Continuation Command](https://github.com/kommitters/kadena.ex/issues/133)
 - Relocated Chainweb types
 - Improved the README documentation

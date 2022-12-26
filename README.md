@@ -5,6 +5,8 @@
 [![Version Badge](https://img.shields.io/hexpm/v/kadena?style=for-the-badge)](https://hexdocs.pm/kadena)
 ![Downloads Badge](https://img.shields.io/hexpm/dt/kadena?style=for-the-badge)
 [![License badge](https://img.shields.io/hexpm/l/kadena?style=for-the-badge)](https://github.com/kommitters/kadena.ex/blob/main/LICENSE)
+[![OpenSSF Best Practices](https://img.shields.io/cii/summary/6474?label=openssf%20best%20practices&style=for-the-badge)](https://bestpractices.coreinfrastructure.org/projects/6474)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/kommitters/kadena.ex?label=openssf%20scorecard&style=for-the-badge)](https://api.securityscorecards.dev/projects/github.com/kommitters/kadena.ex)
 
 **Kadena.ex** is an open source library for Elixir that allows developers to interact with Kadena Chainweb.
 
@@ -22,7 +24,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.10.0"}
+    {:kadena, "~> 0.11.0"}
   ]
 end
 ```
@@ -749,13 +751,13 @@ Chainweb.Pact.spv(payload, network_id: :testnet04, chain_id: 1)
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.11`
+The latest updated branch to target a PR is `v0.12`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Chainweb PACT API Consumer](https://github.com/kommitters/kadena.ex/issues/58)
+- [Remove List Types](https://github.com/kommitters/kadena.ex/issues/169)
 
 ### Done - What we've already developed! 🚀
 
@@ -781,6 +783,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [Kadena Crypto](https://github.com/kommitters/kadena.ex/issues/51)
 - [Kadena Pact](https://github.com/kommitters/kadena.ex/issues/55)
 - [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
+- [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
 
 </details>
 
