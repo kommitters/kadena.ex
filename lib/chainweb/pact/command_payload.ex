@@ -26,7 +26,6 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
     Proof,
     Rollback,
     Signer,
-    SignersList,
     Step
   }
 
@@ -34,7 +33,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
 
   @type network_id :: NetworkID.t() | nil
   @type payload :: PactPayload.t()
-  @type signers :: SignersList.t()
+  @type signers :: list(Signer.t())
   @type meta :: MetaData.t()
   @type nonce :: String.t()
   @type value :: network_id() | payload() | signers() | meta() | nonce()
@@ -139,14 +138,9 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   end
 
   @spec validate_signers(signers :: signers()) :: validation()
-  defp validate_signers(%SignersList{} = signers), do: {:ok, signers}
-
-  defp validate_signers(signers) do
-    case SignersList.new(signers) do
-      %SignersList{} = signers -> {:ok, signers}
-      _error -> {:error, [signers: :invalid]}
-    end
-  end
+  defp validate_signers([%Signer{} | _rest] = signers), do: {:ok, signers}
+  defp validate_signers([] = signers), do: {:ok, signers}
+  defp validate_signers(_signers), do: {:error, [signers: :invalid]}
 
   @spec validate_meta(meta :: meta()) :: validation()
   defp validate_meta(%MetaData{} = meta), do: {:ok, meta}
@@ -223,9 +217,9 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
     |> (&{:ok, &1}).()
   end
 
-  @spec extract_signers_list(signers :: signers()) :: valid_list()
-  defp extract_signers_list(%SignersList{signers: list}) do
-    signers = Enum.map(list, fn sig -> extract_signer_info(sig) end)
+  @spec extract_signers_list(signer_list :: signers()) :: valid_list()
+  defp extract_signers_list(signer_list) do
+    signers = Enum.map(signer_list, fn sig -> extract_signer_info(sig) end)
     {:ok, signers}
   end
 

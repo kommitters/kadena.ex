@@ -16,8 +16,7 @@ defmodule Kadena.Pact.ExecCommandTest do
     PactTransactionHash,
     Signature,
     SignaturesList,
-    Signer,
-    SignersList
+    Signer
   }
 
   describe "create ExecCommand" do
@@ -93,8 +92,8 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_code(code)
         |> ExecCommand.set_nonce(nonce)
         |> ExecCommand.set_metadata(meta_data)
-        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.add_signer(signer)
+        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.build()
     end
 
@@ -161,7 +160,7 @@ defmodule Kadena.Pact.ExecCommandTest do
           nonce: nonce,
           meta_data: meta_data,
           keypairs: [keypair],
-          signers: SignersList.new([signer])
+          signers: [signer]
         )
         |> ExecCommand.build()
     end
@@ -195,7 +194,7 @@ defmodule Kadena.Pact.ExecCommandTest do
           nonce: nonce,
           meta_data: meta_data,
           keypairs: [keypair],
-          signers: SignersList.new([signer])
+          signers: [signer]
         )
         |> ExecCommand.build()
     end
@@ -229,8 +228,8 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_code(code)
         |> ExecCommand.set_nonce(nonce)
         |> ExecCommand.set_metadata(meta_data)
-        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.add_signer(signer)
+        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.add_signer(signer)
         |> ExecCommand.build()
     end
@@ -282,7 +281,7 @@ defmodule Kadena.Pact.ExecCommandTest do
       code: code,
       signer: signer
     } do
-      signers = SignersList.new([signer])
+      signers = [signer]
 
       {:ok,
        %Command{
@@ -334,8 +333,8 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_code(code)
         |> ExecCommand.set_nonce(nonce)
         |> ExecCommand.set_metadata(meta_data)
-        |> ExecCommand.add_keypairs([keypair, keypair])
         |> ExecCommand.add_signer(signer)
+        |> ExecCommand.add_keypairs([keypair, keypair])
         |> ExecCommand.build()
     end
 
@@ -346,7 +345,7 @@ defmodule Kadena.Pact.ExecCommandTest do
       nonce: nonce,
       code: code
     } do
-      signers_list = SignersList.new([signer, signer])
+      signers_list = [signer, signer]
 
       {:ok,
        %Command{
@@ -370,8 +369,8 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_code(code)
         |> ExecCommand.set_nonce(nonce)
         |> ExecCommand.set_metadata(meta_data)
-        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.add_signers(signers_list)
+        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.build()
     end
 
@@ -540,7 +539,7 @@ defmodule Kadena.Pact.ExecCommandTest do
       nonce: nonce,
       code: code
     } do
-      {:error, [signers: :invalid]} =
+      {:error, [signers: :not_a_signer_list]} =
         ExecCommand.new()
         |> ExecCommand.set_network(:testnet04)
         |> ExecCommand.set_data(%{})

@@ -16,8 +16,7 @@ defmodule Kadena.Pact.ContCommandTest do
     PactTransactionHash,
     Signature,
     SignaturesList,
-    Signer,
-    SignersList
+    Signer
   }
 
   describe "create ContCommand" do
@@ -92,8 +91,8 @@ defmodule Kadena.Pact.ContCommandTest do
         |> ContCommand.set_data(%{})
         |> ContCommand.set_nonce(nonce)
         |> ContCommand.set_metadata(metadata)
-        |> ContCommand.add_keypair(keypair)
         |> ContCommand.add_signer(signer)
+        |> ContCommand.add_keypair(keypair)
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_step(0)
         |> ContCommand.set_rollback(false)
@@ -149,7 +148,7 @@ defmodule Kadena.Pact.ContCommandTest do
           nonce: nonce,
           meta_data: metadata,
           keypairs: [keypair],
-          signers: SignersList.new([signer]),
+          signers: [signer],
           pact_tx_hash: pact_tx_hash,
           step: 0,
           proof: "",
@@ -187,7 +186,7 @@ defmodule Kadena.Pact.ContCommandTest do
           nonce: nonce,
           meta_data: metadata,
           keypairs: [keypair],
-          signers: SignersList.new([signer]),
+          signers: [signer],
           pact_tx_hash: pact_tx_hash,
           step: 0,
           rollback: false
@@ -234,7 +233,7 @@ defmodule Kadena.Pact.ContCommandTest do
       pact_tx_hash: pact_tx_hash,
       signer: signer
     } do
-      signers = SignersList.new([signer])
+      signers = [signer]
 
       {:ok,
        %Command{
@@ -285,8 +284,8 @@ defmodule Kadena.Pact.ContCommandTest do
         |> ContCommand.set_data(%{})
         |> ContCommand.set_nonce(nonce)
         |> ContCommand.set_metadata(metadata)
-        |> ContCommand.add_keypairs([keypair, keypair])
         |> ContCommand.add_signer(signer)
+        |> ContCommand.add_keypairs([keypair, keypair])
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_step(0)
         |> ContCommand.set_rollback(false)
@@ -321,8 +320,8 @@ defmodule Kadena.Pact.ContCommandTest do
         |> ContCommand.set_data(%{})
         |> ContCommand.set_nonce(nonce)
         |> ContCommand.set_metadata(metadata)
-        |> ContCommand.add_keypair(keypair)
         |> ContCommand.add_signer(signer)
+        |> ContCommand.add_keypair(keypair)
         |> ContCommand.add_signer(signer)
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_step(0)
@@ -337,7 +336,7 @@ defmodule Kadena.Pact.ContCommandTest do
       signer: signer,
       nonce: nonce
     } do
-      signers_list = SignersList.new([signer, signer])
+      signers_list = [signer, signer]
 
       {:ok,
        %Command{
@@ -360,8 +359,8 @@ defmodule Kadena.Pact.ContCommandTest do
         |> ContCommand.set_data(%{})
         |> ContCommand.set_nonce(nonce)
         |> ContCommand.set_metadata(metadata)
-        |> ContCommand.add_keypair(keypair)
         |> ContCommand.add_signers(signers_list)
+        |> ContCommand.add_keypair(keypair)
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_step(0)
         |> ContCommand.set_rollback(false)
@@ -614,7 +613,7 @@ defmodule Kadena.Pact.ContCommandTest do
       keypair: keypair,
       nonce: nonce
     } do
-      {:error, [signers: :invalid]} =
+      {:error, [signers: :not_a_signer_list]} =
         ContCommand.new()
         |> ContCommand.set_network(:testnet04)
         |> ContCommand.set_data(%{})
