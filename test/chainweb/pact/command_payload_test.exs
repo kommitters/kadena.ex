@@ -13,7 +13,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     MetaData,
     NetworkID,
     PactPayload,
-    SignersList
+    Signer
   }
 
   describe "new/1" do
@@ -28,15 +28,17 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
 
       # Signer args
       cap_value = [name: "gas", args: ["COIN.gas", 0.02]]
-      clist = [cap_value, cap_value, cap_value]
       base16string = "64617373646164617364617364616473616461736461736464"
       signer_scheme = :ed25519
 
-      signers_list_value = [
-        [pub_key: base16string, scheme: signer_scheme, addr: base16string, clist: clist]
+      signer_value = [
+        pub_key: base16string,
+        scheme: signer_scheme,
+        addr: base16string,
+        clist: [cap_value, cap_value, cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       # MetaData args
       creation_time = 0
@@ -68,8 +70,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
             rollback: rollback
           ),
         exec_payload: ExecPayload.new(data: data, code: code),
-        signers: signers_list_value,
-        signers_list_struct: signer_list_struct,
+        signers: signers,
         meta: MetaData.new(meta),
         meta_list: meta,
         nonce: "valid_nonce"
@@ -81,14 +82,13 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       network_id_str: network_id_str,
       exec_payload: exec_payload,
       signers: signers,
-      signers_list_struct: signers_list_struct,
       meta: meta,
       nonce: nonce
     } do
       %CommandPayload{
         network_id: %NetworkID{id: ^network_id_str},
         payload: %PactPayload{payload: ^exec_payload},
-        signers: ^signers_list_struct,
+        signers: ^signers,
         meta: ^meta,
         nonce: ^nonce
       } =
@@ -106,14 +106,13 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       network_id_str: network_id_str,
       exec_payload: exec_payload,
       signers: signers,
-      signers_list_struct: signers_list_struct,
       meta: meta,
       nonce: nonce
     } do
       %CommandPayload{
         network_id: %NetworkID{id: ^network_id_str},
         payload: %PactPayload{payload: ^exec_payload},
-        signers: ^signers_list_struct,
+        signers: ^signers,
         meta: ^meta,
         nonce: ^nonce
       } =
@@ -131,14 +130,13 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       network_id_str: network_id_str,
       exec_payload: exec_payload,
       signers: signers,
-      signers_list_struct: signers_list_struct,
       meta: meta,
       nonce: nonce
     } do
       %CommandPayload{
         network_id: %NetworkID{id: ^network_id_str},
         payload: %PactPayload{payload: ^exec_payload},
-        signers: ^signers_list_struct,
+        signers: ^signers,
         meta: ^meta,
         nonce: ^nonce
       } =
@@ -156,14 +154,13 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       network_id_str: network_id_str,
       cont_payload: cont_payload,
       signers: signers,
-      signers_list_struct: signers_list_struct,
       meta: meta,
       nonce: nonce
     } do
       %CommandPayload{
         network_id: %NetworkID{id: ^network_id_str},
         payload: %PactPayload{payload: ^cont_payload},
-        signers: ^signers_list_struct,
+        signers: ^signers,
         meta: ^meta,
         nonce: ^nonce
       } =
@@ -176,35 +173,10 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
         )
     end
 
-    test "with valid params and signer list struct", %{
-      network_id: network_id,
-      network_id_str: network_id_str,
-      cont_payload: cont_payload,
-      signers_list_struct: signers_list_struct,
-      meta: meta,
-      nonce: nonce
-    } do
-      %CommandPayload{
-        network_id: %NetworkID{id: ^network_id_str},
-        payload: %PactPayload{payload: ^cont_payload},
-        signers: ^signers_list_struct,
-        meta: ^meta,
-        nonce: ^nonce
-      } =
-        CommandPayload.new(
-          network_id: network_id,
-          payload: cont_payload,
-          signers: signers_list_struct,
-          meta: meta,
-          nonce: nonce
-        )
-    end
-
     test "with valid params and MetaData", %{
       network_id: network_id,
       network_id_str: network_id_str,
       cont_payload: cont_payload,
-      signers_list_struct: signers_list_struct,
       signers: signers,
       meta: meta,
       meta_list: meta_list,
@@ -213,7 +185,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       %CommandPayload{
         network_id: %NetworkID{id: ^network_id_str},
         payload: %PactPayload{payload: ^cont_payload},
-        signers: ^signers_list_struct,
+        signers: ^signers,
         meta: ^meta,
         nonce: ^nonce
       } =
@@ -261,7 +233,6 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     test "with invalid signers", %{
       network_id: network_id,
       cont_payload: cont_payload,
-      signers: signers,
       meta: meta,
       nonce: nonce
     } do
@@ -269,7 +240,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
         CommandPayload.new(
           network_id: network_id,
           payload: cont_payload,
-          signers: signers ++ [["invalid_signer_args"]],
+          signers: "invalid_signer_args",
           meta: meta,
           nonce: nonce
         )
@@ -293,13 +264,12 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
 
     test "with required values", %{
       cont_payload: cont_payload,
-      signers_list_struct: signers_list_struct,
       signers: signers
     } do
       %CommandPayload{
         network_id: %NetworkID{id: nil},
         payload: %PactPayload{payload: ^cont_payload},
-        signers: ^signers_list_struct,
+        signers: ^signers,
         meta: %MetaData{},
         nonce: ""
       } =
@@ -350,17 +320,20 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: [pub_key]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: pub_key, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: pub_key,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       command_payload =
         CommandPayload.new(
           network_id: :testnet04,
           payload: exec_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -390,17 +363,20 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: [9_007_199_254_740_992]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: pub_key, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: pub_key,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       command_payload =
         CommandPayload.new(
           network_id: :testnet04,
           payload: exec_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -430,17 +406,20 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: ["9007199254740992.553"]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: pub_key, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: pub_key,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       command_payload =
         CommandPayload.new(
           network_id: :testnet04,
           payload: exec_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -470,17 +449,20 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: [["9007199254740992.553"]]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: pub_key, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: pub_key,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       command_payload =
         CommandPayload.new(
           network_id: :testnet04,
           payload: exec_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -510,17 +492,20 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: [pub_key]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: nil, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: nil,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       command_payload =
         CommandPayload.new(
           network_id: :testnet04,
           payload: exec_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -549,17 +534,20 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: [pub_key]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: nil, addr: pub_key, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: nil,
+        addr: pub_key,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       command_payload =
         CommandPayload.new(
           network_id: :testnet04,
           payload: exec_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -587,17 +575,20 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       signer_scheme: signer_scheme,
       exec_payload: exec_payload
     } do
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: pub_key, clist: nil]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: pub_key,
+        clist: nil
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       command_payload =
         CommandPayload.new(
           network_id: :testnet04,
           payload: exec_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -626,17 +617,20 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: [pub_key]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: pub_key, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: pub_key,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       command_payload =
         CommandPayload.new(
           network_id: :testnet04,
           payload: ExecPayload.new(data: nil, code: "(+ 5 6)"),
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -665,11 +659,14 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: [["9007199254740992.553"]]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: pub_key, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: pub_key,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       cont_payload =
         ContPayload.new(
@@ -684,7 +681,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
         CommandPayload.new(
           network_id: :testnet04,
           payload: cont_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
@@ -713,11 +710,14 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
     } do
       cap_value = [name: "coin.GAS", args: [["9007199254740992.553"]]]
 
-      signers_list_value = [
-        [pub_key: pub_key, scheme: signer_scheme, addr: pub_key, clist: [cap_value]]
+      signer_value = [
+        pub_key: pub_key,
+        scheme: signer_scheme,
+        addr: pub_key,
+        clist: [cap_value]
       ]
 
-      signer_list_struct = SignersList.new(signers_list_value)
+      signers = [Signer.new(signer_value)]
 
       cont_payload =
         ContPayload.new(
@@ -732,7 +732,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
         CommandPayload.new(
           network_id: :testnet04,
           payload: cont_payload,
-          signers: signer_list_struct,
+          signers: signers,
           meta:
             MetaData.new(
               creation_time: creation_time,
