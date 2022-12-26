@@ -172,7 +172,7 @@ defmodule Kadena.Pact.ContCommand do
   @impl true
   def add_signers(%__MODULE__{} = cmd_request, []), do: cmd_request
 
-  def add_signers(%__MODULE__{} = cmd_request, [%Signer{} = signer | signers]) do
+  def add_signers(%__MODULE__{} = cmd_request, [signer | signers]) do
     cmd_request
     |> add_signer(signer)
     |> add_signers(signers)
