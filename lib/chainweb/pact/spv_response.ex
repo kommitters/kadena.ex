@@ -5,12 +5,12 @@ defmodule Kadena.Chainweb.Pact.SPVResponse do
 
   @behaviour Kadena.Chainweb.Pact.Type
 
-  @type response :: String.t()
+  @type proof :: String.t()
 
-  @type t :: %__MODULE__{response: response()}
+  @type t :: %__MODULE__{proof: proof()}
 
-  defstruct [:response]
+  defstruct [:proof]
 
   @impl true
-  def new(response) when is_binary(response), do: struct(%__MODULE__{}, response: response)
+  def new(proof) when is_binary(proof), do: struct(%__MODULE__{}, proof: proof)
 end

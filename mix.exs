@@ -101,6 +101,7 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Pact.Poll,
         Kadena.Chainweb.Pact.Send,
         Kadena.Chainweb.Pact.Spec,
+        Kadena.Chainweb.Pact.SPV,
         Kadena.Chainweb.Request
       ],
       Cryptography: [
