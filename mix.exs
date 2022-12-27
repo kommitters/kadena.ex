@@ -122,7 +122,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.Cap,
         Kadena.Types.ChainID,
         Kadena.Types.Command,
-        Kadena.Types.CommandsList,
         Kadena.Types.ContPayload,
         Kadena.Types.EnvData,
         Kadena.Types.ExecPayload,
