@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.1 (27.12.2022)
+
+- Hardened GitHub Actions.
+- Added stability badge in README.
+
 ## 0.11.0 (26.12.2022)
 
 - Implemented [Local endpoint](https://github.com/kommitters/kadena.ex/issues/100)
