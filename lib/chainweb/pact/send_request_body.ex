@@ -3,11 +3,11 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   `SendRequestBody` struct definition.
   """
 
-  alias Kadena.Types.{Command, CommandsList, PactTransactionHash, SignaturesList}
+  alias Kadena.Types.{Command, PactTransactionHash, SignaturesList}
 
   @behaviour Kadena.Chainweb.Pact.Type
 
-  @type cmds :: CommandsList.t()
+  @type cmds :: list(command())
   @type raw_cmds :: list(map())
   @type valid_cmds :: {:ok, raw_cmds()}
   @type signatures_list :: SignaturesList.t()
@@ -20,15 +20,8 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   defstruct [:cmds]
 
   @impl true
-  def new(cmds) when is_list(cmds) do
-    case CommandsList.new(cmds) do
-      %CommandsList{} = cmds -> %__MODULE__{cmds: cmds}
-      {:error, _reason} -> {:error, [commands: :invalid]}
-    end
-  end
-
-  def new(%CommandsList{} = cmds), do: %__MODULE__{cmds: cmds}
-  def new(_cmds), do: {:error, [commands: :not_a_list]}
+  def new([%Command{} | _tail] = cmds), do: %__MODULE__{cmds: cmds}
+  def new(_cmds), do: {:error, [commands: :not_a_commands_list]}
 
   @impl true
   def to_json!(%__MODULE__{cmds: cmds}) do
@@ -38,8 +31,9 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   end
 
   @spec extract_cmds(cmds :: cmds()) :: valid_cmds()
-  defp extract_cmds(%CommandsList{commands: list_commands}) do
-    cmds = Enum.map(list_commands, fn command -> extract_cmds_info(command) end)
+  defp extract_cmds(cmds) do
+    cmds = Enum.map(cmds, fn command -> extract_cmds_info(command) end)
+    IO.inspect(cmds)
     {:ok, cmds}
   end
 

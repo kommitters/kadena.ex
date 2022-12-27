@@ -6,7 +6,7 @@ defmodule Kadena.Chainweb.Pact.SendRequestBodyTest do
   use ExUnit.Case
 
   alias Kadena.Chainweb.Pact.SendRequestBody
-  alias Kadena.Types.{Command, CommandsList}
+  alias Kadena.Types.Command
 
   setup do
     command =
@@ -21,7 +21,7 @@ defmodule Kadena.Chainweb.Pact.SendRequestBodyTest do
 
     %{
       commands_list_params: [command],
-      commands_list: CommandsList.new([command])
+      commands_list: [command]
     }
   end
 
@@ -37,13 +37,8 @@ defmodule Kadena.Chainweb.Pact.SendRequestBodyTest do
       %SendRequestBody{cmds: ^commands_list} = SendRequestBody.new(commands_list)
     end
 
-    test "with an invalid param in list", %{commands_list_params: commands_list_params} do
-      {:error, [commands: :invalid]} =
-        SendRequestBody.new(commands_list_params ++ [:invalid_command])
-    end
-
     test "with an invalid no list params" do
-      {:error, [commands: :not_a_list]} = SendRequestBody.new("No list")
+      {:error, [commands: :not_a_commands_list]} = SendRequestBody.new("No list")
     end
   end
 
