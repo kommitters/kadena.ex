@@ -7,11 +7,11 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
 
   @behaviour Kadena.Chainweb.Pact.Type
 
+  @type command :: Command.t()
   @type cmds :: list(command())
   @type raw_cmds :: list(map())
   @type valid_cmds :: {:ok, raw_cmds()}
   @type signatures_list :: SignaturesList.t()
-  @type command :: Command.t()
   @type hash :: PactTransactionHash.t()
   @type hash_value :: String.t()
 
