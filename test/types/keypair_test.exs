@@ -5,14 +5,12 @@ defmodule Kadena.Types.KeypairTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{CapsList, KeyPair, OptionalCapsList}
+  alias Kadena.Types.{Cap, KeyPair, OptionalCapsList}
 
   setup do
-    clist =
-      CapsList.new([
-        [name: "gas", args: ["COIN.gas", 0.02]],
-        [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
-      ])
+    cap1 = Cap.new(%{name: "gas", args: ["COIN.gas", 0.02]})
+    cap2 = Cap.new(%{name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]})
+    clist = [cap1, cap2]
 
     %{
       pub_key: "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d",

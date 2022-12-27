@@ -8,7 +8,7 @@ defmodule Kadena.Pact.ContCommandTest do
   alias Kadena.Pact.ContCommand
 
   alias Kadena.Types.{
-    CapsList,
+    Cap,
     Command,
     EnvData,
     KeyPair,
@@ -24,10 +24,8 @@ defmodule Kadena.Pact.ContCommandTest do
       secret_key = "99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4"
       {:ok, %KeyPair{pub_key: pub_key}} = CryptographyKeyPair.from_secret_key(secret_key)
 
-      clist =
-        CapsList.new([
-          [name: "coin.GAS", args: [pub_key]]
-        ])
+      cap = Cap.new(%{name: "coin.GAS", args: [pub_key]})
+      clist = [cap]
 
       keypair_data = [pub_key: pub_key, secret_key: secret_key, clist: clist]
 

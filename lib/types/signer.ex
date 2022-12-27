@@ -3,7 +3,7 @@ defmodule Kadena.Types.Signer do
   `Signer` struct definition.
   """
 
-  alias Kadena.Types.{Base16String, CapsList, OptionalCapsList}
+  alias Kadena.Types.{Base16String, Cap, OptionalCapsList}
 
   @behaviour Kadena.Types.Spec
 
@@ -11,7 +11,7 @@ defmodule Kadena.Types.Signer do
   @type scheme :: :ed25519 | nil
   @type addr :: Base16String.t() | nil
   @type clist :: OptionalCapsList.t()
-  @type cap_list :: CapsList.t() | list() | nil
+  @type cap_list :: list(Cap.t()) | OptionalCapsList.t() | nil
   @type value :: pub_key() | scheme() | addr() | clist()
   @type str :: String.t()
   @type validation :: {:ok, value()} | {:error, Keyword.t()}
@@ -56,15 +56,7 @@ defmodule Kadena.Types.Signer do
 
   @spec validate_clist(clist :: cap_list()) :: validation()
   defp validate_clist(nil), do: {:ok, OptionalCapsList.new()}
-  defp validate_clist(%CapsList{} = clist), do: {:ok, OptionalCapsList.new(clist)}
+  defp validate_clist([%Cap{} | _tail] = clist), do: {:ok, OptionalCapsList.new(clist)}
   defp validate_clist(%OptionalCapsList{} = clist), do: {:ok, clist}
-
-  defp validate_clist(clist) do
-    with %CapsList{} = clist <- CapsList.new(clist),
-         %OptionalCapsList{} = optional_clist <- OptionalCapsList.new(clist) do
-      {:ok, optional_clist}
-    else
-      {:error, [{_field, reason}]} -> {:error, [clist: reason]}
-    end
-  end
+  defp validate_clist(_clist), do: {:error, [clist: :not_a_caps_list]}
 end
