@@ -16,7 +16,7 @@ defmodule Kadena.Pact.ExecCommand do
     MetaData,
     NetworkID,
     PactPayload,
-    SignaturesList,
+    Signature,
     SignCommand,
     Signer
   }
@@ -34,7 +34,7 @@ defmodule Kadena.Pact.ExecCommand do
   @type nonce :: String.t()
   @type pact_payload :: PactPayload.t()
   @type signers :: list(Signer.t())
-  @type signatures :: SignaturesList.t()
+  @type signatures :: list(Signature.t())
   @type sign_command :: SignCommand.t()
   @type sign_commands :: list(sign_command())
   @type valid_command_json_string :: {:ok, json_string_payload()}
@@ -262,8 +262,8 @@ defmodule Kadena.Pact.ExecCommand do
   end
 
   @spec build_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
-  defp build_signatures([], result), do: {:ok, SignaturesList.new(result)}
+  defp build_signatures([], result), do: {:ok, List.flatten(result)}
 
   defp build_signatures([%SignCommand{sig: sig} | rest], result),
-    do: build_signatures(rest, result ++ [sig])
+    do: build_signatures(rest, result ++ [Signature.new(sig)])
 end

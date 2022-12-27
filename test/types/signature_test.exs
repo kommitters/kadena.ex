@@ -19,7 +19,7 @@ defmodule Kadena.Types.SignatureTest do
     end
 
     test "with a nil sig" do
-      {:error, [sig: :invalid]} = Signature.new(nil)
+      [] = Signature.new(nil)
     end
 
     test "with an atom value" do

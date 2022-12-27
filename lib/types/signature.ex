@@ -13,5 +13,6 @@ defmodule Kadena.Types.Signature do
 
   @impl true
   def new(sig) when is_binary(sig), do: %__MODULE__{sig: sig}
+  def new(sig) when is_nil(sig), do: []
   def new(_sig), do: {:error, [sig: :invalid]}
 end

@@ -3,13 +3,13 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
   `LocalRequestBody` struct definition.
   """
 
-  alias Kadena.Types.{Command, PactTransactionHash, SignaturesList}
+  alias Kadena.Types.{Command, PactTransactionHash, Signature}
 
   @behaviour Kadena.Chainweb.Pact.Type
 
   @type command :: Command.t()
   @type hash :: PactTransactionHash.t()
-  @type sigs :: SignaturesList.t()
+  @type sigs :: list(Signature.t())
   @type cmd :: String.t()
   @type error :: {:error, Keyword.t()}
   @type raw_sigs :: list(map())
@@ -37,8 +37,8 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
   end
 
   @spec to_signature_list(signatures :: sigs()) :: {:ok, raw_sigs()}
-  defp to_signature_list(%SignaturesList{signatures: list}) do
-    sigs = Enum.map(list, fn sig -> Map.from_struct(sig) end)
+  defp to_signature_list(signatures) do
+    sigs = Enum.map(signatures, fn sig -> Map.from_struct(sig) end)
     {:ok, sigs}
   end
 end

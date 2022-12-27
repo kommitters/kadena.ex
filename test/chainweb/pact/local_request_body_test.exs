@@ -10,8 +10,7 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBodyTest do
   alias Kadena.Types.{
     Command,
     PactTransactionHash,
-    Signature,
-    SignaturesList
+    Signature
   }
 
   setup do
@@ -22,14 +21,12 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBodyTest do
       hash: "-1npoTU2Mi71pKE_oteJiJuHuXTXxoObJm8zzVRK2pk"
     }
 
-    sigs = %SignaturesList{
-      signatures: [
-        %Signature{
-          sig:
-            "8b234b83570359e52188cceb301036a2a7b255171e856fd550cac687a946f18fbfc0e769fd8393dda44d6d04c31b531eaf35efb3b78b5e40fd857a743133030d"
-        }
-      ]
-    }
+    sigs = [
+      %Signature{
+        sig:
+          "8b234b83570359e52188cceb301036a2a7b255171e856fd550cac687a946f18fbfc0e769fd8393dda44d6d04c31b531eaf35efb3b78b5e40fd857a743133030d"
+      }
+    ]
 
     command = %Command{
       cmd: cmd,

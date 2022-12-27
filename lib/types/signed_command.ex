@@ -2,15 +2,14 @@ defmodule Kadena.Types.SignedCommand do
   @moduledoc """
   `SignedCommand` struct definition.
   """
-  alias Kadena.Types.SignaturesList
+  alias Kadena.Types.Signature
 
   @behaviour Kadena.Types.Spec
 
   @type str :: String.t()
   @type hash :: str()
   @type cmd :: str()
-  @type sigs :: SignaturesList.t()
-  @type raw_sigs :: list()
+  @type sigs :: list(Signature.t())
   @type value :: str() | sigs()
   @type validation :: {:ok, value()} | {:error, Keyword.t()}
 
@@ -39,11 +38,7 @@ defmodule Kadena.Types.SignedCommand do
   defp validate_str(_field, value) when is_binary(value), do: {:ok, value}
   defp validate_str(field, _value), do: {:error, [{field, :invalid}]}
 
-  @spec validate_sigs(sigs :: raw_sigs()) :: validation()
-  defp validate_sigs(sigs) do
-    case SignaturesList.new(sigs) do
-      %SignaturesList{} = sigs -> {:ok, sigs}
-      {:error, reason} -> {:error, [sigs: :invalid] ++ reason}
-    end
-  end
+  @spec validate_sigs(sigs :: sigs()) :: validation()
+  defp validate_sigs([%Signature{} | _tail] = sigs), do: {:ok, sigs}
+  defp validate_sigs(_sigs), do: {:error, [sigs: :invalid]}
 end
