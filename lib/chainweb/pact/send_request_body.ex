@@ -33,7 +33,6 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   @spec extract_cmds(cmds :: cmds()) :: valid_cmds()
   defp extract_cmds(cmds) do
     cmds = Enum.map(cmds, fn command -> extract_cmds_info(command) end)
-    IO.inspect(cmds)
     {:ok, cmds}
   end
 
