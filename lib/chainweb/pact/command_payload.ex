@@ -8,7 +8,6 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   alias Kadena.Types.{
     Base16String,
     Cap,
-    CapsList,
     ChainID,
     ContPayload,
     EnvData,
@@ -51,7 +50,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   @type proof :: Proof.t() | nil
   @type signer :: Signer.t()
   @type raw_value :: integer() | string_value() | boolean() | Decimal.t()
-  @type clist :: CapsList.t() | nil
+  @type clist :: list(cap()) | nil
   @type addr :: Base16String.t() | nil
   @type pact_payload :: PactPayload.t()
   @type literal ::
@@ -249,7 +248,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   @spec extract_clist(clist()) :: list()
   defp extract_clist(nil), do: []
 
-  defp extract_clist(%CapsList{caps: caps}) do
+  defp extract_clist(caps) do
     Enum.map(caps, fn cap -> extract_cap_info(cap) end)
   end
 
