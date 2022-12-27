@@ -120,7 +120,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.Base64Url,
         Kadena.Types.Base64UrlsList,
         Kadena.Types.Cap,
-        Kadena.Types.CapsList,
         Kadena.Types.ChainID,
         Kadena.Types.Command,
         Kadena.Types.CommandsList,
