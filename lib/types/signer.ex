@@ -11,7 +11,7 @@ defmodule Kadena.Types.Signer do
   @type scheme :: :ed25519 | nil
   @type addr :: Base16String.t() | nil
   @type clist :: OptionalCapsList.t()
-  @type cap_list :: list(Cap.t()) | OptionalCapsList | nil
+  @type cap_list :: list(Cap.t()) | OptionalCapsList.t() | nil
   @type value :: pub_key() | scheme() | addr() | clist()
   @type str :: String.t()
   @type validation :: {:ok, value()} | {:error, Keyword.t()}
