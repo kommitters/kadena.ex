@@ -20,13 +20,18 @@ jobs:
     env:
       MIX_ENV: test
     steps:
-      - uses: actions/checkout@v2
-      - uses: erlef/setup-beam@v1
+      - name: Harden Runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5 # v2.0.0
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+      - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 # v2.6.0
+      - uses: erlef/setup-beam@b980a5ac9b7316a23ebc16de2bb69b7c3ad731b5 # v1.15.0
         id: beam
         with:
           otp-version: "24"
           elixir-version: "1.13.4"
-      - uses: actions/cache@v2
+      - uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # v2.1.7
         with:
           path: deps
           key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
@@ -37,7 +42,7 @@ jobs:
       - name: Check Formatting
         run: mix format --check-formatted
       - name: Restore PLT cache
-        uses: actions/cache@v2
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # v2.1.7
         id: plt_cache
         with:
           key: |
@@ -63,6 +68,11 @@ jobs:
     needs: tests
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5 # v2.0.0
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - name: Set BUILD_NUMBER for Pull Request event
         if: github.event_name == 'pull_request'
         run: echo "BUILD_NUMBER=${{ github.event.pull_request.head.sha }}-PR-${{ github.event.pull_request.number }}" >> $GITHUB_ENV
