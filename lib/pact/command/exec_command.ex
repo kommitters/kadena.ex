@@ -262,9 +262,8 @@ defmodule Kadena.Pact.ExecCommand do
   end
 
   @spec build_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
+  defp build_signatures([%SignCommand{sig: nil}], []), do: {:ok, []}
   defp build_signatures([], result), do: {:ok, result}
-
-  defp build_signatures([%SignCommand{sig: nil} | _rest], _result), do: {:ok, []}
 
   defp build_signatures([%SignCommand{sig: sig} | rest], result),
     do: build_signatures(rest, result ++ [Signature.new(sig)])

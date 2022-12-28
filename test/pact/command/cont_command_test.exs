@@ -199,7 +199,7 @@ defmodule Kadena.Pact.ContCommandTest do
        }} = ContCommand.build(cont_command)
     end
 
-    test "with only requeried arguments", %{
+    test "with only required arguments", %{
       pact_tx_hash: pact_tx_hash
     } do
       {:ok,
@@ -218,7 +218,7 @@ defmodule Kadena.Pact.ContCommandTest do
         |> ContCommand.build()
     end
 
-    test "with signers and requeried arguments", %{
+    test "with signers and required arguments", %{
       pact_tx_hash: pact_tx_hash,
       signer: signer
     } do
