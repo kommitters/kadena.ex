@@ -7,7 +7,7 @@ defmodule Kadena.Types.SignCommand do
   @behaviour Kadena.Types.Spec
 
   @type hash :: String.t()
-  @type sig :: String.t()
+  @type sig :: String.t() | nil
   @type pub_key :: String.t() | nil
   @type sig_type :: :unsigned_signature | :signed_signature
   @type sig_with_hash :: SignatureWithHash.t()

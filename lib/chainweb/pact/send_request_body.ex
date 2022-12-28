@@ -3,7 +3,7 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   `SendRequestBody` struct definition.
   """
 
-  alias Kadena.Types.{Command, PactTransactionHash, SignaturesList}
+  alias Kadena.Types.{Command, PactTransactionHash, Signature}
 
   @behaviour Kadena.Chainweb.Pact.Type
 
@@ -11,7 +11,7 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   @type cmds :: list(command())
   @type raw_cmds :: list(map())
   @type valid_cmds :: {:ok, raw_cmds()}
-  @type signatures_list :: SignaturesList.t()
+  @type signatures_list :: list(Signature.t())
   @type hash :: PactTransactionHash.t()
   @type hash_value :: String.t()
 
@@ -45,7 +45,7 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   defp extract_hash(%PactTransactionHash{hash: hash}), do: hash
 
   @spec to_signature_list(signatures_list :: signatures_list()) :: list()
-  defp to_signature_list(%SignaturesList{signatures: list}) do
-    Enum.map(list, fn sig -> Map.from_struct(sig) end)
+  defp to_signature_list(signatures_list) do
+    Enum.map(signatures_list, &Map.from_struct/1)
   end
 end

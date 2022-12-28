@@ -16,7 +16,7 @@ defmodule Kadena.Pact.ContCommand do
     MetaData,
     NetworkID,
     PactPayload,
-    SignaturesList,
+    Signature,
     SignCommand,
     Signer
   }
@@ -35,7 +35,7 @@ defmodule Kadena.Pact.ContCommand do
   @type pact_tx_hash :: String.t()
   @type proof :: String.t() | nil
   @type rollback :: boolean()
-  @type signatures :: SignaturesList.t()
+  @type signatures :: list(Signature.t())
   @type signers :: list(Signer.t())
   @type sign_command :: SignCommand.t()
   @type sign_commands :: list(sign_command())
@@ -305,8 +305,9 @@ defmodule Kadena.Pact.ContCommand do
   end
 
   @spec build_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
-  defp build_signatures([], result), do: {:ok, SignaturesList.new(result)}
+  defp build_signatures([%SignCommand{sig: nil}], []), do: {:ok, []}
+  defp build_signatures([], result), do: {:ok, result}
 
   defp build_signatures([%SignCommand{sig: sig} | rest], result),
-    do: build_signatures(rest, result ++ [sig])
+    do: build_signatures(rest, result ++ [Signature.new(sig)])
 end

@@ -5,22 +5,31 @@ defmodule Kadena.Types.SignedCommandTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{Signature, SignaturesList, SignedCommand}
+  alias Kadena.Types.{Signature, SignedCommand}
 
   describe "new/1" do
     test "with a valid signature list" do
-      signature1 = "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"
+      signature1 =
+        Signature.new("ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d")
 
       signature2 =
-        "8c8932a6459945afb87dbce6f625d07d4bbaafcc01f570b279d41a3d0f51f18ac5f05c017581aab23459e0437b4715774dea80a67da41f3b1b3988b2d59c3c0a"
+        Signature.new(
+          "8c8932a6459945afb87dbce6f625d07d4bbaafcc01f570b279d41a3d0f51f18ac5f05c017581aab23459e0437b4715774dea80a67da41f3b1b3988b2d59c3c0a"
+        )
 
       signatures_list = [signature1, signature2]
 
       %SignedCommand{
         hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
-        sigs: %SignaturesList{
-          signatures: [%Signature{sig: ^signature1}, %Signature{sig: ^signature2}]
-        },
+        sigs: [
+          %Signature{
+            sig: "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"
+          },
+          %Signature{
+            sig:
+              "8c8932a6459945afb87dbce6f625d07d4bbaafcc01f570b279d41a3d0f51f18ac5f05c017581aab23459e0437b4715774dea80a67da41f3b1b3988b2d59c3c0a"
+          }
+        ],
         cmd: "(+ 3 2)"
       } =
         SignedCommand.new(
@@ -31,7 +40,7 @@ defmodule Kadena.Types.SignedCommandTest do
     end
 
     test "with a nil signatures list" do
-      {:error, [sigs: :invalid, signatures: :not_a_list]} =
+      {:error, [sigs: :invalid]} =
         SignedCommand.new(
           hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
           sigs: nil,
@@ -45,7 +54,7 @@ defmodule Kadena.Types.SignedCommandTest do
       signature2 =
         "8c8932a6459945afb87dbce6f625d07d4bbaafcc01f570b279d41a3d0f51f18ac5f05c017581aab23459e0437b4715774dea80a67da41f3b1b3988b2d59c3c0a"
 
-      signature_list = SignaturesList.new([signature1, signature2])
+      signature_list = [signature1, signature2]
 
       {:error, [hash: :invalid]} =
         SignedCommand.new(
@@ -56,7 +65,7 @@ defmodule Kadena.Types.SignedCommandTest do
     end
 
     test "with an invalid sig" do
-      {:error, [sigs: :invalid, signatures: :not_a_list]} =
+      {:error, [sigs: :invalid]} =
         SignedCommand.new(
           hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
           sigs: 123,
@@ -69,7 +78,7 @@ defmodule Kadena.Types.SignedCommandTest do
     end
 
     test "with an incomplete list" do
-      {:error, [sigs: :invalid, signatures: :not_a_list]} =
+      {:error, [sigs: :invalid]} =
         SignedCommand.new(
           hash: "JHgnKe5Wd4hNIb7a6bIhm4ifxsYFzVGtAMyi_TEO-oM",
           cmd: "(+ 3 2)"
