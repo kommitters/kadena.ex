@@ -411,7 +411,6 @@ rollback = true
      }
    ]
  }}
-
 ```
 
 ## Chainweb Pact API
