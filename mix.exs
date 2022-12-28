@@ -141,7 +141,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.SignCommand,
         Kadena.Types.SignatureWithHash,
         Kadena.Types.Signature,
-        Kadena.Types.SignaturesList,
         Kadena.Types.SignedCommand,
         Kadena.Types.Signer,
         Kadena.Types.SigningCap,

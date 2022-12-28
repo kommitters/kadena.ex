@@ -339,14 +339,12 @@ env_data = %{accounts_admin_keyset: [keypair.pub_key]}
    hash: %Kadena.Types.PactTransactionHash{
      hash: "ZOsqP9Wkfj5NnY9WS_XMnO9KfYv0GvK_8QMPTX6BfaA"
    },
-   sigs: %Kadena.Types.SignaturesList{
-     signatures: [
-       %Kadena.Types.Signature{
-         sig:
-           "5b0635c2376949103d8ce8243a1fd34a1a8964900d69eebb1ff4d38ffde437a317f887f864fa9c1b27a97e8d9e57eef8dd58b054edf30b4e6fe89d0208290f02"
-       }
-     ]
-   }
+   sigs: [
+     %Kadena.Types.Signature{
+       sig:
+         "5b0635c2376949103d8ce8243a1fd34a1a8964900d69eebb1ff4d38ffde437a317f887f864fa9c1b27a97e8d9e57eef8dd58b054edf30b4e6fe89d0208290f02"
+     }
+   ]
  }}
 ```
 
@@ -406,15 +404,14 @@ rollback = true
    hash: %Kadena.Types.PactTransactionHash{
      hash: "DIMUpcB9NahL3746TTm1A8Wrr-JRVCT5Rk0rPdxZItg"
    },
-   sigs: %Kadena.Types.SignaturesList{
-     signatures: [
-       %Kadena.Types.Signature{
-         sig:
-           "98de12eda675334c7fddb6ca453017bf2df5af928c2c0763f8748b950f81b7b075f74fc2294f6a16099aa51955a035889767f048a76f7a272eaf639140dbd20a"
-       }
-     ]
-   }
+   sigs: [
+     %Kadena.Types.Signature{
+       sig:
+         "98de12eda675334c7fddb6ca453017bf2df5af928c2c0763f8748b950f81b7b075f74fc2294f6a16099aa51955a035889767f048a76f7a272eaf639140dbd20a"
+     }
+   ]
  }}
+
 ```
 
 ## Chainweb Pact API
