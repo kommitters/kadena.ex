@@ -38,7 +38,7 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
 
   @spec to_signature_list(signatures :: sigs()) :: {:ok, raw_sigs()}
   defp to_signature_list(signatures) do
-    sigs = Enum.map(signatures, fn sig -> Map.from_struct(sig) end)
+    sigs = Enum.map(signatures, &Map.from_struct/1)
     {:ok, sigs}
   end
 end

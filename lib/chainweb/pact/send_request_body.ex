@@ -46,6 +46,6 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
 
   @spec to_signature_list(signatures_list :: signatures_list()) :: list()
   defp to_signature_list(signatures_list) do
-    Enum.map(signatures_list, fn sig -> Map.from_struct(sig) end)
+    Enum.map(signatures_list, &Map.from_struct/1)
   end
 end
