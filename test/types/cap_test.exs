@@ -3,7 +3,7 @@ defmodule Kadena.Types.CapTest do
   `Cap` struct definition tests.
   """
 
-  alias Kadena.Types.{Cap, PactValue, PactValuesList}
+  alias Kadena.Types.{Cap, PactValue}
 
   use ExUnit.Case
 
@@ -13,10 +13,8 @@ defmodule Kadena.Types.CapTest do
 
       %Cap{
         name: "gas",
-        args: %PactValuesList{
-          pact_values: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
-        }
-      } = Cap.new(name: "gas", args: ["COIN.gas", 1.0e-2])
+        args: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
+      } = Cap.new(name: "gas", args: [PactValue.new("COIN.gas"), PactValue.new(1.0e-2)])
     end
 
     test "with valid map arguments" do
@@ -24,20 +22,17 @@ defmodule Kadena.Types.CapTest do
 
       %Cap{
         name: "gas",
-        args: %PactValuesList{
-          pact_values: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
-        }
-      } = Cap.new(%{name: "gas", args: ["COIN.gas", 1.0e-2]})
+        args: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
+      } = Cap.new(%{name: "gas", args: [PactValue.new("COIN.gas"), PactValue.new(1.0e-2)]})
     end
 
     test "with valid pact value list" do
-      pact_value_list = PactValuesList.new(["COIN.gas", 1.0e-2])
+      pact_value_list = [PactValue.new("COIN.gas"), PactValue.new(1.0e-2)]
       %Cap{name: "gas", args: ^pact_value_list} = Cap.new(name: "gas", args: pact_value_list)
     end
 
     test "with an empty list values" do
-      %Kadena.Types.Cap{args: %Kadena.Types.PactValuesList{pact_values: []}, name: "gas"} =
-        Cap.new(name: "gas", args: [])
+      %Kadena.Types.Cap{args: [], name: "gas"} = Cap.new(name: "gas", args: [])
     end
 
     test "with an invalid nil options list" do

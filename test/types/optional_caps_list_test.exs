@@ -5,12 +5,23 @@ defmodule Kadena.Types.OptionalCapsListTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{Cap, OptionalCapsList}
+  alias Kadena.Types.{Cap, OptionalCapsList, PactValue}
 
   describe "new/1" do
     test "with a valid list" do
-      cap1 = Cap.new(%{name: "gas", args: ["COIN.gas", 0.02]})
-      cap2 = Cap.new(%{name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]})
+      cap1 = Cap.new(%{name: "gas", args: [PactValue.new("COIN.gas"), PactValue.new(0.02)]})
+
+      cap2 =
+        Cap.new(%{
+          name: "transfer",
+          args: [
+            PactValue.new("COIN.transfer"),
+            PactValue.new("key_1"),
+            PactValue.new(50),
+            PactValue.new("key_2")
+          ]
+        })
+
       clist = [cap1, cap2]
       %OptionalCapsList{clist: ^clist} = OptionalCapsList.new(clist)
     end

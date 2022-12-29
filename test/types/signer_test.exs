@@ -5,11 +5,11 @@ defmodule Kadena.Types.SignerTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{Base16String, Cap, OptionalCapsList, Signer}
+  alias Kadena.Types.{Base16String, Cap, OptionalCapsList, PactValue, Signer}
 
   describe "new/1" do
     setup do
-      cap = Cap.new(name: "gas", args: ["COIN.gas", 0.02])
+      cap = Cap.new(name: "gas", args: [PactValue.new("COIN.gas"), PactValue.new(0.02)])
       caps_list = [cap, cap, cap]
 
       %{
