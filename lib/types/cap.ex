@@ -9,6 +9,7 @@ defmodule Kadena.Types.Cap do
   @type name :: String.t()
   @type pact_values :: list(PactValue.t())
   @type error :: Keyword.t()
+  @type build_args :: pact_values() | {:error, error()}
   @type validation :: {:ok, any()} | {:error, error()}
 
   @type t :: %__MODULE__{name: name(), args: pact_values()}
@@ -42,12 +43,12 @@ defmodule Kadena.Types.Cap do
   defp validate_name(name) when is_binary(name), do: {:ok, name}
   defp validate_name(_name), do: {:error, [name: :invalid]}
 
-  @spec validate_args(args :: pact_values()) :: validation()
+  @spec validate_args(args :: list()) :: validation()
   defp validate_args([]), do: {:ok, []}
   defp validate_args(args) when is_list(args), do: build_list(PactValue.new(args))
   defp validate_args(_args), do: {:error, [args: :invalid]}
 
-  @spec build_list(list()) :: validation()
+  @spec build_list(build_args()) :: validation()
   defp build_list(pact_value) when is_list(pact_value), do: {:ok, pact_value}
   defp build_list({:error, reason}), do: {:error, reason}
 end

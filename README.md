@@ -86,12 +86,12 @@ alias Kadena.Cryptography.KeyPair
 
 ```elixir
 alias Kadena.Cryptography.KeyPair
-alias Kadena.Types.{Cap, PactValue}
+alias Kadena.Types.Cap
 
 {:ok, keypair} = KeyPair.from_secret_key("e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d")
 
 clist = [
-  Cap.new(name: "coin.GAS", args: [PactValue.new(keypair.pub_key)])
+  Cap.new(name: "coin.GAS", args: [keypair.pub_key])
 ]
 
 keypair_with_caps = Kadena.Types.KeyPair.add_caps(keypair, clist)

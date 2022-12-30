@@ -5,7 +5,6 @@ defmodule Kadena.Types.SigningCapTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.PactValue
   alias Kadena.Types.{Cap, SigningCap}
 
   describe "new/1" do
