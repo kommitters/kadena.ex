@@ -262,7 +262,6 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
 
   @spec extract_value(literal()) :: raw_value()
   defp extract_value(value) when is_list(value), do: extract_values(value)
-  defp extract_value(%PactValue{literal: value}), do: extract_value(value)
   defp extract_value(%PactInt{raw_value: value}), do: value
   defp extract_value(%PactDecimal{raw_value: value}), do: value
   defp extract_value(value), do: value
