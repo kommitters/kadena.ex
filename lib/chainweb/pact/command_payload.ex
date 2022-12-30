@@ -21,7 +21,6 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
     PactPayload,
     PactTransactionHash,
     PactValue,
-    PactValue,
     Proof,
     Rollback,
     Signer,
@@ -258,12 +257,12 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   end
 
   @spec extract_values(pact_values()) :: list()
-  defp extract_values(pact_values) do
-    Enum.map(pact_values, fn %PactValue{literal: pact_value} -> extract_value(pact_value) end)
-  end
+  defp extract_values(pact_values),
+    do: Enum.map(pact_values, fn pact_value -> extract_value(pact_value) end)
 
   @spec extract_value(literal()) :: raw_value()
-  defp extract_value([%PactValue{} | _rest] = pact_value), do: extract_values(pact_value)
+  defp extract_value(value) when is_list(value), do: extract_values(value)
+  defp extract_value(%PactValue{literal: value}), do: extract_value(value)
   defp extract_value(%PactInt{raw_value: value}), do: value
   defp extract_value(%PactDecimal{raw_value: value}), do: value
   defp extract_value(value), do: value

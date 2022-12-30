@@ -31,14 +31,16 @@ defmodule Kadena.Types.PactValueTest do
     test "with a valid PactLiteralList" do
       decimal = Decimal.new("0.01")
 
-      %PactValue{
-        literal: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
-      } = PactValue.new([PactValue.new("COIN.gas"), PactValue.new(1.0e-2)])
+      [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}] =
+        PactValue.new(["COIN.gas", 1.0e-2])
     end
 
     test "with a valid list of pact values" do
-      pact_value_list = [PactValue.new("COIN.gas"), PactValue.new(1.0e-2)]
-      %PactValue{literal: ^pact_value_list} = PactValue.new(pact_value_list)
+      decimal = Decimal.new("0.01")
+      pact_value_list = ["COIN.gas", 1.0e-2]
+
+      [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}] =
+        PactValue.new(pact_value_list)
     end
 
     test "with empty list value" do

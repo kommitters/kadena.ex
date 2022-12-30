@@ -44,6 +44,10 @@ defmodule Kadena.Types.Cap do
 
   @spec validate_args(args :: pact_values()) :: validation()
   defp validate_args([]), do: {:ok, []}
-  defp validate_args([%PactValue{} | _rest] = pact_values), do: {:ok, pact_values}
+  defp validate_args(args) when is_list(args), do: build_list(PactValue.new(args))
   defp validate_args(_args), do: {:error, [args: :invalid]}
+
+  @spec build_list(list()) :: validation()
+  defp build_list(pact_value) when is_list(pact_value), do: {:ok, pact_value}
+  defp build_list({:error, reason}), do: {:error, reason}
 end

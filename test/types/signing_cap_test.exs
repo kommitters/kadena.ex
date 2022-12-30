@@ -10,7 +10,7 @@ defmodule Kadena.Types.SigningCapTest do
 
   describe "new/1" do
     setup do
-      cap_list = [name: "gas", args: [PactValue.new("COIN.gas"), PactValue.new(1.0e-2)]]
+      cap_list = [name: "gas", args: ["COIN.gas", 1.0e-2]]
 
       %{
         role: "",

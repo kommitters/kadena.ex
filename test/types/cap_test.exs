@@ -14,7 +14,7 @@ defmodule Kadena.Types.CapTest do
       %Cap{
         name: "gas",
         args: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
-      } = Cap.new(name: "gas", args: [PactValue.new("COIN.gas"), PactValue.new(1.0e-2)])
+      } = Cap.new(name: "gas", args: ["COIN.gas", 1.0e-2])
     end
 
     test "with valid map arguments" do
@@ -23,12 +23,20 @@ defmodule Kadena.Types.CapTest do
       %Cap{
         name: "gas",
         args: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
-      } = Cap.new(%{name: "gas", args: [PactValue.new("COIN.gas"), PactValue.new(1.0e-2)]})
+      } = Cap.new(%{name: "gas", args: ["COIN.gas", 1.0e-2]})
     end
 
     test "with valid pact value list" do
-      pact_value_list = [PactValue.new("COIN.gas"), PactValue.new(1.0e-2)]
-      %Cap{name: "gas", args: ^pact_value_list} = Cap.new(name: "gas", args: pact_value_list)
+      pact_value_list = ["COIN.gas", 1.0e-2]
+      decimal = Decimal.new("0.01")
+
+      %Cap{
+        name: "gas",
+        args: [
+          %Kadena.Types.PactValue{literal: "COIN.gas"},
+          %Kadena.Types.PactValue{literal: ^decimal}
+        ]
+      } = Cap.new(name: "gas", args: pact_value_list)
     end
 
     test "with an empty list values" do
@@ -52,7 +60,7 @@ defmodule Kadena.Types.CapTest do
     end
 
     test "with an invalid values" do
-      {:error, [args: :invalid]} = Cap.new(name: "gas", args: [true, :atom, nil, "COIN.gas"])
+      {:error, [literal: :invalid]} = Cap.new(name: "gas", args: [true, :atom, nil, "COIN.gas"])
     end
   end
 end

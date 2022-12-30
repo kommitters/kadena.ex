@@ -9,17 +9,12 @@ defmodule Kadena.Types.KeypairTest do
   alias Kadena.Types.{Cap, KeyPair, OptionalCapsList}
 
   setup do
-    cap1 = Cap.new(%{name: "gas", args: [PactValue.new("COIN.gas"), PactValue.new(0.02)]})
+    cap1 = Cap.new(%{name: "gas", args: ["COIN.gas", 0.02]})
 
     cap2 =
       Cap.new(%{
         name: "transfer",
-        args: [
-          PactValue.new("COIN.transfer"),
-          PactValue.new("key_1"),
-          PactValue.new(50),
-          PactValue.new("key_2")
-        ]
+        args: ["COIN.transfer", "key_1", 50, "key_2"]
       })
 
     clist = [cap1, cap2]

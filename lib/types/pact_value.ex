@@ -17,7 +17,8 @@ defmodule Kadena.Types.PactValue do
           | String.t()
           | PactInt.t()
           | PactDecimal.t()
-          | list(PactValue.t())
+          | PactValue.t()
+          | list(literal())
   @type validation :: {:ok, literal()} | {:error, error_list()}
 
   @type t :: %__MODULE__{literal: literal()}
@@ -50,9 +51,22 @@ defmodule Kadena.Types.PactValue do
       else: %__MODULE__{literal: literal}
   end
 
-  def new([%PactValue{} | _rest] = pact_values), do: %__MODULE__{literal: pact_values}
   def new([]), do: %__MODULE__{literal: []}
+  def new(literal) when is_list(literal), do: build_list(literal, [])
   def new(_literal), do: {:error, [literal: :invalid]}
+
+  @spec build_list(literal(), literal()) :: list(t())
+  defp build_list([], result), do: result
+
+  defp build_list([value | rest], result) do
+    case PactValue.new(value) do
+      {:error, reason} ->
+        {:error, reason}
+
+      pact_value ->
+        build_list(rest, result ++ [pact_value])
+    end
+  end
 
   @spec build_pact_decimal(str :: str()) :: t() | {:error, error_list()}
   defp build_pact_decimal(str) do
