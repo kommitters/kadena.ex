@@ -258,7 +258,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
 
   @spec extract_values(pact_values()) :: list()
   defp extract_values(pact_values),
-    do: Enum.map(pact_values, fn pact_value -> extract_value(pact_value) end)
+    do: Enum.map(pact_values, fn %PactValue{literal: pact_value} -> extract_value(pact_value) end)
 
   @spec extract_value(literal()) :: raw_value()
   defp extract_value(value) when is_list(value), do: extract_values(value)

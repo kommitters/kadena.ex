@@ -10,6 +10,7 @@ defmodule Kadena.Types.PactValue do
   @type raw_decimal :: float() | str()
   @type decimal :: Decimal.t()
   @type error_list :: Keyword.t()
+  @type pact_values :: list(PactValue.t())
   @type literal ::
           integer()
           | decimal()
@@ -18,8 +19,8 @@ defmodule Kadena.Types.PactValue do
           | PactInt.t()
           | PactDecimal.t()
           | PactValue.t()
-          | list(literal())
-  @type validation :: {:ok, literal()} | {:error, error_list()}
+          | pact_values()
+  @type validation :: {:ok, literal() | t()} | {:error, error_list()}
 
   @type t :: %__MODULE__{literal: literal()}
 
@@ -55,16 +56,16 @@ defmodule Kadena.Types.PactValue do
   def new(literal) when is_list(literal), do: build_list(literal, [])
   def new(_literal), do: {:error, [literal: :invalid]}
 
-  @spec build_list(literal(), literal()) :: list(t())
-  defp build_list([], result), do: result
+  @spec build_list(literal :: literal(), result :: pact_values()) :: validation()
+  defp build_list([], result), do: %__MODULE__{literal: result}
 
   defp build_list([value | rest], result) do
     case PactValue.new(value) do
+      %PactValue{} = pact_value ->
+        build_list(rest, result ++ [pact_value])
+
       {:error, reason} ->
         {:error, reason}
-
-      pact_value ->
-        build_list(rest, result ++ [pact_value])
     end
   end
 
