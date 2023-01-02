@@ -7,7 +7,7 @@ defmodule Kadena.Types.KeyPair do
   @behaviour Kadena.Types.Spec
 
   @type key :: String.t()
-  @type clist :: list(Cap.t())
+  @type clist :: list(Cap.t()) | nil
   @type arg_type :: atom()
   @type arg_value :: key() | clist()
   @type arg :: {arg_type(), arg_value()}
