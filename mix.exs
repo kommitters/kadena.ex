@@ -118,7 +118,6 @@ defmodule Kadena.MixProject do
       Types: [
         Kadena.Types.Base16String,
         Kadena.Types.Base64Url,
-        Kadena.Types.Base64UrlsList,
         Kadena.Types.Cap,
         Kadena.Types.ChainID,
         Kadena.Types.Command,
