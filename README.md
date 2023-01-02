@@ -100,13 +100,11 @@ keypair_with_caps = Kadena.Types.KeyPair.add_caps(keypair, clist)
   clist: %Kadena.Types.OptionalCapsList{
     clist: [
       %Kadena.Types.Cap{
-        args: %Kadena.Types.PactValuesList{
-          pact_values: [
-            %Kadena.Types.PactValue{
-              literal: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
-            }
-          ]
-        },
+        args: [
+          %Kadena.Types.PactValue{
+            literal: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
+          }
+        ],
         name: "coin.GAS"
       }
     ]

@@ -2,7 +2,7 @@ defmodule Kadena.Types.PactValue do
   @moduledoc """
   `PactValue` structure definition.
   """
-  alias Kadena.Types.{PactDecimal, PactInt, PactValuesList}
+  alias Kadena.Types.{PactDecimal, PactInt, PactValue}
 
   @behaviour Kadena.Types.Spec
 
@@ -10,6 +10,7 @@ defmodule Kadena.Types.PactValue do
   @type raw_decimal :: float() | str()
   @type decimal :: Decimal.t()
   @type error_list :: Keyword.t()
+  @type pact_values :: list(PactValue.t())
   @type literal ::
           integer()
           | decimal()
@@ -17,8 +18,9 @@ defmodule Kadena.Types.PactValue do
           | String.t()
           | PactInt.t()
           | PactDecimal.t()
-          | PactValuesList.t()
-  @type validation :: {:ok, literal()} | {:error, error_list()}
+          | PactValue.t()
+          | pact_values()
+  @type validation :: {:ok, literal() | t()} | {:error, error_list()}
 
   @type t :: %__MODULE__{literal: literal()}
 
@@ -50,16 +52,22 @@ defmodule Kadena.Types.PactValue do
       else: %__MODULE__{literal: literal}
   end
 
-  def new(literals) when is_list(literals) do
-    case PactValuesList.new(literals) do
-      %PactValuesList{} = pact_values_list -> %__MODULE__{literal: pact_values_list}
-      {:error, [{_field, reason}]} -> {:error, [literal: reason]}
+  def new([]), do: %__MODULE__{literal: []}
+  def new(literal) when is_list(literal), do: build_list(literal, [])
+  def new(_literal), do: {:error, [literal: :invalid]}
+
+  @spec build_list(literal :: literal(), result :: pact_values()) :: validation()
+  defp build_list([], result), do: %__MODULE__{literal: result}
+
+  defp build_list([value | rest], result) do
+    case PactValue.new(value) do
+      %PactValue{} = pact_value ->
+        build_list(rest, result ++ [pact_value])
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
-
-  def new(%PactValuesList{} = pact_values), do: %__MODULE__{literal: pact_values}
-
-  def new(_literal), do: {:error, [literal: :invalid]}
 
   @spec build_pact_decimal(str :: str()) :: t() | {:error, error_list()}
   defp build_pact_decimal(str) do

@@ -21,7 +21,6 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
     PactPayload,
     PactTransactionHash,
     PactValue,
-    PactValuesList,
     Proof,
     Rollback,
     Signer,
@@ -42,7 +41,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   @type valid_list :: {:ok, list()}
   @type map_return :: map() | nil
   @type string_value :: String.t() | nil
-  @type pact_values :: PactValuesList.t()
+  @type pact_values :: list(PactValue.t())
   @type scheme :: :ed25519 | nil
   @type scheme_return :: :ED25519 | nil
   @type cap :: Cap.t()
@@ -59,7 +58,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
           | String.t()
           | PactInt.t()
           | PactDecimal.t()
-          | PactValuesList.t()
+          | list(PactValue.t())
 
   @type t :: %__MODULE__{
           network_id: network_id(),
@@ -258,12 +257,11 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   end
 
   @spec extract_values(pact_values()) :: list()
-  defp extract_values(%PactValuesList{pact_values: pact_values}) do
-    Enum.map(pact_values, fn %PactValue{literal: pact_value} -> extract_value(pact_value) end)
-  end
+  defp extract_values(pact_values),
+    do: Enum.map(pact_values, fn %PactValue{literal: pact_value} -> extract_value(pact_value) end)
 
   @spec extract_value(literal()) :: raw_value()
-  defp extract_value(%PactValuesList{} = pact_value), do: extract_values(pact_value)
+  defp extract_value(value) when is_list(value), do: extract_values(value)
   defp extract_value(%PactInt{raw_value: value}), do: value
   defp extract_value(%PactDecimal{raw_value: value}), do: value
   defp extract_value(value), do: value

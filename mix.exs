@@ -135,7 +135,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.PactPayload,
         Kadena.Types.PactTransactionHash,
         Kadena.Types.PactValue,
-        Kadena.Types.PactValuesList,
         Kadena.Types.Proof,
         Kadena.Types.Rollback,
         Kadena.Types.SignCommand,

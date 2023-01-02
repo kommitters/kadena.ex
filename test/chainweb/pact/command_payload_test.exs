@@ -437,7 +437,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
         CommandPayload.to_json!(command_payload)
     end
 
-    test "with a PactValuesList", %{
+    test "with a PactValue list", %{
       creation_time: creation_time,
       ttl: ttl,
       gas_limit: gas_limit,

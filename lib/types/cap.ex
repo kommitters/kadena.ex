@@ -2,13 +2,12 @@ defmodule Kadena.Types.Cap do
   @moduledoc """
   `Cap` struct definition.
   """
-  alias Kadena.Types.PactValuesList
+  alias Kadena.Types.PactValue
 
   @behaviour Kadena.Types.Spec
 
   @type name :: String.t()
-  @type args :: PactValuesList.t() | list()
-  @type pact_values :: PactValuesList.t()
+  @type pact_values :: list(PactValue.t())
   @type error :: Keyword.t()
   @type validation :: {:ok, any()} | {:error, error()}
 
@@ -44,14 +43,20 @@ defmodule Kadena.Types.Cap do
   defp validate_name(_name), do: {:error, [name: :invalid]}
 
   @spec validate_args(args :: list()) :: validation()
-  defp validate_args(args) when is_list(args) do
-    case PactValuesList.new(args) do
-      %PactValuesList{} = pact_values -> {:ok, pact_values}
-      {:error, [{_arg, reason}]} -> {:error, [args: reason]}
+  defp validate_args([]), do: {:ok, []}
+  defp validate_args(args) when is_list(args), do: build_list(args, [])
+  defp validate_args(_args), do: {:error, [args: :invalid]}
+
+  @spec build_list(args :: list(), result :: pact_values()) :: validation()
+  defp build_list([], result), do: {:ok, result}
+
+  defp build_list([arg | rest], result) do
+    case PactValue.new(arg) do
+      %PactValue{} = pact_value ->
+        build_list(rest, result ++ [pact_value])
+
+      {:error, reason} ->
+        {:error, [args: :invalid] ++ reason}
     end
   end
-
-  defp validate_args(%PactValuesList{} = pact_values), do: {:ok, pact_values}
-
-  defp validate_args(_args), do: {:error, [args: :invalid]}
 end
