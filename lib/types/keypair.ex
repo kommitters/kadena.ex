@@ -2,12 +2,12 @@ defmodule Kadena.Types.KeyPair do
   @moduledoc """
   `KeyPair` struct definition.
   """
-  alias Kadena.Types.OptionalCapsList
+  alias Kadena.Types.Cap
 
   @behaviour Kadena.Types.Spec
 
   @type key :: String.t()
-  @type clist :: OptionalCapsList.t()
+  @type clist :: list(Cap.t())
   @type arg_type :: atom()
   @type arg_value :: key() | clist()
   @type arg :: {arg_type(), arg_value()}
@@ -26,7 +26,7 @@ defmodule Kadena.Types.KeyPair do
 
     with {:ok, pub_key} <- validate_key({:pub_key, pub_key_arg}),
          {:ok, secret_key} <- validate_key({:secret_key, secret_key_arg}),
-         {:ok, clist} <- validate_optional_caps_list({:clist, clist_arg}) do
+         {:ok, clist} <- validate_caps_list({:clist, clist_arg}) do
       %__MODULE__{pub_key: pub_key, secret_key: secret_key, clist: clist}
     end
   end
@@ -35,8 +35,8 @@ defmodule Kadena.Types.KeyPair do
 
   @spec add_caps(keypair :: t(), caps :: clist()) :: validated_keypair()
   def add_caps(%__MODULE__{} = keypair, caps) do
-    case validate_optional_caps_list({:clist, caps}) do
-      {:ok, %OptionalCapsList{} = caps} -> %{keypair | clist: caps}
+    case validate_caps_list({:clist, caps}) do
+      {:ok, _any = caps} -> %{keypair | clist: caps}
       {:error, reason} -> {:error, reason}
     end
   end
@@ -45,11 +45,8 @@ defmodule Kadena.Types.KeyPair do
   defp validate_key({_arg, key}) when is_binary(key) and byte_size(key) == 64, do: {:ok, key}
   defp validate_key({arg, _key}), do: {:error, [{arg, :invalid}]}
 
-  @spec validate_optional_caps_list(arg :: arg()) :: arg_validation()
-  defp validate_optional_caps_list({arg, clist}) do
-    case OptionalCapsList.new(clist) do
-      %OptionalCapsList{} = clist -> {:ok, clist}
-      {:error, _reason} -> {:error, [{arg, :invalid}]}
-    end
-  end
+  @spec validate_caps_list(arg :: arg()) :: arg_validation()
+  defp validate_caps_list({_arg, nil}), do: {:ok, nil}
+  defp validate_caps_list({_arg, [%Cap{} | _tail] = clist}), do: {:ok, clist}
+  defp validate_caps_list({arg, _clist}), do: {:error, [{arg, :invalid}]}
 end

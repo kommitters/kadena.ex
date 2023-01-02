@@ -5,7 +5,7 @@ defmodule Kadena.Types.KeypairTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{Cap, KeyPair, OptionalCapsList}
+  alias Kadena.Types.{Cap, KeyPair}
 
   setup do
     cap1 = Cap.new(%{name: "gas", args: ["COIN.gas", 0.02]})
@@ -25,12 +25,12 @@ defmodule Kadena.Types.KeypairTest do
       %KeyPair{
         pub_key: ^pub_key,
         secret_key: ^secret_key,
-        clist: %OptionalCapsList{clist: ^clist}
+        clist: ^clist
       } = KeyPair.new(pub_key: pub_key, secret_key: secret_key, clist: clist)
     end
 
     test "with only required arguments", %{pub_key: pub_key, secret_key: secret_key} do
-      %KeyPair{pub_key: ^pub_key, secret_key: ^secret_key, clist: %OptionalCapsList{clist: nil}} =
+      %KeyPair{pub_key: ^pub_key, secret_key: ^secret_key, clist: nil} =
         KeyPair.new(pub_key: pub_key, secret_key: secret_key)
     end
 
@@ -51,7 +51,7 @@ defmodule Kadena.Types.KeypairTest do
       %KeyPair{
         pub_key: ^pub_key,
         secret_key: ^secret_key,
-        clist: %OptionalCapsList{clist: ^clist}
+        clist: ^clist
       } = KeyPair.add_caps(keypair, clist)
     end
 
