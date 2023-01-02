@@ -5,7 +5,7 @@ defmodule Kadena.Types.SignerTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{Base16String, Cap, OptionalCapsList, Signer}
+  alias Kadena.Types.{Base16String, Cap, Signer}
 
   describe "new/1" do
     setup do
