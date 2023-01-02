@@ -128,7 +128,6 @@ defmodule Kadena.MixProject do
         Kadena.Types.KeyPair,
         Kadena.Types.MetaData,
         Kadena.Types.NetworkID,
-        Kadena.Types.OptionalCapsList,
         Kadena.Types.PactCode,
         Kadena.Types.PactDecimal,
         Kadena.Types.PactInt,
