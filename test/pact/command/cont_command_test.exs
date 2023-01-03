@@ -28,6 +28,11 @@ defmodule Kadena.Pact.ContCommandTest do
 
       keypair_data = [pub_key: pub_key, secret_key: secret_key, clist: clist]
 
+      {:ok, %KeyPair{pub_key: pub_key2} = keypair2} =
+        CryptographyKeyPair.from_secret_key(
+          "0b59981d29c3606ac5198278795c073f501d36c8b2c14969cd30d7de2b0d62a9"
+        )
+
       env_data = %{
         accounts_admin_keyset: [
           pub_key
@@ -47,12 +52,18 @@ defmodule Kadena.Pact.ContCommandTest do
         metadata: MetaData.new(raw_meta_data),
         env_data: EnvData.new(env_data),
         keypair: KeyPair.new(keypair_data),
+        keypair2: keypair2,
         signer:
           Signer.new(
             pub_key: pub_key,
             scheme: :ed25519,
             addr: pub_key,
             clist: clist
+          ),
+        signer2:
+          Signer.new(
+            pub_key: pub_key2,
+            scheme: :ed25519
           ),
         nonce: "2023-06-13 17:45:18.211131 UTC",
         pact_tx_hash: "yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4",
@@ -245,24 +256,25 @@ defmodule Kadena.Pact.ContCommandTest do
       pact_tx_hash: pact_tx_hash,
       metadata: metadata,
       keypair: keypair,
+      keypair2: keypair2,
       signer: signer,
       nonce: nonce
     } do
       {:ok,
        %Command{
          cmd:
-           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"}]}",
          hash: %PactTransactionHash{
-           hash: "D6gtvsO0I7cF5so1WhfmD0ifB0bztQRKEo-PKSFOa20"
+           hash: "1AA1NT1h-9cgKAcKyrMdbWw8RUf0qaLZfOUdIwqxhfI"
          },
          sigs: [
            %Signature{
              sig:
-               "09804662bf7e4de82df95b4c5357aed434ad23795b85196485581fb52590e60912e87c19083101491e1f5b9463fe0c3f0e556b052e4d4f313bf6d2bbb4ecb802"
+               "308850d85839f5f0366d7aa7465b146d2bcb5350182aca0955b6ab7d3777fdfd572a060254d079e5e55e2f800083b51b2231917b588a381ba77e3898cc8cfd01"
            },
            %Signature{
              sig:
-               "09804662bf7e4de82df95b4c5357aed434ad23795b85196485581fb52590e60912e87c19083101491e1f5b9463fe0c3f0e556b052e4d4f313bf6d2bbb4ecb802"
+               "625816b2f52fc3bedac2a3f74691059963b32e16796575eb431e609940c8c6d56f8b36951e4d1687e48046bef5dd22364e6166e9c51d6e185e543e2f747e7303"
            }
          ]
        }} =
@@ -272,7 +284,7 @@ defmodule Kadena.Pact.ContCommandTest do
         |> ContCommand.set_nonce(nonce)
         |> ContCommand.set_metadata(metadata)
         |> ContCommand.add_signer(signer)
-        |> ContCommand.add_keypairs([keypair, keypair])
+        |> ContCommand.add_keypairs([keypair, keypair2])
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_step(0)
         |> ContCommand.set_rollback(false)
@@ -284,19 +296,20 @@ defmodule Kadena.Pact.ContCommandTest do
       metadata: metadata,
       keypair: keypair,
       signer: signer,
+      signer2: signer2,
       nonce: nonce
     } do
       {:ok,
        %Command{
          cmd:
-           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"}]}",
          hash: %PactTransactionHash{
-           hash: "KTuk3PQm1KeFwPtpfHGNABkgPlhyTLVgbz9mFHLBDsU"
+           hash: "1AA1NT1h-9cgKAcKyrMdbWw8RUf0qaLZfOUdIwqxhfI"
          },
          sigs: [
            %Signature{
              sig:
-               "c4b2d7c49b48fab72eaa66e2f4602d1d56da8feb336dcfbbfba4a939ace4a2f1cbf7631244aad8a27cacb67fbb0d600bd4c496ef92f56f31b0fe77b67efef101"
+               "308850d85839f5f0366d7aa7465b146d2bcb5350182aca0955b6ab7d3777fdfd572a060254d079e5e55e2f800083b51b2231917b588a381ba77e3898cc8cfd01"
            }
          ]
        }} =
@@ -307,33 +320,34 @@ defmodule Kadena.Pact.ContCommandTest do
         |> ContCommand.set_metadata(metadata)
         |> ContCommand.add_signer(signer)
         |> ContCommand.add_keypair(keypair)
-        |> ContCommand.add_signer(signer)
+        |> ContCommand.add_signer(signer2)
         |> ContCommand.set_pact_tx_hash(pact_tx_hash)
         |> ContCommand.set_step(0)
         |> ContCommand.set_rollback(false)
         |> ContCommand.build()
     end
 
-    test "with a SignersList", %{
+    test "with a Signer list", %{
       pact_tx_hash: pact_tx_hash,
       metadata: metadata,
       keypair: keypair,
       signer: signer,
+      signer2: signer2,
       nonce: nonce
     } do
-      signers_list = [signer, signer]
+      signers_list = [signer, signer2]
 
       {:ok,
        %Command{
          cmd:
-           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":false,\"step\":0}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
          hash: %PactTransactionHash{
-           hash: "hfqzSR0JGAYiOLnLw8Cw-KMAUL8GXjJTMNomw0a45e4"
+           hash: "bI0td5uMw6XoG_sfcP4eRqYx2y1c3AzDaNCZjKLQu_g"
          },
          sigs: [
            %Signature{
              sig:
-               "f0786c6f75ae7b43d3484b8d1aeaff7692a0d0a57ede11f08dfad58207d68810cf1883e61d1f439012c1ccadb359086552e0313bd95f8d1019c96fe0c53fd507"
+               "d0a5dd0a2f01f1ddf58d2545bb5116b5480451a416daf7ab68f050b0d8d5ffc2147ba9db014984157dc21fcb5ada68cc47f7e744b9cbc451136ee1322f3fea02"
            }
          ]
        }} =
