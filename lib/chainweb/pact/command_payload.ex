@@ -14,7 +14,6 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
     ExecPayload,
     MetaData,
     NetworkID,
-    OptionalCapsList,
     PactCode,
     PactDecimal,
     PactInt,
@@ -226,7 +225,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
          addr: addr,
          scheme: scheme,
          pub_key: %Base16String{value: pub_key},
-         clist: %OptionalCapsList{clist: clist}
+         clist: clist
        }) do
     MapCase.to_camel!(%{
       addr: extract_addr(addr),
@@ -246,15 +245,11 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
 
   @spec extract_clist(clist()) :: list()
   defp extract_clist(nil), do: []
-
-  defp extract_clist(caps) do
-    Enum.map(caps, fn cap -> extract_cap_info(cap) end)
-  end
+  defp extract_clist(caps), do: Enum.map(caps, &extract_cap_info/1)
 
   @spec extract_cap_info(cap()) :: map_return()
-  defp extract_cap_info(%Cap{name: name, args: args}) do
-    %{name: name, args: extract_values(args)}
-  end
+  defp extract_cap_info(%Cap{name: name, args: args}),
+    do: %{name: name, args: extract_values(args)}
 
   @spec extract_values(pact_values()) :: list()
   defp extract_values(pact_values),

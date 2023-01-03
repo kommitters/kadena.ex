@@ -64,7 +64,7 @@ alias Kadena.Cryptography.KeyPair
 
 {:ok,
  %Kadena.Types.KeyPair{
-   clist: %Kadena.Types.OptionalCapsList{clist: nil},
+   clist: nil,
    pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
    secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
  }}
@@ -76,7 +76,7 @@ alias Kadena.Cryptography.KeyPair
 
 {:ok,
  %Kadena.Types.KeyPair{
-   clist: %Kadena.Types.OptionalCapsList{clist: nil},
+   clist: nil,
    pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
    secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
  }}
@@ -97,18 +97,16 @@ clist = [
 keypair_with_caps = Kadena.Types.KeyPair.add_caps(keypair, clist)
 
 %Kadena.Types.KeyPair{
-  clist: %Kadena.Types.OptionalCapsList{
-    clist: [
-      %Kadena.Types.Cap{
-        args: [
-          %Kadena.Types.PactValue{
-            literal: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
-          }
-        ],
-        name: "coin.GAS"
-      }
-    ]
-  },
+  clist: [
+    %Kadena.Types.Cap{
+      args: [
+        %Kadena.Types.PactValue{
+          literal: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
+        }
+      ],
+      name: "coin.GAS"
+    }
+  ],
   pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
   secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
 }

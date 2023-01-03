@@ -5,7 +5,7 @@ defmodule Kadena.Types.SignerTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{Base16String, Cap, OptionalCapsList, Signer}
+  alias Kadena.Types.{Base16String, Cap, Signer}
 
   describe "new/1" do
     setup do
@@ -28,7 +28,7 @@ defmodule Kadena.Types.SignerTest do
         pub_key: %Base16String{value: ^base16string},
         scheme: ^signer_scheme,
         addr: %Base16String{value: ^base16string},
-        clist: %OptionalCapsList{clist: ^caps_list}
+        clist: ^caps_list
       } =
         Signer.new(
           pub_key: base16string,
@@ -43,7 +43,7 @@ defmodule Kadena.Types.SignerTest do
         pub_key: %Base16String{value: ^base16string},
         scheme: nil,
         addr: nil,
-        clist: %OptionalCapsList{clist: nil}
+        clist: nil
       } = Signer.new(pub_key: base16string)
     end
 
