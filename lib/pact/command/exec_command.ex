@@ -135,7 +135,7 @@ defmodule Kadena.Pact.ExecCommand do
 
   @impl true
   def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair) do
-    cmd_request = %{cmd_request | keypairs: keypairs ++ [keypair]}
+    cmd_request = %{cmd_request | keypairs: Enum.uniq(keypairs ++ [keypair])}
     set_signers_from_keypair(cmd_request, keypair)
   end
 
@@ -156,7 +156,7 @@ defmodule Kadena.Pact.ExecCommand do
 
   @impl true
   def add_signer(%__MODULE__{signers: signers} = cmd_request, %Signer{} = signer),
-    do: %{cmd_request | signers: signers ++ [signer]}
+    do: %{cmd_request | signers: Enum.uniq(signers ++ [signer])}
 
   def add_signer(%__MODULE__{}, _signer), do: {:error, [signer: :invalid]}
   def add_signer({:error, reason}, _signer), do: {:error, reason}
