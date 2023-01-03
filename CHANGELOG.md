@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.0 (03.01.2023)
+
+- Remove [List types](https://github.com/kommitters/kadena.ex/issues/169)
+- Added [Handling duplicate signers on commands](https://github.com/kommitters/kadena.ex/issues/210)
+
 ## 0.11.1 (27.12.2022)
 
 - Hardened GitHub Actions.

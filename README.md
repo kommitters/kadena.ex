@@ -750,13 +750,13 @@ Chainweb.Pact.spv(payload, network_id: :testnet04, chain_id: 1)
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.12`
+The latest updated branch to target a PR is `v0.13`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Remove List Types](https://github.com/kommitters/kadena.ex/issues/169)
+- [Chainweb P2P API](https://github.com/kommitters/kadena.ex/milestone/1)
 
 ### Done - What we've already developed! 🚀
 
