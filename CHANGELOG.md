@@ -2,7 +2,8 @@
 
 ## 0.12.0 (03.01.2023)
 
-- Remove [List types](https://github.com/kommitters/kadena.ex/issues/169)
+- Removed [List types](https://github.com/kommitters/kadena.ex/issues/169)
+- Added [Renovate](https://github.com/renovatebot/renovate) as dependency update tool.
 - Added [Handling duplicate signers on commands](https://github.com/kommitters/kadena.ex/issues/210)
 
 ## 0.11.1 (27.12.2022)
