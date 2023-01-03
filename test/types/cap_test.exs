@@ -3,7 +3,7 @@ defmodule Kadena.Types.CapTest do
   `Cap` struct definition tests.
   """
 
-  alias Kadena.Types.{Cap, PactValue, PactValuesList}
+  alias Kadena.Types.{Cap, PactValue}
 
   use ExUnit.Case
 
@@ -13,9 +13,7 @@ defmodule Kadena.Types.CapTest do
 
       %Cap{
         name: "gas",
-        args: %PactValuesList{
-          pact_values: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
-        }
+        args: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
       } = Cap.new(name: "gas", args: ["COIN.gas", 1.0e-2])
     end
 
@@ -24,20 +22,25 @@ defmodule Kadena.Types.CapTest do
 
       %Cap{
         name: "gas",
-        args: %PactValuesList{
-          pact_values: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
-        }
+        args: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
       } = Cap.new(%{name: "gas", args: ["COIN.gas", 1.0e-2]})
     end
 
     test "with valid pact value list" do
-      pact_value_list = PactValuesList.new(["COIN.gas", 1.0e-2])
-      %Cap{name: "gas", args: ^pact_value_list} = Cap.new(name: "gas", args: pact_value_list)
+      pact_value_list = ["COIN.gas", 1.0e-2]
+      decimal = Decimal.new("0.01")
+
+      %Cap{
+        name: "gas",
+        args: [
+          %PactValue{literal: "COIN.gas"},
+          %PactValue{literal: ^decimal}
+        ]
+      } = Cap.new(name: "gas", args: pact_value_list)
     end
 
     test "with an empty list values" do
-      %Kadena.Types.Cap{args: %Kadena.Types.PactValuesList{pact_values: []}, name: "gas"} =
-        Cap.new(name: "gas", args: [])
+      %Cap{args: [], name: "gas"} = Cap.new(name: "gas", args: [])
     end
 
     test "with an invalid nil options list" do
@@ -57,7 +60,8 @@ defmodule Kadena.Types.CapTest do
     end
 
     test "with an invalid values" do
-      {:error, [args: :invalid]} = Cap.new(name: "gas", args: [true, :atom, nil, "COIN.gas"])
+      {:error, [args: :invalid, literal: :invalid]} =
+        Cap.new(name: "gas", args: [true, :atom, nil, "COIN.gas"])
     end
   end
 end

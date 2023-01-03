@@ -3,15 +3,15 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   `SendRequestBody` struct definition.
   """
 
-  alias Kadena.Types.{Command, CommandsList, PactTransactionHash, SignaturesList}
+  alias Kadena.Types.{Command, PactTransactionHash, Signature}
 
   @behaviour Kadena.Chainweb.Pact.Type
 
-  @type cmds :: CommandsList.t()
+  @type command :: Command.t()
+  @type cmds :: list(command())
   @type raw_cmds :: list(map())
   @type valid_cmds :: {:ok, raw_cmds()}
-  @type signatures_list :: SignaturesList.t()
-  @type command :: Command.t()
+  @type signatures_list :: list(Signature.t())
   @type hash :: PactTransactionHash.t()
   @type hash_value :: String.t()
 
@@ -20,15 +20,8 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   defstruct [:cmds]
 
   @impl true
-  def new(cmds) when is_list(cmds) do
-    case CommandsList.new(cmds) do
-      %CommandsList{} = cmds -> %__MODULE__{cmds: cmds}
-      {:error, _reason} -> {:error, [commands: :invalid]}
-    end
-  end
-
-  def new(%CommandsList{} = cmds), do: %__MODULE__{cmds: cmds}
-  def new(_cmds), do: {:error, [commands: :not_a_list]}
+  def new([%Command{} | _tail] = cmds), do: %__MODULE__{cmds: cmds}
+  def new(_cmds), do: {:error, [commands: :not_a_commands_list]}
 
   @impl true
   def to_json!(%__MODULE__{cmds: cmds}) do
@@ -38,8 +31,8 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   end
 
   @spec extract_cmds(cmds :: cmds()) :: valid_cmds()
-  defp extract_cmds(%CommandsList{commands: list_commands}) do
-    cmds = Enum.map(list_commands, fn command -> extract_cmds_info(command) end)
+  defp extract_cmds(cmds) do
+    cmds = Enum.map(cmds, fn command -> extract_cmds_info(command) end)
     {:ok, cmds}
   end
 
@@ -52,7 +45,7 @@ defmodule Kadena.Chainweb.Pact.SendRequestBody do
   defp extract_hash(%PactTransactionHash{hash: hash}), do: hash
 
   @spec to_signature_list(signatures_list :: signatures_list()) :: list()
-  defp to_signature_list(%SignaturesList{signatures: list}) do
-    Enum.map(list, fn sig -> Map.from_struct(sig) end)
+  defp to_signature_list(signatures_list) do
+    Enum.map(signatures_list, &Map.from_struct/1)
   end
 end

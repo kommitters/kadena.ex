@@ -3,12 +3,12 @@ defmodule Kadena.Types.Command do
   `Command` struct definition.
   """
 
-  alias Kadena.Types.{PactTransactionHash, SignaturesList}
+  alias Kadena.Types.{PactTransactionHash, Signature}
 
   @behaviour Kadena.Types.Spec
 
   @type hash :: PactTransactionHash.t()
-  @type sigs :: SignaturesList.t()
+  @type sigs :: list(Signature.t())
   @type cmd :: String.t()
   @type raw_cmd :: list()
   @type value :: hash() | sigs() | cmd()
@@ -44,14 +44,9 @@ defmodule Kadena.Types.Command do
   end
 
   @spec validate_sigs(sigs :: sigs()) :: validation()
-  defp validate_sigs(%SignaturesList{} = hash), do: {:ok, hash}
-
-  defp validate_sigs(sigs) do
-    case SignaturesList.new(sigs) do
-      %SignaturesList{} = sigs -> {:ok, sigs}
-      {:error, reason} -> {:error, [sigs: :invalid] ++ reason}
-    end
-  end
+  defp validate_sigs([]), do: {:ok, []}
+  defp validate_sigs([%Signature{} | _tail] = sigs), do: {:ok, sigs}
+  defp validate_sigs(_hash), do: {:error, [sigs: :invalid]}
 
   @spec validate_cmd(cmd :: raw_cmd()) :: validation()
   defp validate_cmd(cmd) when is_binary(cmd), do: {:ok, cmd}

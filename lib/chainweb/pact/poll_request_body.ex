@@ -3,27 +3,20 @@ defmodule Kadena.Chainweb.Pact.PollRequestBody do
   `PollRequestBody` struct definition.
   """
 
-  alias Kadena.Types.{Base64Url, Base64UrlsList}
+  alias Kadena.Types.Base64Url
 
   @behaviour Kadena.Chainweb.Pact.Type
 
-  @type request_keys :: Base64UrlsList.t()
-  @type base64_urls :: Base64UrlsList.t()
   @type urls :: list(String.t())
+  @type request_keys :: list(Base64Url.t())
+  @type error :: {:error, Keyword.t()}
 
   @type t :: %__MODULE__{request_keys: request_keys()}
 
   defstruct request_keys: []
 
   @impl true
-  def new(request_keys) when is_list(request_keys) do
-    case Base64UrlsList.new(request_keys) do
-      %Base64UrlsList{} = request_keys -> %__MODULE__{request_keys: request_keys}
-      {:error, _reasons} -> {:error, [request_keys: :invalid]}
-    end
-  end
-
-  def new(%Base64UrlsList{} = request_keys), do: %__MODULE__{request_keys: request_keys}
+  def new(request_keys) when is_list(request_keys), do: build_list(%__MODULE__{}, request_keys)
   def new(_request_keys), do: {:error, [request_keys: :not_a_list]}
 
   @impl true
@@ -32,7 +25,16 @@ defmodule Kadena.Chainweb.Pact.PollRequestBody do
     Jason.encode!(%{requestKeys: keys})
   end
 
-  @spec extract_keys(base64_urls()) :: urls()
-  defp extract_keys(%Base64UrlsList{urls: list}),
-    do: Enum.map(list, fn %Base64Url{url: url} -> url end)
+  @spec build_list(list :: t(), urls :: list()) :: t() | error()
+  defp build_list(result, []), do: result
+
+  defp build_list(%__MODULE__{request_keys: urls}, [url | rest]) do
+    case Base64Url.new(url) do
+      %Base64Url{} = url -> build_list(%__MODULE__{request_keys: urls ++ [url]}, rest)
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @spec extract_keys(key_list :: request_keys()) :: urls()
+  defp extract_keys(key_list), do: Enum.map(key_list, fn %Base64Url{url: url} -> url end)
 end

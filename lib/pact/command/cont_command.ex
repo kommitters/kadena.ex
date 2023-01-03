@@ -16,10 +16,9 @@ defmodule Kadena.Pact.ContCommand do
     MetaData,
     NetworkID,
     PactPayload,
-    SignaturesList,
+    Signature,
     SignCommand,
-    Signer,
-    SignersList
+    Signer
   }
 
   @type cmd :: String.t()
@@ -36,8 +35,8 @@ defmodule Kadena.Pact.ContCommand do
   @type pact_tx_hash :: String.t()
   @type proof :: String.t() | nil
   @type rollback :: boolean()
-  @type signatures :: SignaturesList.t()
-  @type signers :: SignersList.t()
+  @type signatures :: list(Signature.t())
+  @type signers :: list(Signer.t())
   @type sign_command :: SignCommand.t()
   @type sign_commands :: list(sign_command())
   @type step :: integer()
@@ -69,7 +68,7 @@ defmodule Kadena.Pact.ContCommand do
     :step,
     :proof,
     :rollback,
-    signers: SignersList.new(),
+    signers: [],
     keypairs: []
   ]
 
@@ -86,15 +85,15 @@ defmodule Kadena.Pact.ContCommand do
     proof = Keyword.get(opts, :proof)
     rollback = Keyword.get(opts, :rollback, true)
     keypairs = Keyword.get(opts, :keypairs, [])
-    signers = Keyword.get(opts, :signers, SignersList.new())
+    signers = Keyword.get(opts, :signers, [])
 
     %__MODULE__{}
     |> set_network(network_id)
     |> set_data(data)
     |> set_nonce(nonce)
     |> set_metadata(meta_data)
-    |> add_keypairs(keypairs)
     |> add_signers(signers)
+    |> add_keypairs(keypairs)
     |> set_pact_tx_hash(pact_tx_hash)
     |> set_proof(proof)
     |> set_step(step)
@@ -144,7 +143,7 @@ defmodule Kadena.Pact.ContCommand do
 
   @impl true
   def add_keypair(%__MODULE__{keypairs: keypairs} = cmd_request, %KeyPair{} = keypair) do
-    cmd_request = %{cmd_request | keypairs: keypairs ++ [keypair]}
+    cmd_request = %{cmd_request | keypairs: Enum.uniq(keypairs ++ [keypair])}
     set_signers_from_keypair(cmd_request, keypair)
   end
 
@@ -164,21 +163,22 @@ defmodule Kadena.Pact.ContCommand do
   def add_keypairs({:error, reason}, _keypairs), do: {:error, reason}
 
   @impl true
-  def add_signer(%__MODULE__{signers: signer_list} = cmd_request, %Signer{} = signer) do
-    %SignersList{signers: signers} = signer_list
-    %{cmd_request | signers: SignersList.new(signers ++ [signer])}
-  end
+  def add_signer(%__MODULE__{signers: signers} = cmd_request, %Signer{} = signer),
+    do: %{cmd_request | signers: Enum.uniq(signers ++ [signer])}
 
   def add_signer(%__MODULE__{}, _signer), do: {:error, [signer: :invalid]}
   def add_signer({:error, reason}, _signer), do: {:error, reason}
 
   @impl true
-  def add_signers(%__MODULE__{signers: signer_list} = cmd_request, %SignersList{signers: signers}) do
-    %SignersList{signers: old_signers} = signer_list
-    %{cmd_request | signers: SignersList.new(old_signers ++ signers)}
+  def add_signers(%__MODULE__{} = cmd_request, []), do: cmd_request
+
+  def add_signers(%__MODULE__{} = cmd_request, [signer | signers]) do
+    cmd_request
+    |> add_signer(signer)
+    |> add_signers(signers)
   end
 
-  def add_signers(%__MODULE__{}, _signers), do: {:error, [signers: :invalid]}
+  def add_signers(%__MODULE__{}, _signers), do: {:error, [signers: :not_a_signer_list]}
   def add_signers({:error, reason}, _signers), do: {:error, reason}
 
   @impl true
@@ -305,8 +305,9 @@ defmodule Kadena.Pact.ContCommand do
   end
 
   @spec build_signatures(sign_commands :: sign_commands(), result :: list()) :: valid_signatures()
-  defp build_signatures([], result), do: {:ok, SignaturesList.new(result)}
+  defp build_signatures([%SignCommand{sig: nil}], []), do: {:ok, []}
+  defp build_signatures([], result), do: {:ok, result}
 
   defp build_signatures([%SignCommand{sig: sig} | rest], result),
-    do: build_signatures(rest, result ++ [sig])
+    do: build_signatures(rest, result ++ [Signature.new(sig)])
 end

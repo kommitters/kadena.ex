@@ -5,14 +5,12 @@ defmodule Kadena.Types.KeypairTest do
 
   use ExUnit.Case
 
-  alias Kadena.Types.{CapsList, KeyPair, OptionalCapsList}
+  alias Kadena.Types.{Cap, KeyPair}
 
   setup do
-    clist =
-      CapsList.new([
-        [name: "gas", args: ["COIN.gas", 0.02]],
-        [name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]]
-      ])
+    cap1 = Cap.new(%{name: "gas", args: ["COIN.gas", 0.02]})
+    cap2 = Cap.new(%{name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]})
+    clist = [cap1, cap2]
 
     %{
       pub_key: "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d",
@@ -27,12 +25,12 @@ defmodule Kadena.Types.KeypairTest do
       %KeyPair{
         pub_key: ^pub_key,
         secret_key: ^secret_key,
-        clist: %OptionalCapsList{clist: ^clist}
+        clist: ^clist
       } = KeyPair.new(pub_key: pub_key, secret_key: secret_key, clist: clist)
     end
 
     test "with only required arguments", %{pub_key: pub_key, secret_key: secret_key} do
-      %KeyPair{pub_key: ^pub_key, secret_key: ^secret_key, clist: %OptionalCapsList{clist: nil}} =
+      %KeyPair{pub_key: ^pub_key, secret_key: ^secret_key, clist: nil} =
         KeyPair.new(pub_key: pub_key, secret_key: secret_key)
     end
 
@@ -53,7 +51,7 @@ defmodule Kadena.Types.KeypairTest do
       %KeyPair{
         pub_key: ^pub_key,
         secret_key: ^secret_key,
-        clist: %OptionalCapsList{clist: ^clist}
+        clist: ^clist
       } = KeyPair.add_caps(keypair, clist)
     end
 

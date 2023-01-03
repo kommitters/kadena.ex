@@ -64,7 +64,7 @@ alias Kadena.Cryptography.KeyPair
 
 {:ok,
  %Kadena.Types.KeyPair{
-   clist: %Kadena.Types.OptionalCapsList{clist: nil},
+   clist: nil,
    pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
    secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
  }}
@@ -76,7 +76,7 @@ alias Kadena.Cryptography.KeyPair
 
 {:ok,
  %Kadena.Types.KeyPair{
-   clist: %Kadena.Types.OptionalCapsList{clist: nil},
+   clist: nil,
    pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
    secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
  }}
@@ -86,33 +86,27 @@ alias Kadena.Cryptography.KeyPair
 
 ```elixir
 alias Kadena.Cryptography.KeyPair
-alias Kadena.Types.CapsList
+alias Kadena.Types.Cap
 
 {:ok, keypair} = KeyPair.from_secret_key("e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d")
 
-clist = Kadena.Types.CapsList.new([
-    [name: "coin.GAS", args: [keypair.pub_key]]
-  ])
+clist = [
+  Cap.new(name: "coin.GAS", args: [keypair.pub_key])
+]
 
 keypair_with_caps = Kadena.Types.KeyPair.add_caps(keypair, clist)
 
 %Kadena.Types.KeyPair{
-  clist: %Kadena.Types.OptionalCapsList{
-    clist: %Kadena.Types.CapsList{
-      caps: [
-        %Kadena.Types.Cap{
-          args: %Kadena.Types.PactValuesList{
-            pact_values: [
-              %Kadena.Types.PactValue{
-                literal: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
-              }
-            ]
-          },
-          name: "coin.GAS"
+  clist: [
+    %Kadena.Types.Cap{
+      args: [
+        %Kadena.Types.PactValue{
+          literal: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
         }
-      ]
+      ],
+      name: "coin.GAS"
     }
-  },
+  ],
   pub_key: "37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9",
   secret_key: "e53faf1774d30e7cec2878d2e4a617c34045f53f0579eb05e127a7808aac229d"
 }
@@ -299,9 +293,10 @@ alias Kadena.Pact
 # set the command attributes
 {:ok, raw_keypair} = Cryptography.KeyPair.from_secret_key("99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4")
 
-caps = Kadena.Types.CapsList.new([
-    [name: "coin.GAS", args: [raw_keypair.pub_key]]
-  ])
+caps = [
+  Kadena.Types.Cap.new(name: "coin.GAS", args: [raw_keypair.pub_key])
+]
+
 
 keypair = Kadena.Types.KeyPair.add_caps(raw_keypair, caps)
 
@@ -333,19 +328,20 @@ env_data = %{accounts_admin_keyset: [keypair.pub_key]}
   |> Pact.ExecCommand.add_keypair(keypair)
   |> Pact.ExecCommand.build()
 
-{:ok, %Kadena.Types.Command{
-  cmd: "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-01-01 00:00:00.000000 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 1 2)\",\"data\":{\"accounts-admin-keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
-  hash: %Kadena.Types.PactTransactionHash{
-    hash: "TAGG_ar-gxdeOhyYAJyF4ZtTwV7_3UGHZMUzRB2nVfY"
-  },
-  sigs: %Kadena.Types.SignaturesList{
-    signatures: [
-      %Kadena.Types.Signature{
-        sig: "5f4ce544aef7c439d97720c12eb8996f013d966abdf754dc6b0d353196fc962781ed5a9b982d9b7156bcd4bf19c868053c64e7fb1ad5edf695bfbd8a3225e304"
-      }
-    ]
-  }
-}}
+{:ok,
+ %Kadena.Types.Command{
+   cmd:
+     "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-01-01 00:00:00.000000 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 1 2)\",\"data\":{\"accounts_admin_keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+   hash: %Kadena.Types.PactTransactionHash{
+     hash: "ZOsqP9Wkfj5NnY9WS_XMnO9KfYv0GvK_8QMPTX6BfaA"
+   },
+   sigs: [
+     %Kadena.Types.Signature{
+       sig:
+         "5b0635c2376949103d8ce8243a1fd34a1a8964900d69eebb1ff4d38ffde437a317f887f864fa9c1b27a97e8d9e57eef8dd58b054edf30b4e6fe89d0208290f02"
+     }
+   ]
+ }}
 ```
 
 ### Building a Continuation Command
@@ -357,9 +353,9 @@ alias Kadena.Pact
 # set the command attributes
 {:ok, raw_keypair} = Cryptography.KeyPair.from_secret_key("99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4")
 
-caps = Kadena.Types.CapsList.new([
-    [name: "coin.GAS", args: [raw_keypair.pub_key]]
-  ])
+caps = [
+  Kadena.Types.Cap.new(name: "coin.GAS", args: [raw_keypair.pub_key])
+]
 
 keypair = Kadena.Types.KeyPair.add_caps(raw_keypair, caps)
 
@@ -397,19 +393,20 @@ rollback = true
   |> Pact.ContCommand.set_rollback(rollback)
   |> Pact.ContCommand.build()
 
-{:ok, %Kadena.Types.Command{
-  cmd: "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-01-01 00:00:00.000000 UTC\",\"payload\":{\"cont\":{\"data\":{\"accounts-admin-keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":true,\"step\":1}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
-  hash: %Kadena.Types.PactTransactionHash{
-    hash: "teDAH5S3H0DgzYWL-NKOTA-D2sIT01hDYHxpKRZv6zc"
-  },
-  sigs: %Kadena.Types.SignaturesList{
-    signatures: [
-      %Kadena.Types.Signature{
-        sig: "708777a672ebf3f29d936a75677305a2a77add7380abede734696dddc4cbbfd62d8cfc1e236e7a8e1df07632233a05c697157ef7a58fcf67a91d6c4791ca7807"
-      }
-    ]
-  }
-}}
+{:ok,
+ %Kadena.Types.Command{
+   cmd:
+     "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-01-01 00:00:00.000000 UTC\",\"payload\":{\"cont\":{\"data\":{\"accounts_admin_keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":true,\"step\":1}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+   hash: %Kadena.Types.PactTransactionHash{
+     hash: "DIMUpcB9NahL3746TTm1A8Wrr-JRVCT5Rk0rPdxZItg"
+   },
+   sigs: [
+     %Kadena.Types.Signature{
+       sig:
+         "98de12eda675334c7fddb6ca453017bf2df5af928c2c0763f8748b950f81b7b075f74fc2294f6a16099aa51955a035889767f048a76f7a272eaf639140dbd20a"
+     }
+   ]
+ }}
 ```
 
 ## Chainweb Pact API
@@ -753,13 +750,13 @@ Chainweb.Pact.spv(payload, network_id: :testnet04, chain_id: 1)
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.12`
+The latest updated branch to target a PR is `v0.13`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Remove List Types](https://github.com/kommitters/kadena.ex/issues/169)
+- [Chainweb P2P API](https://github.com/kommitters/kadena.ex/milestone/1)
 
 ### Done - What we've already developed! 🚀
 

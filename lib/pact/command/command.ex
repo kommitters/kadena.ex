@@ -4,7 +4,7 @@ defmodule Kadena.Pact.Command do
   """
 
   alias Kadena.Pact.{ContCommand, ExecCommand}
-  alias Kadena.Types.{ChainID, Command, KeyPair, MetaData, NetworkID, Signer, SignersList}
+  alias Kadena.Types.{ChainID, Command, KeyPair, MetaData, NetworkID, Signer}
 
   @type cmd :: {:ok, Command.t()}
   @type network_id :: NetworkID.t()
@@ -19,7 +19,7 @@ defmodule Kadena.Pact.Command do
   @type keypair :: KeyPair.t()
   @type keypairs_list :: list(keypair())
   @type signer :: Signer.t()
-  @type signers_list :: list(signer()) | SignersList.t()
+  @type signers_list :: list(signer())
   @type hash :: String.t()
 
   @callback new() :: cmd_request()

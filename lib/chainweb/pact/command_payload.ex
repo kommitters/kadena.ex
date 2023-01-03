@@ -8,25 +8,21 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   alias Kadena.Types.{
     Base16String,
     Cap,
-    CapsList,
     ChainID,
     ContPayload,
     EnvData,
     ExecPayload,
     MetaData,
     NetworkID,
-    OptionalCapsList,
     PactCode,
     PactDecimal,
     PactInt,
     PactPayload,
     PactTransactionHash,
     PactValue,
-    PactValuesList,
     Proof,
     Rollback,
     Signer,
-    SignersList,
     Step
   }
 
@@ -34,7 +30,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
 
   @type network_id :: NetworkID.t() | nil
   @type payload :: PactPayload.t()
-  @type signers :: SignersList.t()
+  @type signers :: list(Signer.t())
   @type meta :: MetaData.t()
   @type nonce :: String.t()
   @type value :: network_id() | payload() | signers() | meta() | nonce()
@@ -44,7 +40,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   @type valid_list :: {:ok, list()}
   @type map_return :: map() | nil
   @type string_value :: String.t() | nil
-  @type pact_values :: PactValuesList.t()
+  @type pact_values :: list(PactValue.t())
   @type scheme :: :ed25519 | nil
   @type scheme_return :: :ED25519 | nil
   @type cap :: Cap.t()
@@ -52,7 +48,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   @type proof :: Proof.t() | nil
   @type signer :: Signer.t()
   @type raw_value :: integer() | string_value() | boolean() | Decimal.t()
-  @type clist :: CapsList.t() | nil
+  @type clist :: list(cap()) | nil
   @type addr :: Base16String.t() | nil
   @type pact_payload :: PactPayload.t()
   @type literal ::
@@ -61,7 +57,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
           | String.t()
           | PactInt.t()
           | PactDecimal.t()
-          | PactValuesList.t()
+          | list(PactValue.t())
 
   @type t :: %__MODULE__{
           network_id: network_id(),
@@ -139,14 +135,9 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
   end
 
   @spec validate_signers(signers :: signers()) :: validation()
-  defp validate_signers(%SignersList{} = signers), do: {:ok, signers}
-
-  defp validate_signers(signers) do
-    case SignersList.new(signers) do
-      %SignersList{} = signers -> {:ok, signers}
-      _error -> {:error, [signers: :invalid]}
-    end
-  end
+  defp validate_signers([%Signer{} | _rest] = signers), do: {:ok, signers}
+  defp validate_signers([] = signers), do: {:ok, signers}
+  defp validate_signers(_signers), do: {:error, [signers: :invalid]}
 
   @spec validate_meta(meta :: meta()) :: validation()
   defp validate_meta(%MetaData{} = meta), do: {:ok, meta}
@@ -223,9 +214,9 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
     |> (&{:ok, &1}).()
   end
 
-  @spec extract_signers_list(signers :: signers()) :: valid_list()
-  defp extract_signers_list(%SignersList{signers: list}) do
-    signers = Enum.map(list, fn sig -> extract_signer_info(sig) end)
+  @spec extract_signers_list(signer_list :: signers()) :: valid_list()
+  defp extract_signers_list(signer_list) do
+    signers = Enum.map(signer_list, fn sig -> extract_signer_info(sig) end)
     {:ok, signers}
   end
 
@@ -234,7 +225,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
          addr: addr,
          scheme: scheme,
          pub_key: %Base16String{value: pub_key},
-         clist: %OptionalCapsList{clist: clist}
+         clist: clist
        }) do
     MapCase.to_camel!(%{
       addr: extract_addr(addr),
@@ -254,23 +245,18 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
 
   @spec extract_clist(clist()) :: list()
   defp extract_clist(nil), do: []
-
-  defp extract_clist(%CapsList{caps: caps}) do
-    Enum.map(caps, fn cap -> extract_cap_info(cap) end)
-  end
+  defp extract_clist(caps), do: Enum.map(caps, &extract_cap_info/1)
 
   @spec extract_cap_info(cap()) :: map_return()
-  defp extract_cap_info(%Cap{name: name, args: args}) do
-    %{name: name, args: extract_values(args)}
-  end
+  defp extract_cap_info(%Cap{name: name, args: args}),
+    do: %{name: name, args: extract_values(args)}
 
   @spec extract_values(pact_values()) :: list()
-  defp extract_values(%PactValuesList{pact_values: pact_values}) do
-    Enum.map(pact_values, fn %PactValue{literal: pact_value} -> extract_value(pact_value) end)
-  end
+  defp extract_values(pact_values),
+    do: Enum.map(pact_values, fn %PactValue{literal: pact_value} -> extract_value(pact_value) end)
 
   @spec extract_value(literal()) :: raw_value()
-  defp extract_value(%PactValuesList{} = pact_value), do: extract_values(pact_value)
+  defp extract_value(value) when is_list(value), do: extract_values(value)
   defp extract_value(%PactInt{raw_value: value}), do: value
   defp extract_value(%PactDecimal{raw_value: value}), do: value
   defp extract_value(value), do: value

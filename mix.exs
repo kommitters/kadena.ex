@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.11.1"
+  @version "0.12.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -118,35 +118,28 @@ defmodule Kadena.MixProject do
       Types: [
         Kadena.Types.Base16String,
         Kadena.Types.Base64Url,
-        Kadena.Types.Base64UrlsList,
         Kadena.Types.Cap,
-        Kadena.Types.CapsList,
         Kadena.Types.ChainID,
         Kadena.Types.Command,
-        Kadena.Types.CommandsList,
         Kadena.Types.ContPayload,
         Kadena.Types.EnvData,
         Kadena.Types.ExecPayload,
         Kadena.Types.KeyPair,
         Kadena.Types.MetaData,
         Kadena.Types.NetworkID,
-        Kadena.Types.OptionalCapsList,
         Kadena.Types.PactCode,
         Kadena.Types.PactDecimal,
         Kadena.Types.PactInt,
         Kadena.Types.PactPayload,
         Kadena.Types.PactTransactionHash,
         Kadena.Types.PactValue,
-        Kadena.Types.PactValuesList,
         Kadena.Types.Proof,
         Kadena.Types.Rollback,
         Kadena.Types.SignCommand,
         Kadena.Types.SignatureWithHash,
         Kadena.Types.Signature,
-        Kadena.Types.SignaturesList,
         Kadena.Types.SignedCommand,
         Kadena.Types.Signer,
-        Kadena.Types.SignersList,
         Kadena.Types.SigningCap,
         Kadena.Types.Spec,
         Kadena.Types.Step

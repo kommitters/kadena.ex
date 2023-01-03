@@ -8,29 +8,29 @@ defmodule Kadena.Pact.ExecCommandTest do
   alias Kadena.Pact.ExecCommand
 
   alias Kadena.Types.{
-    CapsList,
+    Cap,
     Command,
     EnvData,
     KeyPair,
     MetaData,
     PactTransactionHash,
     Signature,
-    SignaturesList,
-    Signer,
-    SignersList
+    Signer
   }
 
   describe "create ExecCommand" do
     setup do
       secret_key = "99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4"
       {:ok, %KeyPair{pub_key: pub_key}} = CryptographyKeyPair.from_secret_key(secret_key)
-
-      clist =
-        CapsList.new([
-          [name: "coin.GAS", args: [pub_key]]
-        ])
+      cap = Cap.new(%{name: "coin.GAS", args: [pub_key]})
+      clist = [cap]
 
       keypair_data = [pub_key: pub_key, secret_key: secret_key, clist: clist]
+
+      {:ok, %KeyPair{pub_key: pub_key2} = keypair2} =
+        CryptographyKeyPair.from_secret_key(
+          "0b59981d29c3606ac5198278795c073f501d36c8b2c14969cd30d7de2b0d62a9"
+        )
 
       env_data = %{
         accounts_admin_keyset: [
@@ -51,12 +51,18 @@ defmodule Kadena.Pact.ExecCommandTest do
         env_data: EnvData.new(env_data),
         meta_data: MetaData.new(raw_meta_data),
         keypair: KeyPair.new(keypair_data),
+        keypair2: keypair2,
         signer:
           Signer.new(
             pub_key: pub_key,
             scheme: :ed25519,
             addr: pub_key,
             clist: clist
+          ),
+        signer2:
+          Signer.new(
+            pub_key: pub_key2,
+            scheme: :ed25519
           ),
         code: "(+ 5 6)",
         nonce: "2023-06-13 17:45:18.211131 UTC",
@@ -78,14 +84,12 @@ defmodule Kadena.Pact.ExecCommandTest do
          hash: %PactTransactionHash{
            hash: "2lnN17Ev5LuLUQXQ8fXNWf_Z7R0x3lrFejZ-yZMKWww"
          },
-         sigs: %SignaturesList{
-           signatures: [
-             %Signature{
-               sig:
-                 "a4ac51052152ccff62e8dfdafe9e17df999e5b2b9cacccf2707a39a878bde0b9e18f7eff792b8863b9e9a329289f5de8eb86a8f5ff8fed399cd4258ac75b7907"
-             }
-           ]
-         }
+         sigs: [
+           %Signature{
+             sig:
+               "a4ac51052152ccff62e8dfdafe9e17df999e5b2b9cacccf2707a39a878bde0b9e18f7eff792b8863b9e9a329289f5de8eb86a8f5ff8fed399cd4258ac75b7907"
+           }
+         ]
        }} =
         ExecCommand.new()
         |> ExecCommand.set_network(:testnet04)
@@ -93,8 +97,8 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_code(code)
         |> ExecCommand.set_nonce(nonce)
         |> ExecCommand.set_metadata(meta_data)
-        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.add_signer(signer)
+        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.build()
     end
 
@@ -112,14 +116,12 @@ defmodule Kadena.Pact.ExecCommandTest do
          hash: %Kadena.Types.PactTransactionHash{
            hash: "jXp99H0iuZBXQUCCihWSqULfwKpexB9dEKozviN4QPM"
          },
-         sigs: %Kadena.Types.SignaturesList{
-           signatures: [
-             %Kadena.Types.Signature{
-               sig:
-                 "36d55e69103b266e53521b2d8d7ca1a0055b7d178970511f8319a6029315e1bf6a518c24a94f2ba20e041f7ec69e7c503a14c1c886f54d51e65674a377a5fb06"
-             }
-           ]
-         }
+         sigs: [
+           %Signature{
+             sig:
+               "36d55e69103b266e53521b2d8d7ca1a0055b7d178970511f8319a6029315e1bf6a518c24a94f2ba20e041f7ec69e7c503a14c1c886f54d51e65674a377a5fb06"
+           }
+         ]
        }} =
         ExecCommand.new()
         |> ExecCommand.set_network(:testnet04)
@@ -145,14 +147,12 @@ defmodule Kadena.Pact.ExecCommandTest do
          hash: %PactTransactionHash{
            hash: "2lnN17Ev5LuLUQXQ8fXNWf_Z7R0x3lrFejZ-yZMKWww"
          },
-         sigs: %SignaturesList{
-           signatures: [
-             %Signature{
-               sig:
-                 "a4ac51052152ccff62e8dfdafe9e17df999e5b2b9cacccf2707a39a878bde0b9e18f7eff792b8863b9e9a329289f5de8eb86a8f5ff8fed399cd4258ac75b7907"
-             }
-           ]
-         }
+         sigs: [
+           %Signature{
+             sig:
+               "a4ac51052152ccff62e8dfdafe9e17df999e5b2b9cacccf2707a39a878bde0b9e18f7eff792b8863b9e9a329289f5de8eb86a8f5ff8fed399cd4258ac75b7907"
+           }
+         ]
        }} =
         ExecCommand.new(
           network_id: :testnet04,
@@ -161,7 +161,7 @@ defmodule Kadena.Pact.ExecCommandTest do
           nonce: nonce,
           meta_data: meta_data,
           keypairs: [keypair],
-          signers: SignersList.new([signer])
+          signers: [signer]
         )
         |> ExecCommand.build()
     end
@@ -180,14 +180,12 @@ defmodule Kadena.Pact.ExecCommandTest do
          hash: %PactTransactionHash{
            hash: "Kk-dF78h0kaw8Ku5v-Ts4cLyvoDBYyROQVEm240Fx9Q"
          },
-         sigs: %SignaturesList{
-           signatures: [
-             %Signature{
-               sig:
-                 "0be960f6fd0e5687c2caf9ece1a6f544de2fb9fccb0850d1693e261ed8e500d3f5012231658335cb3b08d6eead1bcbe98e11b7afbc3b75999e9e0c77b29a930e"
-             }
-           ]
-         }
+         sigs: [
+           %Signature{
+             sig:
+               "0be960f6fd0e5687c2caf9ece1a6f544de2fb9fccb0850d1693e261ed8e500d3f5012231658335cb3b08d6eead1bcbe98e11b7afbc3b75999e9e0c77b29a930e"
+           }
+         ]
        }} =
         ExecCommand.new(
           network_id: :testnet04,
@@ -195,7 +193,7 @@ defmodule Kadena.Pact.ExecCommandTest do
           nonce: nonce,
           meta_data: meta_data,
           keypairs: [keypair],
-          signers: SignersList.new([signer])
+          signers: [signer]
         )
         |> ExecCommand.build()
     end
@@ -204,24 +202,23 @@ defmodule Kadena.Pact.ExecCommandTest do
       meta_data: meta_data,
       keypair: keypair,
       signer: signer,
+      signer2: signer2,
       nonce: nonce,
       code: code
     } do
       {:ok,
        %Command{
          cmd:
-           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{}}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{}}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"}]}",
          hash: %PactTransactionHash{
-           hash: "dj3E1TH6QPhS2YIi7tfcXj1INhcjYIFhgOitLNQEajg"
+           hash: "tXmmohuUXUt6Uzx3L3okK-yY2x_OEIN_ZujgS7d3174"
          },
-         sigs: %SignaturesList{
-           signatures: [
-             %Signature{
-               sig:
-                 "bafbe7dbad8a82f60923331b842c3d0b973e871bc0bb56bab1e87f960d076906a07f7ce63bce41cf0d16fb0acd95d1efcd00ac3f093f5c275b2398bf40904a07"
-             }
-           ]
-         }
+         sigs: [
+           %Signature{
+             sig:
+               "fd18fd8e02806ad0a861740595f0a68338cd34fe81a2bf7270d7007b009b7033606e4ec95ba465fc19f1ef94d94ff0291c23d6eec1170e437eed84710144de0e"
+           }
+         ]
        }} =
         ExecCommand.new()
         |> ExecCommand.set_network(:testnet04)
@@ -229,9 +226,9 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_code(code)
         |> ExecCommand.set_nonce(nonce)
         |> ExecCommand.set_metadata(meta_data)
+        |> ExecCommand.add_signer(signer)
         |> ExecCommand.add_keypair(keypair)
-        |> ExecCommand.add_signer(signer)
-        |> ExecCommand.add_signer(signer)
+        |> ExecCommand.add_signer(signer2)
         |> ExecCommand.build()
     end
 
@@ -245,7 +242,7 @@ defmodule Kadena.Pact.ExecCommandTest do
          hash: %PactTransactionHash{
            hash: "UKgNDSO6gc78eUwZf2PHLIfG4mHHth0ol52n4JtjwS0"
          },
-         sigs: %SignaturesList{signatures: []}
+         sigs: []
        }} =
         ExecCommand.new()
         |> ExecCommand.set_code(code)
@@ -263,14 +260,12 @@ defmodule Kadena.Pact.ExecCommandTest do
          hash: %PactTransactionHash{
            hash: "4HznR8QoUaRavOcEm9FbjO7JX7ID_LNhV5NCegYJLHQ"
          },
-         sigs: %SignaturesList{
-           signatures: [
-             %Signature{
-               sig:
-                 "77a0c4964ebc983a049082086f2d1fcccce32d4e72d9bdc377e21ef4dbec202813a6088ec683a13617ab723038bc4be7a122e37274b3a6f82ecc1e5a003a930f"
-             }
-           ]
-         }
+         sigs: [
+           %Signature{
+             sig:
+               "77a0c4964ebc983a049082086f2d1fcccce32d4e72d9bdc377e21ef4dbec202813a6088ec683a13617ab723038bc4be7a122e37274b3a6f82ecc1e5a003a930f"
+           }
+         ]
        }} =
         ExecCommand.new()
         |> ExecCommand.set_code(code)
@@ -282,7 +277,7 @@ defmodule Kadena.Pact.ExecCommandTest do
       code: code,
       signer: signer
     } do
-      signers = SignersList.new([signer])
+      signers = [signer]
 
       {:ok,
        %Command{
@@ -291,9 +286,7 @@ defmodule Kadena.Pact.ExecCommandTest do
          hash: %PactTransactionHash{
            hash: "FSel8P9Mb4NhBE6eamiF_jHtQUycrKtGjeJOVL_sQV4"
          },
-         sigs: %SignaturesList{
-           signatures: []
-         }
+         sigs: []
        }} =
         ExecCommand.new()
         |> ExecCommand.set_code(code)
@@ -304,6 +297,7 @@ defmodule Kadena.Pact.ExecCommandTest do
     test "with a keypair list", %{
       meta_data: meta_data,
       keypair: keypair,
+      keypair2: keypair2,
       signer: signer,
       nonce: nonce,
       code: code
@@ -311,22 +305,20 @@ defmodule Kadena.Pact.ExecCommandTest do
       {:ok,
        %Command{
          cmd:
-           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{}}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{}}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"}]}",
          hash: %PactTransactionHash{
-           hash: "p4u6YQ6rE1ytZx2aXTr8UU88UScQuA8Yn4QWeZ52nOo"
+           hash: "tXmmohuUXUt6Uzx3L3okK-yY2x_OEIN_ZujgS7d3174"
          },
-         sigs: %SignaturesList{
-           signatures: [
-             %Signature{
-               sig:
-                 "fdd35fd60a4ce5192ef4ef739c1baf02b1b4abadd40b56df866d9311ce0e0ea1472895c87830522bba59b13a9898573e1a63890a8bc8798dccf89a158798e807"
-             },
-             %Signature{
-               sig:
-                 "fdd35fd60a4ce5192ef4ef739c1baf02b1b4abadd40b56df866d9311ce0e0ea1472895c87830522bba59b13a9898573e1a63890a8bc8798dccf89a158798e807"
-             }
-           ]
-         }
+         sigs: [
+           %Signature{
+             sig:
+               "fd18fd8e02806ad0a861740595f0a68338cd34fe81a2bf7270d7007b009b7033606e4ec95ba465fc19f1ef94d94ff0291c23d6eec1170e437eed84710144de0e"
+           },
+           %Signature{
+             sig:
+               "6e3735ef0f96a566076733db78c0bf303de3bcfe19f5a8b8067ffd1d0e1fb60cfb2166fe6e3e363d87cdd02f98427826298ca64f652554977c13e1819d6a8c0a"
+           }
+         ]
        }} =
         ExecCommand.new()
         |> ExecCommand.set_network(:testnet04)
@@ -334,35 +326,34 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_code(code)
         |> ExecCommand.set_nonce(nonce)
         |> ExecCommand.set_metadata(meta_data)
-        |> ExecCommand.add_keypairs([keypair, keypair])
         |> ExecCommand.add_signer(signer)
+        |> ExecCommand.add_keypairs([keypair, keypair2])
         |> ExecCommand.build()
     end
 
-    test "with a SignersList", %{
+    test "with a Signer list", %{
       meta_data: meta_data,
       keypair: keypair,
       signer: signer,
+      signer2: signer2,
       nonce: nonce,
       code: code
     } do
-      signers_list = SignersList.new([signer, signer])
+      signers_list = [signer, signer2]
 
       {:ok,
        %Command{
          cmd:
-           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{}}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{}}},\"signers\":[{\"addr\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"},{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
          hash: %PactTransactionHash{
-           hash: "OsU2BtUACpxV8qQcIElP-Ks6ERDipQsITPwTo0CCpck"
+           hash: "ZhEB5Kn8vjHrtoB3c7XGg97feEuDxisgNIx1SmhNg4Q"
          },
-         sigs: %SignaturesList{
-           signatures: [
-             %Signature{
-               sig:
-                 "d05fd6227247ba9fc4277a2994d02d3ff0735888ad025fc4416c8daaae07055fe6aa34b018f9aff83d9b877ce131ff5e3032c627ae1c750e6e21e3da1b54b507"
-             }
-           ]
-         }
+         sigs: [
+           %Signature{
+             sig:
+               "7f699bc02dd67cbd390e7b29a25c2c98c50cd6cbe2b6883b457943a64c2d5cbb812cbab9d9c168d372ba803a67816e5de71ee869723e9a43a9065e7e6ea9a603"
+           }
+         ]
        }} =
         ExecCommand.new()
         |> ExecCommand.set_network(:testnet04)
@@ -370,8 +361,8 @@ defmodule Kadena.Pact.ExecCommandTest do
         |> ExecCommand.set_code(code)
         |> ExecCommand.set_nonce(nonce)
         |> ExecCommand.set_metadata(meta_data)
-        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.add_signers(signers_list)
+        |> ExecCommand.add_keypair(keypair)
         |> ExecCommand.build()
     end
 
@@ -540,7 +531,7 @@ defmodule Kadena.Pact.ExecCommandTest do
       nonce: nonce,
       code: code
     } do
-      {:error, [signers: :invalid]} =
+      {:error, [signers: :not_a_signer_list]} =
         ExecCommand.new()
         |> ExecCommand.set_network(:testnet04)
         |> ExecCommand.set_data(%{})
