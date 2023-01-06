@@ -195,7 +195,8 @@ defmodule Kadena.Chainweb.P2P.CutTest do
   end
 
   test "retrieve/1 with location and query params", %{query_response: query_response} do
-    ^query_response = Cut.retrieve(location: "jp2", network_id: :mainnet01, query_params: "36543")
+    ^query_response =
+      Cut.retrieve(location: "jp2", network_id: :mainnet01, query_params: [maxheight: "36543"])
   end
 
   test "retrieve/2 not existing location error" do
@@ -209,6 +210,6 @@ defmodule Kadena.Chainweb.P2P.CutTest do
        status: 400,
        title:
          "Error parsing query parameter maxheight failed: could not parse: `f' (input does not start with a digit)"
-     }} = Cut.retrieve(network_id: :mainnet01, query_params: "f")
+     }} = Cut.retrieve(network_id: :mainnet01, query_params: [maxheight: "f"])
   end
 end

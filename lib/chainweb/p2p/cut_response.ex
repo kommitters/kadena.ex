@@ -6,7 +6,7 @@ defmodule Kadena.Chainweb.P2P.CutResponse do
 
   @type hashes :: map()
   @type weight :: String.t()
-  @type height :: integer()
+  @type height :: non_neg_integer()
   @type origin :: map() | nil
 
   @type t :: %__MODULE__{
