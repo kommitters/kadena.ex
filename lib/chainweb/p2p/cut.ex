@@ -13,9 +13,7 @@ defmodule Kadena.Chainweb.P2P.Cut do
   @type cut_response :: CutResponse.t() | error()
 
   @spec retrieve(opts :: opts()) :: cut_response()
-  def retrieve(opts \\ [])
-
-  def retrieve(opts) do
+  def retrieve(opts \\ []) do
     location = Keyword.get(opts, :location)
     network_id = Keyword.get(opts, :network_id, :testnet04)
     query_params = Keyword.get(opts, :query_params, [])
