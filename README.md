@@ -770,9 +770,10 @@ Kadena.Chainweb.P2P.Cut.retrieve(network_opts \\ [location: nil network_id: :tes
     - to mainnet: `"us-e1", "us-e2", "us-e3", "us-w1", "us-w2", "us-w3", "fr1", "fr2", "fr3", "jp1", "jp2", "jp3"`
 
   - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
-  Defaults to `[network_id: :testnet04, chain_id: 0]` if not specified.
   - `query_params`: Integer or string-encoded integer `>= 0`, represents the maximum cut height of the returned cut.
 
+ Defaults to `[location: nil, network_id: :testnet04, query_params: nil]` if not specified.
+ 
 **Example**
 
 ```elixir
