@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.Pact.PollRequestBody do
 
   alias Kadena.Types.Base64Url
 
-  @behaviour Kadena.Chainweb.Pact.Type
+  @behaviour Kadena.Chainweb.Type
 
   @type urls :: list(String.t())
   @type request_keys :: list(Base64Url.t())

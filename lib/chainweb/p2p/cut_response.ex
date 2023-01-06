@@ -2,12 +2,12 @@ defmodule Kadena.Chainweb.P2P.CutResponse do
   @moduledoc """
   `CutResponse` struct definition.
   """
+  @behaviour Kadena.Chainweb.Type
 
   @type hashes :: map()
   @type weight :: String.t()
   @type height :: integer()
   @type origin :: map() | nil
-  @type attrs :: map()
 
   @type t :: %__MODULE__{
           hashes: hashes(),
@@ -18,6 +18,6 @@ defmodule Kadena.Chainweb.P2P.CutResponse do
 
   defstruct [:hashes, :height, :weight, :id, :instance, :origin]
 
-  @spec new(attrs: attrs()) :: t()
+  @impl true
   def new(attrs), do: struct(%__MODULE__{}, attrs)
 end

@@ -26,7 +26,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayload do
     Step
   }
 
-  @behaviour Kadena.Chainweb.Pact.Type
+  @behaviour Kadena.Chainweb.Type
 
   @type network_id :: NetworkID.t() | nil
   @type payload :: PactPayload.t()

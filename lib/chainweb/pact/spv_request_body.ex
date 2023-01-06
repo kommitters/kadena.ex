@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.Pact.SPVRequestBody do
 
   alias Kadena.Types.{Base64Url, ChainID}
 
-  @behaviour Kadena.Chainweb.Pact.Type
+  @behaviour Kadena.Chainweb.Type
 
   @type request_key :: Base64Url.t()
   @type target_chain_id :: ChainID.t()
