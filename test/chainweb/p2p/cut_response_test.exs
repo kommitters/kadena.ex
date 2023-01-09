@@ -51,12 +51,16 @@ defmodule Kadena.Chainweb.P2P.CutResponseTest do
     attrs: attrs,
     hashes: hashes,
     height: height,
-    weight: weight
+    weight: weight,
+    instance: instance,
+    id: id
   } do
     %CutResponse{
       hashes: ^hashes,
       height: ^height,
       weight: ^weight,
+      id: ^id,
+      instance: ^instance,
       origin: nil
     } = CutResponse.new(attrs)
   end
