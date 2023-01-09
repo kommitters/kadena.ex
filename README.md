@@ -748,41 +748,41 @@ Chainweb.Pact.spv(payload, network_id: :testnet04, chain_id: 1)
 ```
 ## Chainweb P2P API
 
-Interaction with [Chainweb P2P API][chainweb_p2p_api_doc] is done through the different modules that implement functions for accessing the endpoints.
+Interaction with [Chainweb P2P API][chainweb_p2p_api_doc] is done through different modules that implement functions to access the endpoints.
 
-### Cut endpoint
+### Cut
 
 A cut represents a distributed state of a chainweb. It references one block header for each chain, such that those blocks are pairwise concurrent.
 
 Two blocks from two different chains are said to be concurrent if either one of them is an adjacent parent (is a direct dependency) of the other or if the blocks do not depend at all on each other.
 
-* Query the current cut from a Chainweb node.
+#### Query the current cut from a Chainweb node
 
 ```elixir
-Kadena.Chainweb.P2P.Cut.retrieve(network_opts \\ [location: nil network_id: :testnet04, query_params: nil])
+Kadena.Chainweb.P2P.Cut.retrieve(opts \\ [network_id: :testnet04, location: nil, query_params: nil])
 ```
 
 **Parameters**
 
-- `network_opts`: Network options. Keyword list with:
-  - `location`: To access the urls of the Chainweb testnet or mainnet P2P bootstrap node, where only P2P API endpoints are served. Allowed values: 
-    - to testnet: `"us1", "us2", "eu1", "eu2", "ap1", "ap2"`
-    - to mainnet: `"us-e1", "us-e2", "us-e3", "us-w1", "us-w2", "us-w3", "fr1", "fr2", "fr3", "jp1", "jp2", "jp3"`
-
+- `opts`: Network options. Keyword list with:
   - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
-  - `query_params`: Query parameters. Keyword list with: 
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
 
-    - `maxheight`: Integer or string-encoded integer `>= 0`, represents the maximum cut height of the returned cut.
+  - `query_params` (optional): Query parameters. Keyword list with:
 
- Defaults to `[location: nil, network_id: :testnet04, query_params: []]` if not specified.
- 
+    - `maxheight` (optional): Integer or string-encoded integer `>= 0`, represents the maximum cut height of the returned cut.
+
+  Defaults to `[network_id: :testnet04, location: nil, query_params: []]` if not specified.
+
 **Example**
 
 ```elixir
 
 alias Kadena.Chainweb.P2P.Cut
 
-Cut.retrieve(location: "jp2", network_id: :mainnet01, query_params: [maxheight: 36543])
+Cut.retrieve(network_id: :mainnet01, location: "jp2", query_params: [maxheight: 36543])
 
 {:ok,
  %Kadena.Chainweb.P2P.CutResponse{
