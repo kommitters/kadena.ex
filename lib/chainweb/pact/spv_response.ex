@@ -3,7 +3,7 @@ defmodule Kadena.Chainweb.Pact.SPVResponse do
   `SPVResponse` struct definition.
   """
 
-  @behaviour Kadena.Chainweb.Pact.Type
+  @behaviour Kadena.Chainweb.Type
 
   @type proof :: String.t()
 

@@ -60,7 +60,7 @@ defmodule Kadena.Chainweb.RequestTest do
       endpoint: ^endpoint,
       network_id: ^network_id,
       chain_id: ^chain_id,
-      body: nil,
+      body: "",
       headers: [],
       query: []
     } = Request.new(:post, pact: [endpoint: endpoint, network_id: network_id, chain_id: chain_id])

@@ -746,6 +746,65 @@ Chainweb.Pact.spv(payload, network_id: :testnet04, chain_id: 1)
      "eyJjaGFpbiI6Miwib2JqZWN0IjoiQUFBQUVBQUFBQUFBQUFBQ0FBRm5kSVUwc0tpRHJvUWQ0LWJxbHA4dThxd3BpdXRvdXVFXzFxY1JteUNsQUtBN1BRSGxRcTlPMmpQT0E3VlI5bXhVZm4yVDhGdjcxTFFfVTM3eEw5Q3hBYTdkN0lnWUFUZUgxLWNEb3RJbnVyRFZMX1FjYzJyTzFtR3BvY21TcWlfeUFiR1JrXzVnT0Jka0JXVWVLS0lnRHN1YWlmbGt4S0R0alJfSndSSmxPd2w3QUZ0ZWxrZXNWVkZ6aUMyUXgwUFczSmJPY3pQOFVINjRteVNWTTNHUGhxUE5BYWdtUEpTenRsUlNSOTJhNUl5d1dZYVlmREVweUljLWNwSG9VSDdSWTBWZkFGVmVlZG1qbUFZS1l4RTdoS1VZa0gtLWN0dkFWbUFuQWlPYm1xUmFsUnlfQUt0RWJnOU9BSzNyTUZfM01STUpkODFpZmJCdnBHT2Jxckk5bXZEU1U0cEpBYjMtcTdXYU9hTWVVVk9XdlI4NUxLQW9qbFdXLVRmeVdrRXJMLXBreGZtNkFPOURadkNIOExiZkwzYlFXOWRKbUN0VHRteXI3N3pNZGxNaGVvb1k5OHNDQWRKcF9rN0hNUXJpLUtSTEFWeHJkT1dCOEt4dk13UldsaDNHQTRFa2ZFTnhBSW83N29OWGlKb3hLOUdqWFVwcGJXWnhDY1Q5TVJwQ0NHTURsVndmdkpaREFOMlpWZW8wSUxVOXd1XzNlOTRLUUEtUk9SNk1LUFFBeWJ4VHczUzVLbFg4QVg2aFhmODljMGpLRzBqeUQ0cVZxR2hhaGp0ZjNsRGdaekdPbEhDY3FNd2NBQ01yVTEyM3VHbnRUTnpUVVljREF5bTZnU1c2MUxWeFp5SjZxMjBoQzRSR0FPQUxJbGVBVy1tYVlBdXVkN08xeGhQbVFlcFg0MzhrWXJCOVd1Z3ZRUXg4Iiwic3ViamVjdCI6eyJpbnB1dCI6IkFCUjdJbWRoY3lJNk1qTXpMQ0p5WlhOMWJIUWlPbnNpYzNSaGRIVnpJam9pYzNWalkyVnpjeUlzSW1SaGRHRWlPak45TENKeVpYRkxaWGtpT2lKV1FqUmFTMjlpZW5Wdk5VTjNkalZNVkRsclYwdG5MVE0wZFRkTFdqQlBiemcwYW01SmFYVnFWRWRqSWl3aWJHOW5jeUk2SWxBelEwUldWV0pEVTFOeldIVnJVSHAwYTIxTWFrcE1OM1J6ZUU1T1NYVlFTRXQ1YUVkTlJGOHdkMFVpTENKbGRtVnVkSE1pT2x0N0luQmhjbUZ0Y3lJNld5SnJPbVF4WVRNMk1XUTNNakZqWmpneFpHSmpNakZtTmpjMlpUWTRPVGRtTjJVM1lUTXpOalkzTVdNd1pEVmtNalZtT0Rkak1UQTVNek5qWVdNMlpEaGpaamNpTENKck9tUmlOemMyTnprelltVXdabU5tT0dVM05tTTNOV0prWWpNMVlUTTJaVFkzWmpJNU9ERXhNV1JqTmpFME5XTTJOalk1TTJJd01UTXpNVGt5WlRJMk1UWWlMREl1TXpObExUUmRMQ0p1WVcxbElqb2lWRkpCVGxOR1JWSWlMQ0p0YjJSMWJHVWlPbnNpYm1GdFpYTndZV05sSWpwdWRXeHNMQ0p1WVcxbElqb2lZMjlwYmlKOUxDSnRiMlIxYkdWSVlYTm9Jam9pY2tVM1JGVTRhbXhSVERsNFgwMVFXWFZ1YVZwS1pqVkpRMEpVUVVWSVFVbEdVVU5DTkdKc2IyWlFOQ0o5WFN3aWJXVjBZVVJoZEdFaU9tNTFiR3dzSW1OdmJuUnBiblZoZEdsdmJpSTZiblZzYkN3aWRIaEpaQ0k2TkRJM01qVXdNSDAifSwiYWxnb3JpdGhtIjoiU0hBNTEydF8yNTYifQ"
  }}
 ```
+## Chainweb P2P API
+
+Interaction with [Chainweb P2P API][chainweb_p2p_api_doc] is done through different modules that implement functions to access the endpoints.
+
+### Cut
+
+A cut represents a distributed state of a chainweb. It references one block header for each chain, such that those blocks are pairwise concurrent.
+
+Two blocks from two different chains are said to be concurrent if either one of them is an adjacent parent (is a direct dependency) of the other or if the blocks do not depend at all on each other.
+
+#### Query the current cut from a Chainweb node
+
+```elixir
+Kadena.Chainweb.P2P.Cut.retrieve(opts \\ [network_id: :testnet04, location: nil, query_params: nil])
+```
+
+**Parameters**
+
+- `opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+
+  - `query_params` (optional): Query parameters. Keyword list with:
+
+    - `maxheight` (optional): Integer or string-encoded integer `>= 0`, represents the maximum cut height of the returned cut.
+
+  Defaults to `[network_id: :testnet04, location: nil, query_params: []]` if not specified.
+
+**Example**
+
+```elixir
+
+alias Kadena.Chainweb.P2P.Cut
+
+Cut.retrieve(network_id: :mainnet01, location: "jp2", query_params: [maxheight: 36543])
+
+{:ok,
+ %Kadena.Chainweb.P2P.CutResponse{
+   hashes: %{
+     "0": %{hash: "zkkjtWjiD68BcaISzjn5_y7-vQ3Yk2y3swhz7hm_7w8", height: 3654},
+     "1": %{hash: "M-tbkEAVpS0-v5dxu-rxhRkjcVZfSE1nKEBBxNvka_g", height: 3654},
+     "2": %{hash: "af5hWh0dUJoTGr5Bn8JxgDbAA97h6uqtclYi4SP95w8", height: 3654},
+     "3": %{hash: "1-XVBn9NO2-g53WFzX9YpYT-t10Rr3RWJTdydMxK7Qg", height: 3654},
+     "4": %{hash: "wphlMRCrkjVaIBlFNQdlTonLxGRebClL4DTHjZhgpXw", height: 3654},
+     "5": %{hash: "T6iaDkYwzMBIBEyXgkFQ-T4FMhS__g6DACs4C8O27gg", height: 3654},
+     "6": %{hash: "fX3NieTI5CjMs9VZEyfRqHg0B3ZKyxNkm7-p4TIfSZ4", height: 3654},
+     "7": %{hash: "ddZN5o0ZNrcgmCOaEhyWb0rmpl0QcBguwfmop6uQKpI", height: 3654},
+     "8": %{hash: "KEQkdXVF0nYujH43U0q-nkwDIUViZnncWol78Spoxow", height: 3654},
+     "9": %{hash: "qqCoe3VfCyH6vJmn22RLIzD8DrDrKKjKlPn15UQ25TU", height: 3654}
+   },
+   height: 36540,
+   id: "DeYKC0r8tXxZRYyx-S49sVzFCAZ8TZT3J1UlVSVmjCA",
+   instance: "mainnet01",
+   origin: nil,
+   weight: "LKml1d8BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+ }}
+```
 ---
 
 ## Roadmap
@@ -830,3 +889,4 @@ Made with 💙 by [kommitters Open Source](https://kommit.co)
 [jason_url]: https://github.com/michalmuskala/jason
 [chainweb_pact_api_doc]: https://api.chainweb.com/openapi/pact.html
 [chainweb_pact_api]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/pact.ex
+[chainweb_p2p_api_doc]: https://api.chainweb.com/openapi/#tag/p2p_api

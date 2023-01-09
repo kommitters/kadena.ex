@@ -95,6 +95,7 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Client.Default,
         Kadena.Chainweb.Client.Spec,
         Kadena.Chainweb.Network,
+        Kadena.Chainweb.P2P.Cut,
         Kadena.Chainweb.Pact,
         Kadena.Chainweb.Pact.Listen,
         Kadena.Chainweb.Pact.Local,
@@ -158,6 +159,9 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Pact.SendResponse,
         Kadena.Chainweb.Pact.SPVRequestBody,
         Kadena.Chainweb.Pact.SPVResponse
+      ],
+      "Chainweb P2P Types": [
+        Kadena.Chainweb.P2P.CutResponse
       ],
       Utils: Kadena.Utils.MapCase
     ]
