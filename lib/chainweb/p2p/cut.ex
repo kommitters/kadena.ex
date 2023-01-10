@@ -9,6 +9,7 @@ defmodule Kadena.Chainweb.P2P.Cut do
   alias Kadena.Chainweb.{Error, Request}
 
   @type network_opts :: Keyword.t()
+  @type network_id :: :mainnet01 | :testnet04
   @type error :: {:error, Error.t()}
   @type cut_response :: CutResponse.t()
   @type retrieve_response :: cut_response() | error()
@@ -16,6 +17,7 @@ defmodule Kadena.Chainweb.P2P.Cut do
   @type origin :: map() | nil
   @type publish_response :: {:ok, map()} | error()
   @type json :: String.t()
+  @type location :: String.t()
 
   @spec retrieve(network_opts :: network_opts()) :: retrieve_response()
   def retrieve(network_opts \\ []) do
@@ -35,10 +37,10 @@ defmodule Kadena.Chainweb.P2P.Cut do
   @spec publish(payload_opts :: payload_opts(), network_opts :: network_opts()) ::
           publish_response()
   def publish(payload_opts \\ [], network_opts \\ []) do
-    location = Keyword.get(network_opts, :location)
-    network_id = Keyword.get(network_opts, :network_id, :testnet04)
     payload = Keyword.get(payload_opts, :payload)
     origin = Keyword.get(payload_opts, :origin)
+    network_id = Keyword.get(network_opts, :network_id, :testnet04)
+    location = Keyword.get(network_opts, :location, set_default_location(network_id))
     body = json_request_body(payload, origin)
     headers = [{"Content-Type", "application/json"}]
 
@@ -58,4 +60,8 @@ defmodule Kadena.Chainweb.P2P.Cut do
     |> CutRequestBody.set_origin(origin)
     |> CutRequestBody.to_json!()
   end
+
+  @spec set_default_location(network_id :: network_id()) :: location()
+  defp set_default_location(:testnet04), do: "us1"
+  defp set_default_location(:mainnet01), do: "us-e1"
 end
