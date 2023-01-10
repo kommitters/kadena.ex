@@ -161,7 +161,8 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Pact.SPVResponse
       ],
       "Chainweb P2P Types": [
-        Kadena.Chainweb.P2P.CutResponse
+        Kadena.Chainweb.P2P.CutResponse,
+        Kadena.Chainweb.P2P.CutRequestBody
       ],
       Utils: Kadena.Utils.MapCase
     ]

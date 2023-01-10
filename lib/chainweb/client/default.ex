@@ -35,6 +35,10 @@ defmodule Kadena.Chainweb.Client.Default do
   end
 
   @spec handle_response(response :: client_response()) :: parsed_response()
+  defp handle_response({:ok, status, _headers, _body}) when status == 204 do
+    {:ok, %{status: status, response: :no_content}}
+  end
+
   defp handle_response({:ok, status, _headers, body}) when status in 200..299 do
     decoded_body = json_library().decode!(body, keys: &snake_case_atom/1)
     {:ok, decoded_body}
