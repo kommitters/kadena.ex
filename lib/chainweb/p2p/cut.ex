@@ -14,7 +14,7 @@ defmodule Kadena.Chainweb.P2P.Cut do
   @type retrieve_response :: cut_response() | error()
   @type payload_opts :: Keyword.t()
   @type origin :: map() | nil
-  @type publish_response :: {:ok, map} | error()
+  @type publish_response :: {:ok, map()} | error()
   @type json :: String.t()
 
   @spec retrieve(network_opts :: network_opts()) :: retrieve_response()
