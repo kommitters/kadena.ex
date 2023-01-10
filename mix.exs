@@ -164,11 +164,15 @@ defmodule Kadena.MixProject do
       "Chainweb P2P Types": [
         Kadena.Chainweb.P2P.CutResponse,
 <<<<<<< HEAD
+<<<<<<< HEAD
         Kadena.Chainweb.P2P.BlockHashResponse,
         Kadena.Chainweb.P2P.BlockHashRequestBody
 =======
         Kadena.Chainweb.P2P.CutRequestBody,
 >>>>>>> c16e564 (Update docs and improve code)
+=======
+        Kadena.Chainweb.P2P.CutRequestBody
+>>>>>>> 5f93579 (Update README.md)
       ],
       Utils: Kadena.Utils.MapCase
     ]
