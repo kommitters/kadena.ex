@@ -759,7 +759,7 @@ Two blocks from two different chains are said to be concurrent if either one of 
 #### Query the current cut from a Chainweb node
 
 ```elixir
-Kadena.Chainweb.P2P.Cut.retrieve(network_opts \\ [network_id: :testnet04, location: nil, query_params: nil])
+Kadena.Chainweb.P2P.Cut.retrieve(network_opts \\ [])
 ```
 
 **Parameters**
@@ -919,7 +919,7 @@ BlockHash.retrieve_branches(payload, location: "us2", query_params: [limit: 4])
 The receiving node will first try to obtain all missing dependencies from the node that is indicated in by the origin property before searching for the dependencies in the P2P network.
 
 ```elixir
-Kadena.Chainweb.P2P.Cut.publish(payload_opts \\ [payload: nil, origin: nil ], network_opts \\ [network_id: :testnet04, location: "us1"])
+Kadena.Chainweb.P2P.Cut.publish(payload_opts \\ [], network_opts \\ [])
 ```
 
 **Parameters**

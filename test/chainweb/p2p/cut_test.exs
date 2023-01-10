@@ -400,7 +400,7 @@ defmodule Kadena.Chainweb.P2P.CutTest do
         )
     end
 
-    test "error with a not existing location", %{
+    test "error with a non existing location", %{
       payload_mainnet: payload_mainnet,
       origin_mainnet: origin_mainnet
     } do
