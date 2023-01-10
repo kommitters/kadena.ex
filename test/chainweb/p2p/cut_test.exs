@@ -274,11 +274,11 @@ defmodule Kadena.Chainweb.P2P.CutTest do
 
   describe "publish/3" do
     setup do
-      # Application.put_env(:kadena, :http_client_impl, CannedCutRequests)
+      Application.put_env(:kadena, :http_client_impl, CannedCutRequests)
 
-      # on_exit(fn ->
-      #   Application.delete_env(:kadena, :http_client_impl)
-      # end)
+      on_exit(fn ->
+        Application.delete_env(:kadena, :http_client_impl)
+      end)
 
       origin = %{
         id: "VsCK48567Tu5v4NucnGiB7Wp6QSf2K2UjiBbxW_XSgE",
@@ -324,22 +324,22 @@ defmodule Kadena.Chainweb.P2P.CutTest do
 
     test "success", %{payload: payload, origin: origin} do
       {:ok, %{response: :no_content, status: 204}} =
-        Cut.publish(payload, origin, location: "us-e2", network_id: :mainnet01)
+        Cut.publish([payload: payload, origin: origin], location: "us-e2", network_id: :mainnet01)
     end
 
-    test "error when origin is nil", %{payload: payload} do
+    test "error with origin nil", %{payload: payload} do
       {:error, %Error{status: 400, title: "Cut is missing an origin entry"}} =
-        Cut.publish(payload, nil, location: "us-e2", network_id: :mainnet01)
+        Cut.publish([payload: payload], location: "us-e2", network_id: :mainnet01)
     end
 
-    test "error when origin is empty", %{payload: payload} do
+    test "error with origin empty", %{payload: payload} do
       {:error, %Error{status: 400, title: "Error in $.origin: key \"id\" not found"}} =
-        Cut.publish(payload, %{}, location: "us-e2", network_id: :mainnet01)
+        Cut.publish([payload: payload, origin: %{}], location: "us-e2", network_id: :mainnet01)
     end
 
-    test "error with not existing location error", %{payload: payload, origin: origin} do
+    test "error with a not existing location", %{payload: payload, origin: origin} do
       {:error, %Error{status: :network_error, title: :nxdomain}} =
-        Cut.publish(payload, origin, location: "col1", network_id: :mainnet01)
+        Cut.publish([payload: payload, origin: origin], location: "col1", network_id: :mainnet01)
     end
   end
 end
