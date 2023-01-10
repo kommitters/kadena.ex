@@ -78,6 +78,17 @@ defmodule Kadena.Chainweb.Client.CannedCutRequests do
 
   def request(
         :put,
+        "https://us1.testnet.chainweb.com/chainweb/0.0/testnet04/cut",
+        _headers,
+        _body,
+        _options
+      ) do
+    response = %{response: :no_content, status: 204}
+    {:ok, response}
+  end
+
+  def request(
+        :put,
         "https://us-e2.chainweb.com/chainweb/0.0/mainnet01/cut",
         _headers,
         body,
@@ -280,7 +291,7 @@ defmodule Kadena.Chainweb.P2P.CutTest do
         Application.delete_env(:kadena, :http_client_impl)
       end)
 
-      origin = %{
+      origin_mainnet = %{
         id: "VsCK48567Tu5v4NucnGiB7Wp6QSf2K2UjiBbxW_XSgE",
         address: %{
           hostname: "hetzner-eu-13-58.poolmon.net",
@@ -288,8 +299,45 @@ defmodule Kadena.Chainweb.P2P.CutTest do
         }
       }
 
+      origin_testnet = %{
+        id: "SMS0rJlkg59bwR9Vm0HlZGsBjyt56rJtSD5DXzd_r0g",
+        address: %{
+          hostname: "139.144.77.27",
+          port: 1788
+        }
+      }
+
       %{
-        payload: %CutResponse{
+        payload_testnet: %CutResponse{
+          hashes: %{
+            "0": %{hash: "k4sSYR2YCV-lrXrGvtdxS0OMDIohqkMRHZtVn8EjxQw", height: 2_892_544},
+            "1": %{hash: "M7JqlTZzkhtjU4XJrD4P61yD16DWB0vtBO_gxYF2NwY", height: 2_892_543},
+            "10": %{hash: "KLQeGKKP5rDa2XTFKrBPjTywVh6WOtlCAlNEmGq_E8k", height: 2_892_544},
+            "11": %{hash: "PB9q_J9T8H72L8jBWFrnv1UZ8akTLQAk4QE9qCgQdHs", height: 2_892_544},
+            "12": %{hash: "4hIRfbY1hocV45oTwohdmgQcV19cI2TkJsvEaacFglQ", height: 2_892_545},
+            "13": %{hash: "SxIZk18NB9U9UX1a5b3TC3zZW59thpQOVoPX-Uj7sXE", height: 2_892_544},
+            "14": %{hash: "KID4GH2VhMdArpnZbTKLSqo8SzVWUEHSxjF0pitvkiI", height: 2_892_545},
+            "15": %{hash: "m6Y65nMxkkIipzH_36cpe7ukNYM6QmyLq_5HbT12sM0", height: 2_892_545},
+            "16": %{hash: "UBxAWvGZy_yhLhDGUMgMgbn8ygqOu3jm-cfpy4xCzkQ", height: 2_892_544},
+            "17": %{hash: "r1aB7vEQUd6ivHihsWboPKBmffRH7ZdIbRt_LfZRJ6g", height: 2_892_545},
+            "18": %{hash: "gpvZszjV_Zjmy6cVQEdiX4TEnHQ1oXUNRwSP7uYpkxA", height: 2_892_545},
+            "19": %{hash: "gzZnNrZtwcDDZVYbSRkbf6CWtgDv4Gkm-zfnfMD6fxI", height: 2_892_544},
+            "2": %{hash: "M64LSHud2DhtxMX35T8IDAzd66OGW-TM7utFYpEcZjU", height: 2_892_544},
+            "3": %{hash: "s_-hack8xv2cdN6or0MCQM7djJbLyLB6_oML2kJ3Rms", height: 2_892_545},
+            "4": %{hash: "e-_CWdiWIIvyrls1loiiBlnfFV0N5r1MCbIFbU9tuuI", height: 2_892_545},
+            "5": %{hash: "0SZf0_jj7TLE9SICe8l5s441bIlSxRVu3--FFw3AdOk", height: 2_892_545},
+            "6": %{hash: "BxGtGfY0rP-I4UPgvHfrRIm4MkqHBTDWIFPqwZ2tNPU", height: 2_892_544},
+            "7": %{hash: "X0QUl32xZCtUvcseaTo1o8r2IgKqXrMAfdj4ctJg00U", height: 2_892_545},
+            "8": %{hash: "SVTK2_PZtUslGKnlX2BmEw4ss8myLTeOTbtLzdNgUPw", height: 2_892_545},
+            "9": %{hash: "gtZ6-HnkLOIO-Kwt9Pdfj2V38IDMcqbhsQMRpFBG2-0", height: 2_892_545}
+          },
+          height: 57_850_890,
+          id: "NiuWkgQIjlepKcJ_1_37SD32PI61aNHhxTIVNJQf0LA",
+          instance: "testnet04",
+          origin: nil,
+          weight: "v-oSR4rGAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        },
+        payload_mainnet: %CutResponse{
           hashes: %{
             "0": %{hash: "N5oyYlCvq6VvyoqioTQClWXAudf_ap3gqXxSpr4V32w", height: 3_362_200},
             "1": %{hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw", height: 3_362_200},
@@ -318,28 +366,49 @@ defmodule Kadena.Chainweb.P2P.CutTest do
           origin: nil,
           weight: "zrmhnWgsJ-5v9gMAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         },
-        origin: origin
+        origin_mainnet: origin_mainnet,
+        origin_testnet: origin_testnet
       }
     end
 
-    test "success", %{payload: payload, origin: origin} do
+    test "success", %{payload_mainnet: payload_mainnet, origin_mainnet: origin_mainnet} do
       {:ok, %{response: :no_content, status: 204}} =
-        Cut.publish([payload: payload, origin: origin], location: "us-e2", network_id: :mainnet01)
+        Cut.publish([payload: payload_mainnet, origin: origin_mainnet],
+          location: "us-e2",
+          network_id: :mainnet01
+        )
     end
 
-    test "error with origin nil", %{payload: payload} do
+    test "success with only required args", %{
+      payload_testnet: payload_testnet,
+      origin_testnet: origin_testnet
+    } do
+      {:ok, %{response: :no_content, status: 204}} =
+        Cut.publish(payload: payload_testnet, origin: origin_testnet)
+    end
+
+    test "error with an nil origin", %{payload_mainnet: payload_mainnet} do
       {:error, %Error{status: 400, title: "Cut is missing an origin entry"}} =
-        Cut.publish([payload: payload], location: "us-e2", network_id: :mainnet01)
+        Cut.publish([payload: payload_mainnet], location: "us-e2", network_id: :mainnet01)
     end
 
-    test "error with origin empty", %{payload: payload} do
+    test "error with an empty origin", %{payload_mainnet: payload_mainnet} do
       {:error, %Error{status: 400, title: "Error in $.origin: key \"id\" not found"}} =
-        Cut.publish([payload: payload, origin: %{}], location: "us-e2", network_id: :mainnet01)
+        Cut.publish([payload: payload_mainnet, origin: %{}],
+          location: "us-e2",
+          network_id: :mainnet01
+        )
     end
 
-    test "error with a not existing location", %{payload: payload, origin: origin} do
+    test "error with a not existing location", %{
+      payload_mainnet: payload_mainnet,
+      origin_mainnet: origin_mainnet
+    } do
       {:error, %Error{status: :network_error, title: :nxdomain}} =
-        Cut.publish([payload: payload, origin: origin], location: "col1", network_id: :mainnet01)
+        Cut.publish([payload: payload_mainnet, origin: origin_mainnet],
+          location: "col1",
+          network_id: :mainnet01
+        )
     end
   end
 end

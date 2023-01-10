@@ -913,6 +913,50 @@ BlockHash.retrieve_branches(payload, location: "us2", query_params: [limit: 4])
    next: nil
  }}
 ```
+
+#### Publish a cut to a Chainweb node.
+
+The receiving node will first try to obtain all missing dependencies from the node that is indicated in by the origin property before searching for the dependencies in the P2P network.
+
+```elixir
+Kadena.Chainweb.P2P.Cut.publish(payload_opts \\ [payload: nil, origin: nil ], network_opts \\ [network_id: :testnet04, location: "us1"])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+
+  Defaults to `[network_id: :testnet04, location: "us1"]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+- `payload_opts`: Payload options. Keyword list with:
+  - `payload` (required): A Cut info from a chainweb node, it is obtained via the [Cut endpoint (query)](#query-the-current-cut-from-a-chainweb-node).
+  - `origin` (required): Peer info object, it is obtained via the Peer endpoint.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Cut
+
+origin = %{
+  id: "SMS0rJlkg59bwR9Vm0HlZGsBjyt56rJtSD5DXzd_r0g",
+  address: %{
+    hostname: "139.144.77.27",
+    port: 1788
+  }
+}
+
+{:ok, payload} = Cut.retrieve()
+
+Cut.publish([payload: payload, origin: origin])
+
+{:ok, %{response: :no_content, status: 204}}
+```
+The status `204` means a cut was added to the cut processing pipeline of the remote node.
 ---
 
 ## Roadmap
