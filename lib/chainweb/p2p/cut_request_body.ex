@@ -26,7 +26,7 @@ defmodule Kadena.Chainweb.P2P.CutRequestBody do
   defstruct [:hashes, :height, :weight, :id, :instance, :origin]
 
   @impl true
-  def new(%CutResponse{} = payload), do: build_local_request_body(payload)
+  def new(%CutResponse{} = payload), do: build_cut_request_body(payload)
   def new(_payload), do: {:error, [payload: :not_a_cut_response]}
 
   @impl true
@@ -51,8 +51,8 @@ defmodule Kadena.Chainweb.P2P.CutRequestBody do
   @spec set_origin(payload :: t(), origin :: origin()) :: t()
   def set_origin(%__MODULE__{} = payload, origin), do: %{payload | origin: origin}
 
-  @spec build_local_request_body(payload :: cut_response()) :: t()
-  defp build_local_request_body(%CutResponse{} = payload) do
+  @spec build_cut_request_body(payload :: cut_response()) :: t()
+  defp build_cut_request_body(%CutResponse{} = payload) do
     attrs = Map.from_struct(payload)
     struct(%__MODULE__{}, attrs)
   end

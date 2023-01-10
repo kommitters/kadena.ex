@@ -8,18 +8,20 @@ defmodule Kadena.Chainweb.P2P.Cut do
   alias Kadena.Chainweb.P2P.{CutRequestBody, CutResponse}
   alias Kadena.Chainweb.{Error, Request}
 
-  @type opts :: Keyword.t()
+  @type network_opts :: Keyword.t()
   @type error :: {:error, Error.t()}
-  @type cut_response :: CutResponse.t() | error()
-  @type payload :: CutRequestBody.t()
+  @type cut_response :: CutResponse.t()
+  @type retrieve_response :: cut_response() | error()
+  @type payload_opts :: Keyword.t()
   @type origin :: map() | nil
+  @type publish_response :: {:ok, map} | error()
   @type json :: String.t()
 
-  @spec retrieve(opts :: opts()) :: cut_response()
-  def retrieve(opts \\ []) do
-    location = Keyword.get(opts, :location)
-    network_id = Keyword.get(opts, :network_id, :testnet04)
-    query_params = Keyword.get(opts, :query_params, [])
+  @spec retrieve(network_opts :: network_opts()) :: retrieve_response()
+  def retrieve(network_opts \\ []) do
+    location = Keyword.get(network_opts, :location)
+    network_id = Keyword.get(network_opts, :network_id, :testnet04)
+    query_params = Keyword.get(network_opts, :query_params, [])
 
     :get
     |> Request.new(p2p: [endpoint: @endpoint])
@@ -30,11 +32,13 @@ defmodule Kadena.Chainweb.P2P.Cut do
     |> Request.results(as: CutResponse)
   end
 
-  @spec publish(payload :: payload(), origin :: origin(), opts :: opts()) ::
-          error() | {:ok, map}
-  def publish(payload, origin, opts \\ []) do
-    location = Keyword.get(opts, :location)
-    network_id = Keyword.get(opts, :network_id, :testnet04)
+  @spec publish(payload_opts :: payload_opts(), network_opts :: network_opts()) ::
+          publish_response()
+  def publish(payload_opts \\ [], network_opts \\ []) do
+    location = Keyword.get(network_opts, :location)
+    network_id = Keyword.get(network_opts, :network_id, :testnet04)
+    payload = Keyword.get(payload_opts, :payload)
+    origin = Keyword.get(payload_opts, :origin)
     body = json_request_body(payload, origin)
     headers = [{"Content-Type", "application/json"}]
 
@@ -47,7 +51,7 @@ defmodule Kadena.Chainweb.P2P.Cut do
     |> Request.perform()
   end
 
-  @spec json_request_body(payload :: payload(), origin :: origin()) :: json()
+  @spec json_request_body(payload :: cut_response(), origin :: origin()) :: json()
   defp json_request_body(payload, origin) do
     payload
     |> CutRequestBody.new()
