@@ -162,7 +162,7 @@ defmodule Kadena.MixProject do
       ],
       "Chainweb P2P Types": [
         Kadena.Chainweb.P2P.CutResponse,
-        Kadena.Chainweb.P2P.CutRequestBody,
+        Kadena.Chainweb.P2P.CutRequestBody
       ],
       Utils: Kadena.Utils.MapCase
     ]

@@ -759,12 +759,12 @@ Two blocks from two different chains are said to be concurrent if either one of 
 #### Query the current cut from a Chainweb node
 
 ```elixir
-Kadena.Chainweb.P2P.Cut.retrieve(opts \\ [network_id: :testnet04, location: nil, query_params: nil])
+Kadena.Chainweb.P2P.Cut.retrieve(network_opts \\ [network_id: :testnet04, location: nil, query_params: nil])
 ```
 
 **Parameters**
 
-- `opts`: Network options. Keyword list with:
+- `network_opts`: Network options. Keyword list with:
   - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
   - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
     - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
