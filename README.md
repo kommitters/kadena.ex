@@ -805,6 +805,61 @@ Cut.retrieve(network_id: :mainnet01, location: "jp2", query_params: [maxheight: 
    weight: "LKml1d8BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
  }}
 ```
+
+### BlockHash
+
+These endpoints return block hashes from the chain database. Generally, block hashes are returned in ascending order and include hashes from orphaned blocks.
+
+For only querying blocks that are included in the winning `branch` of the chain the branch endpoint can be used, which returns blocks in descending order starting from the leafs of branches of the blockchain.
+
+
+#### Get Block Hashes
+
+A page of a collection of block hashes in ascending order that satisfies query parameters. Any block hash from the chain database is returned. This includes hashes of orphaned blocks.
+
+```elixir
+Kadena.Chainweb.P2P.BlockHash.retrieve(network_opts \\ [])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+
+  - `query_params` (optional): Query parameters. Keyword list with:
+
+    - `limit` (optional): Integer (`>=0`) that respresent the maximum number of records that may be returned.
+    - `next` (optional): String the cursor for the next page. This value can be found as value of the next property of the previous page.
+    - `minheight` (optional): Integer (`>=0`) that represents the minimum block heigt of the returned headers.
+    - `maxheight` (optional): Integer (`>=0`) that represents the maximum block heigt of the returned headers. 
+
+  Defaults to `[network_id: :testnet04, location: nil, chain_id: 0, query_params: []]` if not specified.
+
+**Example**
+
+```elixir
+
+alias Kadena.Chainweb.P2P.BlockHash
+
+BlockHash.retrieve(location: "eu1", query_params: [limit: 5])
+
+{:ok,
+ %Kadena.Chainweb.P2P.BlockHashResponse{
+   items: [
+     "r21zg8E011awAbEghzNBOI4RtKUZ-wHLkUwio-5dKpE",
+     "3eH11vI_wZuP3lEKcilfCx89_kZ78nFuJJbty44iNBo",
+     "M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA",
+     "4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI",
+     "jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"
+   ],
+   limit: 5,
+   next: "inclusive:gmV-pRi50fUcy2i9v8cba_HDjw2_GP47RKgpKD-0av8"
+ }}
+```
 ---
 
 ## Roadmap
