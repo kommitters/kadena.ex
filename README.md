@@ -864,10 +864,15 @@ BlockHash.retrieve(location: "eu1", query_params: [limit: 5])
 A page of block hashes from branches of the block chain in descending order. Only blocks are returned that are ancestors of the some block in the set of upper bounds and are not ancestors of any block in the set of lower bounds.
 
 ```elixir
-Kadena.Chainweb.P2P.BlockHash.retrieve_branches(payload_opts \\ [], network_opts \\ [])
+Kadena.Chainweb.P2P.BlockHash.retrieve_branches(payload \\ [], network_opts \\ [])
 ```
 
 **Parameters**
+- `payload`: Keyword list with:
+  - `lower`: Array of strings (Block Hash), no block hashes are returned that are predecessors of any block with a hash from this array.
+  - `upper`: Array of strings (Block Hash), returned block hashes are predecessors of a block with an hash from this array. This includes blocks with hashes from this array.
+
+  Defaults to `[lower: [], upper: []]` if not specified.
 
 - `network_opts`: Network options. Keyword list with:
   - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
@@ -882,13 +887,7 @@ Kadena.Chainweb.P2P.BlockHash.retrieve_branches(payload_opts \\ [], network_opts
     - `minheight` (optional): Integer (`>=0`) that represents the minimum block height of the returned headers.
     - `maxheight` (optional): Integer (`>=0`) that represents the maximum block height of the returned headers. 
 
-Defaults to `[network_id: :testnet04, location: nil, chain_id: 0, query_params: []]` if not specified.
-  
-- `payload_opts`: Payload options. Keyword list with:
-  - `lower`: Array of strings (Block Hash), no block hashes are returned that are predecessors of any block with a hash from this array.
-  - `upper`: Array of strings (Block Hash), returned block hashes are predecessors of a block with an hash from this array. This includes blocks with hashes from this array.
-
-Defaults to `[lower: [], upper: []]` if not specified.
+  Defaults to `[network_id: :testnet04, location: nil, chain_id: 0, query_params: []]` if not specified.
 
 **Example**
 

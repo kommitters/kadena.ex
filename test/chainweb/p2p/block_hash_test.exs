@@ -157,6 +157,17 @@ defmodule Kadena.Chainweb.Client.CannedBlockHashRequests do
         :post,
         "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/hash/branch",
         _headers,
+        "{\"lower\":[],\"upper\":[]}",
+        _options
+      ) do
+    response = Chainweb.fixture("block_hash_retrieve_branches_3")
+    {:ok, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/hash/branch",
+        _headers,
         _body,
         _options
       ) do
@@ -313,11 +324,20 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
            next: nil
          }}
 
+      success_response3 =
+        {:ok,
+         %BlockHashResponse{
+           items: [],
+           limit: 0,
+           next: nil
+         }}
+
       %{
         lower: lower,
         upper: upper,
         success_response: success_response,
-        success_response2: success_response2
+        success_response2: success_response2,
+        success_response3: success_response3
       }
     end
 
@@ -330,6 +350,10 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
 
     test "success with only upper", %{success_response2: success_response2, upper: upper} do
       ^success_response2 = BlockHash.retrieve_branches(upper: upper)
+    end
+
+    test "success with default params", %{success_response3: success_response3} do
+      ^success_response3 = BlockHash.retrieve_branches()
     end
 
     test "error when hashes not in the chain", %{lower: lower, upper: upper} do

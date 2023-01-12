@@ -5,12 +5,10 @@ defmodule Kadena.Chainweb.P2P.BlockHashRequestBody do
 
   @behaviour Kadena.Chainweb.Type
 
-  @type lower :: list(String.t())
-  @type upper :: list(String.t())
   @type error :: {:error, Keyword.t()}
-  @type args_validation :: {:ok, lower() | upper()} | error()
+  @type args_validation :: {:ok, list(String.t())} | error()
 
-  @type t :: %__MODULE__{lower: lower(), upper: upper()}
+  @type t :: %__MODULE__{lower: list(String.t()), upper: list(String.t())}
 
   defstruct [:lower, :upper]
 
@@ -26,7 +24,7 @@ defmodule Kadena.Chainweb.P2P.BlockHashRequestBody do
   def to_json!(%__MODULE__{lower: lower, upper: upper}),
     do: Jason.encode!(%{lower: lower, upper: upper})
 
-  @spec validate_args(args :: list()) :: args_validation()
+  @spec validate_args(args :: list(String.t())) :: args_validation()
   defp validate_args(args) when is_list(args), do: {:ok, args}
   defp validate_args(_args), do: {:error, [args: :not_a_string_list]}
 end
