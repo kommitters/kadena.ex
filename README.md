@@ -812,7 +812,6 @@ These endpoints return block hashes from the chain database. Generally, block ha
 
 For only querying blocks that are included in the winning `branch` of the chain the branch endpoint can be used, which returns blocks in descending order starting from the leafs of branches of the blockchain.
 
-
 #### Get Block Hashes
 
 A page of a collection of block hashes in ascending order that satisfies query parameters. Any block hash from the chain database is returned. This includes hashes of orphaned blocks.
@@ -828,12 +827,12 @@ Kadena.Chainweb.P2P.BlockHash.retrieve(network_opts \\ [])
   - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
     - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
     - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
-  - `chain_id` (required): Allowed values: integer or string-encoded integer from 0 to 19.
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
 
   - `query_params` (optional): Query parameters. Keyword list with:
 
     - `limit` (optional): Integer (`>=0`) that respresent the maximum number of records that may be returned.
-    - `next` (optional): String the cursor for the next page. This value can be found as value of the next property of the previous page.
+    - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
     - `minheight` (optional): Integer (`>=0`) that represents the minimum block heigt of the returned headers.
     - `maxheight` (optional): Integer (`>=0`) that represents the maximum block heigt of the returned headers. 
 

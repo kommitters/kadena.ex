@@ -33,12 +33,7 @@ defmodule Kadena.Chainweb.Network do
   def base_url(%Request{api_type: :p2p, network_id: network_id, chain_id: nil, location: location}),
       do: String.replace(@base_urls[network_id], "api", location)
 
-  def base_url(%Request{
-        api_type: :p2p,
-        network_id: network_id,
-        chain_id: chain_id,
-        location: nil
-      }),
+  def base_url(%Request{api_type: :p2p, network_id: network_id, chain_id: chain_id, location: nil}),
       do: "#{@base_urls[network_id]}/chain/#{chain_id}"
 
   def base_url(%Request{
