@@ -341,13 +341,13 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
        }} = BlockHash.retrieve_branches([lower: lower, upper: upper], chain_id: 1)
     end
 
-    test "error with upper hash not valid" do
+    test "error with an invalid upper hash" do
       {:error,
        %Error{status: 400, title: "Error in $.upper[0]: DecodeException \"not enough bytes\""}} =
         BlockHash.retrieve_branches(upper: [""])
     end
 
-    test "error with decode error" do
+    test "hash decode error" do
       {:error,
        %Error{
          status: 400,
@@ -355,7 +355,7 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
        }} = BlockHash.retrieve_branches(lower: ["hello"])
     end
 
-    test "error when upper and lower not a string list" do
+    test "hash parsing error" do
       {:error,
        %Error{
          status: 400,
