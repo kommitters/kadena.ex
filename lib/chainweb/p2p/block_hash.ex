@@ -40,7 +40,7 @@ defmodule Kadena.Chainweb.P2P.BlockHash do
     network_id = Keyword.get(network_opts, :network_id, :testnet04)
     chain_id = Keyword.get(network_opts, :chain_id, 0)
     query_params = Keyword.get(network_opts, :query_params, [])
-    body = json_request_body([lower: lower, upper: upper])
+    body = json_request_body(lower: lower, upper: upper)
     headers = [{"Content-Type", "application/json"}]
 
     :post
@@ -55,7 +55,7 @@ defmodule Kadena.Chainweb.P2P.BlockHash do
     |> Request.results(as: BlockHashResponse)
   end
 
-  @spec json_request_body(payload :: payload_opts())  :: json()
+  @spec json_request_body(payload :: payload_opts()) :: json()
   defp json_request_body(payload) do
     payload
     |> BlockHashRequestBody.new()
