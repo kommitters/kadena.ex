@@ -10,8 +10,7 @@ defmodule Kadena.Chainweb.P2P.BlockHash do
 
   @type network_opts :: Keyword.t()
   @type error :: {:error, Error.t()}
-  @type block_hash_response :: BlockHashResponse.t()
-  @type retrieve_response :: block_hash_response | error()
+  @type retrieve_response :: BlockHashResponse.t() | error()
 
   @spec retrieve(network_opts :: network_opts()) :: retrieve_response()
   def retrieve(network_opts \\ []) do

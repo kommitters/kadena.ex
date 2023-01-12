@@ -831,10 +831,10 @@ Kadena.Chainweb.P2P.BlockHash.retrieve(network_opts \\ [])
 
   - `query_params` (optional): Query parameters. Keyword list with:
 
-    - `limit` (optional): Integer (`>=0`) that respresent the maximum number of records that may be returned.
+    - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
     - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
-    - `minheight` (optional): Integer (`>=0`) that represents the minimum block heigt of the returned headers.
-    - `maxheight` (optional): Integer (`>=0`) that represents the maximum block heigt of the returned headers. 
+    - `minheight` (optional): Integer (`>=0`) that represents the minimum block height of the returned headers.
+    - `maxheight` (optional): Integer (`>=0`) that represents the maximum block height of the returned headers. 
 
   Defaults to `[network_id: :testnet04, location: nil, chain_id: 0, query_params: []]` if not specified.
 
