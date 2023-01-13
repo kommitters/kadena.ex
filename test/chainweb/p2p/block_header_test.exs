@@ -196,7 +196,7 @@ defmodule Kadena.Chainweb.P2P.BlockHeaderTest do
     end
 
     test "success with Accept decode header", %{success_response2: success_response2} do
-      ^success_response2 = BlockHeader.retrieve(header: :decode, query_params: [limit: 2])
+      ^success_response2 = BlockHeader.retrieve(format: :decode, query_params: [limit: 2])
     end
 
     test "success with all query params", %{success_response3: success_response3} do
