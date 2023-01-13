@@ -869,8 +869,8 @@ Kadena.Chainweb.P2P.BlockHash.retrieve_branches(payload \\ [], network_opts \\ [
 
 **Parameters**
 - `payload`: Keyword list with:
-  - `lower`: Array of strings (Block Hash), no block hashes are returned that are predecessors of any block with a hash from this array.
-  - `upper`: Array of strings (Block Hash), returned block hashes are predecessors of a block with an hash from this array. This includes blocks with hashes from this array.
+  - `lower` (required): Array of strings (Block Hash), no block hashes are returned that are predecessors of any block with a hash from this array.
+  - `upper` (required): Array of strings (Block Hash), returned block hashes are predecessors of a block with an hash from this array. This includes blocks with hashes from this array.
 
   Defaults to `[lower: [], upper: []]` if not specified.
 
@@ -894,13 +894,12 @@ Kadena.Chainweb.P2P.BlockHash.retrieve_branches(payload \\ [], network_opts \\ [
 ```elixir
 alias Kadena.Chainweb.P2P.BlockHash
 
-lower = ["r21zg8E011awAbEghzNBOI4RtKUZ-wHLkUwio-5dKpE"]
-upper = ["jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"]
+payload = [
+  lower: ["r21zg8E011awAbEghzNBOI4RtKUZ-wHLkUwio-5dKpE"],
+  upper: ["jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"]
+]
 
-BlockHash.retrieve_branches([lower: lower, upper: upper],
-  location: "us2",
-  query_params: [limit: 5]
-)
+BlockHash.retrieve_branches(payload, location: "us2", query_params: [limit: 4])
 
 {:ok,
  %Kadena.Chainweb.P2P.BlockHashResponse{
