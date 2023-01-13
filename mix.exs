@@ -91,11 +91,12 @@ defmodule Kadena.MixProject do
       ],
       "Kadena Chainweb": [
         Kadena.Chainweb.Client,
-        Kadena.Chainweb.Error,
         Kadena.Chainweb.Client.Default,
         Kadena.Chainweb.Client.Spec,
+        Kadena.Chainweb.Error,
         Kadena.Chainweb.Network,
         Kadena.Chainweb.P2P.BlockHash,
+        Kadena.Chainweb.Cut,
         Kadena.Chainweb.P2P.Cut,
         Kadena.Chainweb.Pact,
         Kadena.Chainweb.Pact.Listen,
@@ -163,16 +164,9 @@ defmodule Kadena.MixProject do
       ],
       "Chainweb P2P Types": [
         Kadena.Chainweb.P2P.CutResponse,
-<<<<<<< HEAD
-<<<<<<< HEAD
+        Kadena.Chainweb.P2P.CutRequestBody,
         Kadena.Chainweb.P2P.BlockHashResponse,
         Kadena.Chainweb.P2P.BlockHashRequestBody
-=======
-        Kadena.Chainweb.P2P.CutRequestBody,
->>>>>>> c16e564 (Update docs and improve code)
-=======
-        Kadena.Chainweb.P2P.CutRequestBody
->>>>>>> 5f93579 (Update README.md)
       ],
       Utils: Kadena.Utils.MapCase
     ]

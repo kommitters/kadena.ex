@@ -4,24 +4,14 @@ defmodule Kadena.Chainweb.P2P.CutResponse do
   """
   @behaviour Kadena.Chainweb.Type
 
-  @type hashes :: map()
-  @type height :: non_neg_integer()
-  @type id :: String.t()
-  @type instance :: String.t()
-  @type origin :: map() | nil
-  @type weight :: String.t()
+  alias Kadena.Chainweb.Cut
+  @type cut :: Cut.t()
 
-  @type t :: %__MODULE__{
-          hashes: hashes(),
-          height: height(),
-          weight: weight(),
-          origin: origin(),
-          id: id(),
-          instance: instance()
-        }
+  @type t :: %__MODULE__{cut: cut()}
 
-  defstruct [:hashes, :height, :weight, :id, :instance, :origin]
+  defstruct [:cut]
 
   @impl true
-  def new(attrs), do: struct(%__MODULE__{}, attrs)
+  def new(%Cut{} = cut), do: %__MODULE__{cut: cut}
+  def new(attrs), do: %__MODULE__{cut: Cut.new(attrs)}
 end

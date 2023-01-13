@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.P2P.CutRequestBody do
 
   @behaviour Kadena.Chainweb.Type
 
-  alias Kadena.Chainweb.P2P.CutResponse
+  alias Kadena.Chainweb.Cut
 
   @type hashes :: map()
   @type height :: non_neg_integer()
@@ -13,7 +13,7 @@ defmodule Kadena.Chainweb.P2P.CutRequestBody do
   @type instance :: String.t()
   @type weight :: String.t()
   @type origin :: map() | nil
-  @type cut_response :: CutResponse.t()
+  @type cut :: Cut.t()
 
   @type t :: %__MODULE__{
           hashes: hashes(),
@@ -26,8 +26,8 @@ defmodule Kadena.Chainweb.P2P.CutRequestBody do
   defstruct [:hashes, :height, :weight, :id, :instance, :origin]
 
   @impl true
-  def new(%CutResponse{} = payload), do: build_cut_request_body(payload)
-  def new(_payload), do: {:error, [payload: :not_a_cut_response]}
+  def new(%Cut{} = payload), do: build_cut_request_body(payload)
+  def new(_payload), do: {:error, [payload: :not_a_cut]}
 
   @impl true
   def to_json!(%__MODULE__{
@@ -48,11 +48,8 @@ defmodule Kadena.Chainweb.P2P.CutRequestBody do
           instance: instance
         })
 
-  @spec set_origin(payload :: t(), origin :: origin()) :: t()
-  def set_origin(%__MODULE__{} = payload, origin), do: %{payload | origin: origin}
-
-  @spec build_cut_request_body(payload :: cut_response()) :: t()
-  defp build_cut_request_body(%CutResponse{} = payload) do
+  @spec build_cut_request_body(payload :: cut()) :: t()
+  defp build_cut_request_body(%Cut{} = payload) do
     attrs = Map.from_struct(payload)
     struct(%__MODULE__{}, attrs)
   end
