@@ -859,6 +859,60 @@ BlockHash.retrieve(location: "eu1", query_params: [limit: 5])
    next: "inclusive:gmV-pRi50fUcy2i9v8cba_HDjw2_GP47RKgpKD-0av8"
  }}
 ```
+#### Get Block Hash Branches
+
+A page of block hashes from branches of the blockchain in descending order. Only blocks are returned that are ancestors of some block in the set of upper bounds and are not ancestors of any block in the set of lower bounds.
+
+```elixir
+Kadena.Chainweb.P2P.BlockHash.retrieve_branches(payload \\ [], network_opts \\ [])
+```
+
+**Parameters**
+- `payload`: Keyword list with:
+  - `lower` (required): Array of strings (Block Hash), no block hashes are returned that are predecessors of any block with a hash from this array.
+  - `upper` (required): Array of strings (Block Hash), returned block hashes are predecessors of a block with an hash from this array. This includes blocks with hashes from this array.
+
+  Defaults to `[lower: [], upper: []]` if not specified.
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+  - `query_params` (optional): Query parameters. Keyword list with:
+  
+    - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
+    - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
+    - `minheight` (optional): Integer (`>=0`) that represents the minimum block height of the returned headers.
+    - `maxheight` (optional): Integer (`>=0`) that represents the maximum block height of the returned headers. 
+
+  Defaults to `[network_id: :testnet04, location: nil, chain_id: 0, query_params: []]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.BlockHash
+
+payload = [
+  lower: ["r21zg8E011awAbEghzNBOI4RtKUZ-wHLkUwio-5dKpE"],
+  upper: ["jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"]
+]
+
+BlockHash.retrieve_branches(payload, location: "us2", query_params: [limit: 4])
+
+{:ok,
+ %Kadena.Chainweb.P2P.BlockHashResponse{
+   items: [
+     "jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk",
+     "4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI",
+     "M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA",
+     "3eH11vI_wZuP3lEKcilfCx89_kZ78nFuJJbty44iNBo"
+   ],
+   limit: 4,
+   next: nil
+ }}
+```
 ---
 
 ## Roadmap

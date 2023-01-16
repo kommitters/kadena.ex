@@ -4,7 +4,7 @@ defmodule Kadena.Chainweb.P2P.BlockHashResponse do
   """
   @behaviour Kadena.Chainweb.Type
 
-  @type next :: String.t()
+  @type next :: String.t() | nil
   @type limit :: non_neg_integer()
   @type items :: list()
 
