@@ -166,7 +166,7 @@ defmodule Kadena.Chainweb.Client.CannedBlockHashRequests do
 
   def request(
         :post,
-        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/hash/branch",
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/hash/branch?limit=5",
         _headers,
         _body,
         _options
@@ -261,28 +261,28 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
           ]
         )
     end
-  end
 
-  test "error with an invalid next" do
-    {:error,
-     %Error{
-       status: 400,
-       title:
-         "Error parsing query parameter next failed: TextFormatException \"missing ':' in next item: \\\"invalid\\\".\""
-     }} =
-      BlockHash.retrieve(
-        query_params: [limit: 5, next: "invalid", minheight: 0, maxheight: 50_000]
-      )
-  end
+    test "error with an invalid next" do
+      {:error,
+       %Error{
+         status: 400,
+         title:
+           "Error parsing query parameter next failed: TextFormatException \"missing ':' in next item: \\\"invalid\\\".\""
+       }} =
+        BlockHash.retrieve(
+          query_params: [limit: 5, next: "invalid", minheight: 0, maxheight: 50_000]
+        )
+    end
 
-  test "error with an invalid chain_id" do
-    {:error, %Error{status: 404, title: "not found"}} =
-      BlockHash.retrieve(network_id: :mainnet01, chain_id: "20")
-  end
+    test "error with an invalid chain_id" do
+      {:error, %Error{status: 404, title: "not found"}} =
+        BlockHash.retrieve(network_id: :mainnet01, chain_id: "20")
+    end
 
-  test "error with a non existing location" do
-    {:error, %Error{status: :network_error, title: :nxdomain}} =
-      BlockHash.retrieve(location: "col1", network_id: :mainnet01)
+    test "error with a non existing location" do
+      {:error, %Error{status: :network_error, title: :nxdomain}} =
+        BlockHash.retrieve(location: "col1", network_id: :mainnet01)
+    end
   end
 
   describe "retrieve_branches/2" do
@@ -295,6 +295,7 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
 
       lower = ["4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI"]
       upper = ["HHEJ8CfvcweMTfvSMBYlXLWv0v25Mt-4bK3RUi_L6ls"]
+      upper2 = ["PIwcqQQ9MGNsSq-4uzKHw-D9QeQaXmDKokB5uPvkoKE"]
 
       success_response =
         {:ok,
@@ -312,16 +313,14 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
         {:ok,
          %BlockHashResponse{
            items: [
-             "HHEJ8CfvcweMTfvSMBYlXLWv0v25Mt-4bK3RUi_L6ls",
-             "gmV-pRi50fUcy2i9v8cba_HDjw2_GP47RKgpKD-0av8",
-             "jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk",
-             "4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI",
-             "M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA",
-             "3eH11vI_wZuP3lEKcilfCx89_kZ78nFuJJbty44iNBo",
-             "r21zg8E011awAbEghzNBOI4RtKUZ-wHLkUwio-5dKpE"
+             "PIwcqQQ9MGNsSq-4uzKHw-D9QeQaXmDKokB5uPvkoKE",
+             "eX5DagBqbjeUQgzoktn6U2I6STAeOMUsctCiFdG5I-w",
+             "lcscUtkLIpIURnbzG1XH7XHgnGGhzP62JZ-7ltuPt7U",
+             "hw39zl3bDziJwWIovWRZMt7zzxWlOHAR5AVzxMLkyLo",
+             "W0hQlDDZB2GJwbG29Ty5EcxxHlCTxFO-SgUtAKG8hz0"
            ],
-           limit: 7,
-           next: nil
+           limit: 5,
+           next: "inclusive:8fiysjahEdnUeyjEPNv1B2joEWmUAHl-Weqm4Yp1OoY"
          }}
 
       success_response3 =
@@ -335,6 +334,7 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
       %{
         lower: lower,
         upper: upper,
+        upper2: upper2,
         success_response: success_response,
         success_response2: success_response2,
         success_response3: success_response3
@@ -348,8 +348,8 @@ defmodule Kadena.Chainweb.P2P.BlockHashTest do
         )
     end
 
-    test "success with only upper", %{success_response2: success_response2, upper: upper} do
-      ^success_response2 = BlockHash.retrieve_branches(upper: upper)
+    test "success with only upper", %{success_response2: success_response2, upper2: upper2} do
+      ^success_response2 = BlockHash.retrieve_branches([upper: upper2], query_params: [limit: 5])
     end
 
     test "success with default params", %{success_response3: success_response3} do
