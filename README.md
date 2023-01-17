@@ -812,12 +812,12 @@ Cut.retrieve(network_id: :mainnet01, location: "jp2", query_params: [maxheight: 
 The receiving node will first try to obtain all missing dependencies from the node that is indicated in by the origin property before searching for the dependencies in the P2P network.
 
 ```elixir
-Kadena.Chainweb.P2P.Cut.publish(payload , network_opts \\ [])
+Kadena.Chainweb.P2P.Cut.publish(cut , network_opts \\ [])
 ```
 
 **Parameters**
 
-- `payload`: A Cut struct which can be created with `Kadena.Chainweb.Cut.new()`
+- `cut`: A Cut struct which can be created with `Kadena.Chainweb.Cut.new()`
 - `network_opts`: Network options. Keyword list with:
 
   - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
@@ -851,16 +851,14 @@ id = "PXbSJgmFjN3A4DSz37ttYWmyrpDfzCoyivVflV3VL9A"
 instance = "mainnet01"
 weight = "zrmhnWgsJ-5v9gMAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 
-payload =
-  Chainweb.Cut.new()
-  |> Chainweb.Cut.set_hashes(hashes)
-  |> Chainweb.Cut.set_height(height)
-  |> Chainweb.Cut.set_weight(weight)
-  |> Chainweb.Cut.set_id(id)
-  |> Chainweb.Cut.set_instance(instance)
-  |> Chainweb.Cut.set_origin(origin)
-
-Cut.publish(payload)
+Chainweb.Cut.new()
+|> Chainweb.Cut.set_hashes(hashes)
+|> Chainweb.Cut.set_height(height)
+|> Chainweb.Cut.set_weight(weight)
+|> Chainweb.Cut.set_id(id)
+|> Chainweb.Cut.set_instance(instance)
+|> Chainweb.Cut.set_origin(origin)
+|> Cut.publish()
 
 {:ok,
  %Kadena.Chainweb.P2P.CutResponse{

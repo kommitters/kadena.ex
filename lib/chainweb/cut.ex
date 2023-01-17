@@ -4,7 +4,7 @@ defmodule Kadena.Chainweb.Cut do
   """
   @behaviour Kadena.Chainweb.Type
 
-  @type hashes :: map()
+  @type hashes :: map() | list()
   @type height :: non_neg_integer()
   @type id :: String.t()
   @type instance :: String.t()
@@ -32,12 +32,28 @@ defmodule Kadena.Chainweb.Cut do
   def new(_attrs), do: {:error, [args: :invalid_format]}
 
   @spec set_hashes(cut :: t(), hashes :: hashes()) :: result()
-  def set_hashes(%__MODULE__{} = cut, %{} = hashes), do: %{cut | hashes: hashes}
+  def set_hashes(%__MODULE__{} = cut, %{} = hashes), do: set_hashes(cut, Map.to_list(hashes))
+
+  def set_hashes(%__MODULE__{} = cut, [{chain_id, hash} | rest]) do
+    cut
+    |> add_hash(String.to_integer(Atom.to_string(chain_id)), hash)
+    |> set_hashes(rest)
+  end
+
+  def set_hashes(%__MODULE__{} = cut, []), do: cut
+
   def set_hashes(%__MODULE__{}, _hashes), do: {:error, [hashes: :not_a_map]}
+  def set_hashes({:error, reason}, _hashes), do: {:error, [hashes: reason]}
 
   @spec add_hash(cut :: t(), chain_id :: chain_id(), hash :: map()) :: result()
-  def add_hash(%__MODULE__{hashes: hashes} = cut, chain_id, %{} = hash) when chain_id in 0..19,
-    do: %{cut | hashes: Map.put(hashes, String.to_atom("#{chain_id}"), hash)}
+  def add_hash(
+        %__MODULE__{hashes: hashes} = cut,
+        chain_id,
+        %{hash: hash_value, height: height} = hash
+      )
+      when chain_id in 0..19 and is_binary(hash_value) and height >= 0 do
+    %{cut | hashes: Map.put(hashes, String.to_atom("#{chain_id}"), hash)}
+  end
 
   def add_hash(%__MODULE__{}, _chain_id, _hash), do: {:error, [args: :invalid]}
 
@@ -56,7 +72,13 @@ defmodule Kadena.Chainweb.Cut do
   def set_weight(%__MODULE__{}, _weight), do: {:error, [weight: :not_a_string]}
 
   @spec set_origin(cut :: t(), origin :: origin()) :: result()
-  def set_origin(%__MODULE__{} = cut, origin) when is_map(origin), do: %{cut | origin: origin}
+  def set_origin(%__MODULE__{} = cut, %{id: id, address: address} = origin) when is_map(origin) do
+    with {:ok, _id} <- validate_origin_id(id),
+         {:ok, _address} <- validate_origin_address(address) do
+      %{cut | origin: origin}
+    end
+  end
+
   def set_origin(%__MODULE__{}, _origin), do: {:error, [origin: :not_a_map]}
 
   @spec set_id(cut :: t(), id :: id()) :: result()
@@ -68,4 +90,13 @@ defmodule Kadena.Chainweb.Cut do
     do: %{cut | instance: instance}
 
   def set_instance(%__MODULE__{}, _instance), do: {:error, [instance: :not_a_string]}
+
+  defp validate_origin_id(id) when is_binary(id), do: {:ok, id}
+  defp validate_origin_id(_id), do: {:error, [id: :not_a_string]}
+
+  defp validate_origin_address(%{hostname: hostname, port: port} = address)
+       when is_binary(hostname) and port >= 0,
+       do: {:ok, address}
+
+  defp validate_origin_address(_address), do: {:error, [address: :invalid]}
 end

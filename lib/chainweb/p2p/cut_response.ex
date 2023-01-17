@@ -5,6 +5,7 @@ defmodule Kadena.Chainweb.P2P.CutResponse do
   @behaviour Kadena.Chainweb.Type
 
   alias Kadena.Chainweb.Cut
+
   @type cut :: Cut.t()
 
   @type t :: %__MODULE__{cut: cut()}

@@ -36,6 +36,11 @@ defmodule Kadena.Chainweb.CutTest do
       "1": %{hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw", height: 3_362_200}
     }
 
+    invalid_hashes = %{
+      "21": %{hash: "N5oyYlCvq6VvyoqioTQClWXAudf_ap3gqXxSpr4V32w", height: 3_362_200},
+      invalid: %{hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw", height: 3_362_200}
+    }
+
     hashes_with_removed_item = %{
       "1": %{hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw", height: 3_362_200}
     }
@@ -57,6 +62,7 @@ defmodule Kadena.Chainweb.CutTest do
       hashes: hashes,
       hashes2: hashes2,
       hashes_with_removed_item: hashes_with_removed_item,
+      invalid_hashes: invalid_hashes,
       height: height,
       id: id,
       instance: instance,
@@ -181,15 +187,19 @@ defmodule Kadena.Chainweb.CutTest do
       } = Cut.remove_hash(cut, 0)
     end
 
-    test "with an invalid hashes" do
+    test "with an invalid hashes: not a map" do
       {:error, [hashes: :not_a_map]} = Cut.set_hashes(Cut.new(), "invalid_value")
+    end
+
+    test "with an invalid hashes: invalid content", %{invalid_hashes: invalid_hashes} do
+      {:error, [hashes: [args: :invalid]]} = Cut.set_hashes(Cut.new(), invalid_hashes)
     end
 
     test "with an invalid hash: invalid map" do
       {:error, [args: :invalid]} = Cut.add_hash(Cut.new(), 2, "invalid_value")
     end
 
-    test "with an invalid hash: invalid chain_id" do
+    test "with an invalid hash: chain_id greater than 19" do
       {:error, [args: :invalid]} =
         Cut.add_hash(Cut.new(), 23, %{
           hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw",
@@ -197,7 +207,7 @@ defmodule Kadena.Chainweb.CutTest do
         })
     end
 
-    test "with an invalid hash: invalid chain_id 2" do
+    test "with an invalid hash: chain_id as string" do
       {:error, [args: :invalid]} =
         Cut.add_hash(Cut.new(), "invalid", %{
           hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw",
@@ -213,6 +223,42 @@ defmodule Kadena.Chainweb.CutTest do
           height: 3_362_200
         })
         |> Cut.remove_hash(25)
+    end
+
+    test "with and invalid origin id" do
+      origin_invalid = %{
+        id: nil,
+        address: %{
+          hostname: "hetzner-eu-13-58.poolmon.net",
+          port: 4443
+        }
+      }
+
+      {:error, [id: :not_a_string]} = Cut.set_origin(Cut.new(), origin_invalid)
+    end
+
+    test "with and invalid origin address hostname" do
+      origin_invalid = %{
+        id: "VsCK48567Tu5v4NucnGiB7Wp6QSf2K2UjiBbxW_XSgE",
+        address: %{
+          hostname: ["hetzner-eu-13-58.poolmon.net"],
+          port: 4443
+        }
+      }
+
+      {:error, [address: :invalid]} = Cut.set_origin(Cut.new(), origin_invalid)
+    end
+
+    test "with and invalid origin address port" do
+      origin_invalid = %{
+        id: "VsCK48567Tu5v4NucnGiB7Wp6QSf2K2UjiBbxW_XSgE",
+        address: %{
+          hostname: "hetzner-eu-13-58.poolmon.net",
+          port: -10
+        }
+      }
+
+      {:error, [address: :invalid]} = Cut.set_origin(Cut.new(), origin_invalid)
     end
 
     test "with an invalid height" do

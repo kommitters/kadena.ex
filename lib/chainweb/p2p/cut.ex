@@ -12,7 +12,7 @@ defmodule Kadena.Chainweb.P2P.Cut do
   @type network_id :: :mainnet01 | :testnet04
   @type error :: {:error, Error.t()}
   @type response :: {:ok, CutResponse.t()} | error()
-  @type payload :: Cut.t()
+  @type cut :: Cut.t()
   @type origin :: map() | nil
   @type json :: String.t()
   @type location :: String.t()
@@ -32,11 +32,11 @@ defmodule Kadena.Chainweb.P2P.Cut do
     |> Request.results(as: CutResponse)
   end
 
-  @spec publish(payload :: payload(), network_opts :: network_opts()) :: response()
-  def publish(%Cut{} = payload, network_opts \\ []) do
+  @spec publish(cut :: cut(), network_opts :: network_opts()) :: response()
+  def publish(%Cut{} = cut, network_opts \\ []) do
     network_id = Keyword.get(network_opts, :network_id, :testnet04)
     location = Keyword.get(network_opts, :location, set_default_location(network_id))
-    body = json_request_body(payload)
+    body = json_request_body(cut)
     headers = [{"Content-Type", "application/json"}]
 
     :put
@@ -46,12 +46,12 @@ defmodule Kadena.Chainweb.P2P.Cut do
     |> Request.add_body(body)
     |> Request.add_headers(headers)
     |> Request.perform()
-    |> return_response(payload)
+    |> return_response(cut)
   end
 
-  @spec json_request_body(payload :: payload()) :: json()
-  defp json_request_body(payload) do
-    payload
+  @spec json_request_body(cut :: cut()) :: json()
+  defp json_request_body(cut) do
+    cut
     |> CutRequestBody.new()
     |> CutRequestBody.to_json!()
   end
@@ -60,9 +60,9 @@ defmodule Kadena.Chainweb.P2P.Cut do
   defp set_default_location(:testnet04), do: "us1"
   defp set_default_location(:mainnet01), do: "us-e1"
 
-  @spec return_response(response :: {:ok, map()}, payload :: payload()) :: response()
-  defp return_response({:ok, %{response: :no_content, status: 204}}, payload),
-    do: {:ok, CutResponse.new(payload)}
+  @spec return_response(response :: {:ok, map()}, cut :: cut()) :: response()
+  defp return_response({:ok, %{response: :no_content, status: 204}}, cut),
+    do: {:ok, CutResponse.new(cut)}
 
-  defp return_response({:error, error}, _payload), do: {:error, error}
+  defp return_response({:error, error}, _cut), do: {:error, error}
 end
