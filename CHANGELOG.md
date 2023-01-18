@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0 (18.01.2023)
+
+- Added [Cut endpoints](https://github.com/kommitters/kadena.ex/issues/201)
+- Added [Block Hash endpoints](https://github.com/kommitters/kadena.ex/issues/202)
+- Blocked egress traffic in GitHub Actions
+
 ## 0.12.0 (03.01.2023)
 
 - Removed [List types](https://github.com/kommitters/kadena.ex/issues/169)
