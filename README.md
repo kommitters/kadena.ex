@@ -759,12 +759,12 @@ Two blocks from two different chains are said to be concurrent if either one of 
 #### Query the current cut from a Chainweb node
 
 ```elixir
-Kadena.Chainweb.P2P.Cut.retrieve(opts \\ [network_id: :testnet04, location: nil, query_params: nil])
+Kadena.Chainweb.P2P.Cut.retrieve(network_opts \\ [])
 ```
 
 **Parameters**
 
-- `opts`: Network options. Keyword list with:
+- `network_opts`: Network options. Keyword list with:
   - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
   - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
     - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
@@ -786,23 +786,102 @@ Cut.retrieve(network_id: :mainnet01, location: "jp2", query_params: [maxheight: 
 
 {:ok,
  %Kadena.Chainweb.P2P.CutResponse{
-   hashes: %{
-     "0": %{hash: "zkkjtWjiD68BcaISzjn5_y7-vQ3Yk2y3swhz7hm_7w8", height: 3654},
-     "1": %{hash: "M-tbkEAVpS0-v5dxu-rxhRkjcVZfSE1nKEBBxNvka_g", height: 3654},
-     "2": %{hash: "af5hWh0dUJoTGr5Bn8JxgDbAA97h6uqtclYi4SP95w8", height: 3654},
-     "3": %{hash: "1-XVBn9NO2-g53WFzX9YpYT-t10Rr3RWJTdydMxK7Qg", height: 3654},
-     "4": %{hash: "wphlMRCrkjVaIBlFNQdlTonLxGRebClL4DTHjZhgpXw", height: 3654},
-     "5": %{hash: "T6iaDkYwzMBIBEyXgkFQ-T4FMhS__g6DACs4C8O27gg", height: 3654},
-     "6": %{hash: "fX3NieTI5CjMs9VZEyfRqHg0B3ZKyxNkm7-p4TIfSZ4", height: 3654},
-     "7": %{hash: "ddZN5o0ZNrcgmCOaEhyWb0rmpl0QcBguwfmop6uQKpI", height: 3654},
-     "8": %{hash: "KEQkdXVF0nYujH43U0q-nkwDIUViZnncWol78Spoxow", height: 3654},
-     "9": %{hash: "qqCoe3VfCyH6vJmn22RLIzD8DrDrKKjKlPn15UQ25TU", height: 3654}
-   },
-   height: 36540,
-   id: "DeYKC0r8tXxZRYyx-S49sVzFCAZ8TZT3J1UlVSVmjCA",
-   instance: "mainnet01",
-   origin: nil,
-   weight: "LKml1d8BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   cut: %Kadena.Chainweb.Cut{
+     hashes: %{
+       "0": %{hash: "zkkjtWjiD68BcaISzjn5_y7-vQ3Yk2y3swhz7hm_7w8", height: 3654},
+       "1": %{hash: "M-tbkEAVpS0-v5dxu-rxhRkjcVZfSE1nKEBBxNvka_g", height: 3654},
+       "2": %{hash: "af5hWh0dUJoTGr5Bn8JxgDbAA97h6uqtclYi4SP95w8", height: 3654},
+       "3": %{hash: "1-XVBn9NO2-g53WFzX9YpYT-t10Rr3RWJTdydMxK7Qg", height: 3654},
+       "4": %{hash: "wphlMRCrkjVaIBlFNQdlTonLxGRebClL4DTHjZhgpXw", height: 3654},
+       "5": %{hash: "T6iaDkYwzMBIBEyXgkFQ-T4FMhS__g6DACs4C8O27gg", height: 3654},
+       "6": %{hash: "fX3NieTI5CjMs9VZEyfRqHg0B3ZKyxNkm7-p4TIfSZ4", height: 3654},
+       "7": %{hash: "ddZN5o0ZNrcgmCOaEhyWb0rmpl0QcBguwfmop6uQKpI", height: 3654},
+       "8": %{hash: "KEQkdXVF0nYujH43U0q-nkwDIUViZnncWol78Spoxow", height: 3654},
+       "9": %{hash: "qqCoe3VfCyH6vJmn22RLIzD8DrDrKKjKlPn15UQ25TU", height: 3654}
+     },
+     height: 36540,
+     id: "DeYKC0r8tXxZRYyx-S49sVzFCAZ8TZT3J1UlVSVmjCA",
+     instance: "mainnet01",
+     origin: nil,
+     weight: "LKml1d8BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   }
+ }}
+```
+#### Publish a cut to a Chainweb node
+
+The receiving node will first try to obtain all missing dependencies from the node that is indicated in by the origin property before searching for the dependencies in the P2P network.
+
+```elixir
+Kadena.Chainweb.P2P.Cut.publish(cut , network_opts \\ [])
+```
+
+**Parameters**
+
+- `cut`: A Cut struct which can be created with `Kadena.Chainweb.Cut.new()`
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+
+  Defaults to `[network_id: :testnet04, location: "us1"]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Cut
+alias Kadena.Chainweb 
+
+origin = %{
+  id: "SMS0rJlkg59bwR9Vm0HlZGsBjyt56rJtSD5DXzd_r0g",
+  address: %{
+    hostname: "139.144.77.27",
+    port: 1788
+  }
+}
+
+hashes = %{
+  "0": %{hash: "N5oyYlCvq6VvyoqioTQClWXAudf_ap3gqXxSpr4V32w", height: 3_362_200},
+  "1": %{hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw", height: 3_362_200}
+}
+
+height = 67_243_992
+id = "PXbSJgmFjN3A4DSz37ttYWmyrpDfzCoyivVflV3VL9A"
+instance = "mainnet01"
+weight = "zrmhnWgsJ-5v9gMAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+
+Chainweb.Cut.new()
+|> Chainweb.Cut.set_hashes(hashes)
+|> Chainweb.Cut.set_height(height)
+|> Chainweb.Cut.set_weight(weight)
+|> Chainweb.Cut.set_id(id)
+|> Chainweb.Cut.set_instance(instance)
+|> Chainweb.Cut.set_origin(origin)
+|> Cut.publish()
+
+{:ok,
+ %Kadena.Chainweb.P2P.CutResponse{
+   cut: %Kadena.Chainweb.Cut{
+     hashes: %{
+       "0": %{
+         hash: "N5oyYlCvq6VvyoqioTQClWXAudf_ap3gqXxSpr4V32w",
+         height: 3_362_200
+       },
+       "1": %{
+         hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw",
+         height: 3_362_200
+       }
+     },
+     height: 67_243_992,
+     id: "PXbSJgmFjN3A4DSz37ttYWmyrpDfzCoyivVflV3VL9A",
+     instance: "mainnet01",
+     origin: %{
+       address: %{hostname: "139.144.77.27", port: 1788},
+       id: "SMS0rJlkg59bwR9Vm0HlZGsBjyt56rJtSD5DXzd_r0g"
+     },
+     weight: "zrmhnWgsJ-5v9gMAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   }
  }}
 ```
 
