@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.12.0"
+  @version "0.13.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -91,10 +91,13 @@ defmodule Kadena.MixProject do
       ],
       "Kadena Chainweb": [
         Kadena.Chainweb.Client,
-        Kadena.Chainweb.Error,
         Kadena.Chainweb.Client.Default,
         Kadena.Chainweb.Client.Spec,
+        Kadena.Chainweb.Error,
         Kadena.Chainweb.Network,
+        Kadena.Chainweb.P2P.BlockHash,
+        Kadena.Chainweb.Cut,
+        Kadena.Chainweb.P2P.Cut,
         Kadena.Chainweb.Pact,
         Kadena.Chainweb.Pact.Listen,
         Kadena.Chainweb.Pact.Local,
@@ -158,6 +161,12 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.Pact.SendResponse,
         Kadena.Chainweb.Pact.SPVRequestBody,
         Kadena.Chainweb.Pact.SPVResponse
+      ],
+      "Chainweb P2P Types": [
+        Kadena.Chainweb.P2P.CutResponse,
+        Kadena.Chainweb.P2P.CutRequestBody,
+        Kadena.Chainweb.P2P.BlockHashResponse,
+        Kadena.Chainweb.P2P.BlockHashRequestBody
       ],
       Utils: Kadena.Utils.MapCase
     ]

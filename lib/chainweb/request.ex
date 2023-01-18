@@ -22,6 +22,7 @@ defmodule Kadena.Chainweb.Request do
   @type params :: Keyword.t()
   @type response :: {:ok, map()} | {:error, Error.t()}
   @type parsed_response :: {:ok, struct()} | {:error, Error.t()}
+  @type location :: String.t() | nil
 
   @type t :: %__MODULE__{
           method: method(),
@@ -34,8 +35,9 @@ defmodule Kadena.Chainweb.Request do
           segment_path: path(),
           query: query(),
           headers: headers(),
-          body: body(),
-          encoded_query: encoded_query()
+          encoded_query: encoded_query(),
+          location: location(),
+          body: body()
         }
 
   defstruct [
@@ -49,8 +51,9 @@ defmodule Kadena.Chainweb.Request do
     :segment_path,
     :query,
     :headers,
-    :body,
-    :encoded_query
+    :encoded_query,
+    :location,
+    body: ""
   ]
 
   @spec new(method :: method(), opts :: opts()) :: t()
@@ -75,6 +78,9 @@ defmodule Kadena.Chainweb.Request do
       headers: []
     }
   end
+
+  @spec set_location(t(), location :: location()) :: t()
+  def set_location(%__MODULE__{} = request, location), do: %{request | location: location}
 
   @spec set_chain_id(t(), chain_id :: chain_id()) :: t()
   def set_chain_id(%__MODULE__{} = request, chain_id), do: %{request | chain_id: chain_id}

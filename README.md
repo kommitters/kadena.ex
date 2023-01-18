@@ -25,7 +25,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.11.1"}
+    {:kadena, "~> 0.13.0"}
   ]
 end
 ```
@@ -746,11 +746,257 @@ Chainweb.Pact.spv(payload, network_id: :testnet04, chain_id: 1)
      "eyJjaGFpbiI6Miwib2JqZWN0IjoiQUFBQUVBQUFBQUFBQUFBQ0FBRm5kSVUwc0tpRHJvUWQ0LWJxbHA4dThxd3BpdXRvdXVFXzFxY1JteUNsQUtBN1BRSGxRcTlPMmpQT0E3VlI5bXhVZm4yVDhGdjcxTFFfVTM3eEw5Q3hBYTdkN0lnWUFUZUgxLWNEb3RJbnVyRFZMX1FjYzJyTzFtR3BvY21TcWlfeUFiR1JrXzVnT0Jka0JXVWVLS0lnRHN1YWlmbGt4S0R0alJfSndSSmxPd2w3QUZ0ZWxrZXNWVkZ6aUMyUXgwUFczSmJPY3pQOFVINjRteVNWTTNHUGhxUE5BYWdtUEpTenRsUlNSOTJhNUl5d1dZYVlmREVweUljLWNwSG9VSDdSWTBWZkFGVmVlZG1qbUFZS1l4RTdoS1VZa0gtLWN0dkFWbUFuQWlPYm1xUmFsUnlfQUt0RWJnOU9BSzNyTUZfM01STUpkODFpZmJCdnBHT2Jxckk5bXZEU1U0cEpBYjMtcTdXYU9hTWVVVk9XdlI4NUxLQW9qbFdXLVRmeVdrRXJMLXBreGZtNkFPOURadkNIOExiZkwzYlFXOWRKbUN0VHRteXI3N3pNZGxNaGVvb1k5OHNDQWRKcF9rN0hNUXJpLUtSTEFWeHJkT1dCOEt4dk13UldsaDNHQTRFa2ZFTnhBSW83N29OWGlKb3hLOUdqWFVwcGJXWnhDY1Q5TVJwQ0NHTURsVndmdkpaREFOMlpWZW8wSUxVOXd1XzNlOTRLUUEtUk9SNk1LUFFBeWJ4VHczUzVLbFg4QVg2aFhmODljMGpLRzBqeUQ0cVZxR2hhaGp0ZjNsRGdaekdPbEhDY3FNd2NBQ01yVTEyM3VHbnRUTnpUVVljREF5bTZnU1c2MUxWeFp5SjZxMjBoQzRSR0FPQUxJbGVBVy1tYVlBdXVkN08xeGhQbVFlcFg0MzhrWXJCOVd1Z3ZRUXg4Iiwic3ViamVjdCI6eyJpbnB1dCI6IkFCUjdJbWRoY3lJNk1qTXpMQ0p5WlhOMWJIUWlPbnNpYzNSaGRIVnpJam9pYzNWalkyVnpjeUlzSW1SaGRHRWlPak45TENKeVpYRkxaWGtpT2lKV1FqUmFTMjlpZW5Wdk5VTjNkalZNVkRsclYwdG5MVE0wZFRkTFdqQlBiemcwYW01SmFYVnFWRWRqSWl3aWJHOW5jeUk2SWxBelEwUldWV0pEVTFOeldIVnJVSHAwYTIxTWFrcE1OM1J6ZUU1T1NYVlFTRXQ1YUVkTlJGOHdkMFVpTENKbGRtVnVkSE1pT2x0N0luQmhjbUZ0Y3lJNld5SnJPbVF4WVRNMk1XUTNNakZqWmpneFpHSmpNakZtTmpjMlpUWTRPVGRtTjJVM1lUTXpOalkzTVdNd1pEVmtNalZtT0Rkak1UQTVNek5qWVdNMlpEaGpaamNpTENKck9tUmlOemMyTnprelltVXdabU5tT0dVM05tTTNOV0prWWpNMVlUTTJaVFkzWmpJNU9ERXhNV1JqTmpFME5XTTJOalk1TTJJd01UTXpNVGt5WlRJMk1UWWlMREl1TXpObExUUmRMQ0p1WVcxbElqb2lWRkpCVGxOR1JWSWlMQ0p0YjJSMWJHVWlPbnNpYm1GdFpYTndZV05sSWpwdWRXeHNMQ0p1WVcxbElqb2lZMjlwYmlKOUxDSnRiMlIxYkdWSVlYTm9Jam9pY2tVM1JGVTRhbXhSVERsNFgwMVFXWFZ1YVZwS1pqVkpRMEpVUVVWSVFVbEdVVU5DTkdKc2IyWlFOQ0o5WFN3aWJXVjBZVVJoZEdFaU9tNTFiR3dzSW1OdmJuUnBiblZoZEdsdmJpSTZiblZzYkN3aWRIaEpaQ0k2TkRJM01qVXdNSDAifSwiYWxnb3JpdGhtIjoiU0hBNTEydF8yNTYifQ"
  }}
 ```
+## Chainweb P2P API
+
+Interaction with [Chainweb P2P API][chainweb_p2p_api_doc] is done through different modules that implement functions to access the endpoints.
+
+### Cut
+
+A cut represents a distributed state of a chainweb. It references one block header for each chain, such that those blocks are pairwise concurrent.
+
+Two blocks from two different chains are said to be concurrent if either one of them is an adjacent parent (is a direct dependency) of the other or if the blocks do not depend at all on each other.
+
+#### Query the current cut from a Chainweb node
+
+```elixir
+Kadena.Chainweb.P2P.Cut.retrieve(network_opts \\ [])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+
+  - `query_params` (optional): Query parameters. Keyword list with:
+
+    - `maxheight` (optional): Integer or string-encoded integer `>= 0`, represents the maximum cut height of the returned cut.
+
+  Defaults to `[network_id: :testnet04, location: nil, query_params: []]` if not specified.
+
+**Example**
+
+```elixir
+
+alias Kadena.Chainweb.P2P.Cut
+
+Cut.retrieve(network_id: :mainnet01, location: "jp2", query_params: [maxheight: 36543])
+
+{:ok,
+ %Kadena.Chainweb.P2P.CutResponse{
+   cut: %Kadena.Chainweb.Cut{
+     hashes: %{
+       "0": %{hash: "zkkjtWjiD68BcaISzjn5_y7-vQ3Yk2y3swhz7hm_7w8", height: 3654},
+       "1": %{hash: "M-tbkEAVpS0-v5dxu-rxhRkjcVZfSE1nKEBBxNvka_g", height: 3654},
+       "2": %{hash: "af5hWh0dUJoTGr5Bn8JxgDbAA97h6uqtclYi4SP95w8", height: 3654},
+       "3": %{hash: "1-XVBn9NO2-g53WFzX9YpYT-t10Rr3RWJTdydMxK7Qg", height: 3654},
+       "4": %{hash: "wphlMRCrkjVaIBlFNQdlTonLxGRebClL4DTHjZhgpXw", height: 3654},
+       "5": %{hash: "T6iaDkYwzMBIBEyXgkFQ-T4FMhS__g6DACs4C8O27gg", height: 3654},
+       "6": %{hash: "fX3NieTI5CjMs9VZEyfRqHg0B3ZKyxNkm7-p4TIfSZ4", height: 3654},
+       "7": %{hash: "ddZN5o0ZNrcgmCOaEhyWb0rmpl0QcBguwfmop6uQKpI", height: 3654},
+       "8": %{hash: "KEQkdXVF0nYujH43U0q-nkwDIUViZnncWol78Spoxow", height: 3654},
+       "9": %{hash: "qqCoe3VfCyH6vJmn22RLIzD8DrDrKKjKlPn15UQ25TU", height: 3654}
+     },
+     height: 36540,
+     id: "DeYKC0r8tXxZRYyx-S49sVzFCAZ8TZT3J1UlVSVmjCA",
+     instance: "mainnet01",
+     origin: nil,
+     weight: "LKml1d8BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   }
+ }}
+```
+#### Publish a cut to a Chainweb node
+
+The receiving node will first try to obtain all missing dependencies from the node that is indicated in by the origin property before searching for the dependencies in the P2P network.
+
+```elixir
+Kadena.Chainweb.P2P.Cut.publish(cut , network_opts \\ [])
+```
+
+**Parameters**
+
+- `cut`: A Cut struct which can be created with `Kadena.Chainweb.Cut.new()`
+- `network_opts`: Network options. Keyword list with:
+
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+
+  Defaults to `[network_id: :testnet04, location: "us1"]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Cut
+alias Kadena.Chainweb 
+
+origin = %{
+  id: "SMS0rJlkg59bwR9Vm0HlZGsBjyt56rJtSD5DXzd_r0g",
+  address: %{
+    hostname: "139.144.77.27",
+    port: 1788
+  }
+}
+
+hashes = %{
+  "0": %{hash: "N5oyYlCvq6VvyoqioTQClWXAudf_ap3gqXxSpr4V32w", height: 3_362_200},
+  "1": %{hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw", height: 3_362_200}
+}
+
+height = 67_243_992
+id = "PXbSJgmFjN3A4DSz37ttYWmyrpDfzCoyivVflV3VL9A"
+instance = "mainnet01"
+weight = "zrmhnWgsJ-5v9gMAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+
+Chainweb.Cut.new()
+|> Chainweb.Cut.set_hashes(hashes)
+|> Chainweb.Cut.set_height(height)
+|> Chainweb.Cut.set_weight(weight)
+|> Chainweb.Cut.set_id(id)
+|> Chainweb.Cut.set_instance(instance)
+|> Chainweb.Cut.set_origin(origin)
+|> Cut.publish()
+
+{:ok,
+ %Kadena.Chainweb.P2P.CutResponse{
+   cut: %Kadena.Chainweb.Cut{
+     hashes: %{
+       "0": %{
+         hash: "N5oyYlCvq6VvyoqioTQClWXAudf_ap3gqXxSpr4V32w",
+         height: 3_362_200
+       },
+       "1": %{
+         hash: "CK2XPSueEx8EdkIehFMUadEBnMKZTPOfgM5-fEyoYbw",
+         height: 3_362_200
+       }
+     },
+     height: 67_243_992,
+     id: "PXbSJgmFjN3A4DSz37ttYWmyrpDfzCoyivVflV3VL9A",
+     instance: "mainnet01",
+     origin: %{
+       address: %{hostname: "139.144.77.27", port: 1788},
+       id: "SMS0rJlkg59bwR9Vm0HlZGsBjyt56rJtSD5DXzd_r0g"
+     },
+     weight: "zrmhnWgsJ-5v9gMAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   }
+ }}
+```
+
+### BlockHash
+
+These endpoints return block hashes from the chain database. Generally, block hashes are returned in ascending order and include hashes from orphaned blocks.
+
+For only querying blocks that are included in the winning `branch` of the chain the branch endpoint can be used, which returns blocks in descending order starting from the leafs of branches of the blockchain.
+
+#### Get Block Hashes
+
+A page of a collection of block hashes in ascending order that satisfies query parameters. Any block hash from the chain database is returned. This includes hashes of orphaned blocks.
+
+```elixir
+Kadena.Chainweb.P2P.BlockHash.retrieve(network_opts \\ [])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+
+  - `query_params` (optional): Query parameters. Keyword list with:
+
+    - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
+    - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
+    - `minheight` (optional): Integer (`>=0`) that represents the minimum block height of the returned headers.
+    - `maxheight` (optional): Integer (`>=0`) that represents the maximum block height of the returned headers. 
+
+  Defaults to `[network_id: :testnet04, location: nil, chain_id: 0, query_params: []]` if not specified.
+
+**Example**
+
+```elixir
+
+alias Kadena.Chainweb.P2P.BlockHash
+
+BlockHash.retrieve(location: "eu1", query_params: [limit: 5])
+
+{:ok,
+ %Kadena.Chainweb.P2P.BlockHashResponse{
+   items: [
+     "r21zg8E011awAbEghzNBOI4RtKUZ-wHLkUwio-5dKpE",
+     "3eH11vI_wZuP3lEKcilfCx89_kZ78nFuJJbty44iNBo",
+     "M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA",
+     "4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI",
+     "jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"
+   ],
+   limit: 5,
+   next: "inclusive:gmV-pRi50fUcy2i9v8cba_HDjw2_GP47RKgpKD-0av8"
+ }}
+```
+#### Get Block Hash Branches
+
+A page of block hashes from branches of the blockchain in descending order. Only blocks are returned that are ancestors of some block in the set of upper bounds and are not ancestors of any block in the set of lower bounds.
+
+```elixir
+Kadena.Chainweb.P2P.BlockHash.retrieve_branches(payload \\ [], network_opts \\ [])
+```
+
+**Parameters**
+- `payload`: Keyword list with:
+  - `lower` (required): Array of strings (Block Hash), no block hashes are returned that are predecessors of any block with a hash from this array.
+  - `upper` (required): Array of strings (Block Hash), returned block hashes are predecessors of a block with an hash from this array. This includes blocks with hashes from this array.
+
+  Defaults to `[lower: [], upper: []]` if not specified.
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+  - `query_params` (optional): Query parameters. Keyword list with:
+  
+    - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
+    - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
+    - `minheight` (optional): Integer (`>=0`) that represents the minimum block height of the returned headers.
+    - `maxheight` (optional): Integer (`>=0`) that represents the maximum block height of the returned headers. 
+
+  Defaults to `[network_id: :testnet04, location: nil, chain_id: 0, query_params: []]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.BlockHash
+
+payload = [
+  lower: ["r21zg8E011awAbEghzNBOI4RtKUZ-wHLkUwio-5dKpE"],
+  upper: ["jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"]
+]
+
+BlockHash.retrieve_branches(payload, location: "us2", query_params: [limit: 4])
+
+{:ok,
+ %Kadena.Chainweb.P2P.BlockHashResponse{
+   items: [
+     "jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk",
+     "4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI",
+     "M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA",
+     "3eH11vI_wZuP3lEKcilfCx89_kZ78nFuJJbty44iNBo"
+   ],
+   limit: 4,
+   next: nil
+ }}
+```
 ---
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.13`
+The latest updated branch to target a PR is `v0.14`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
@@ -830,3 +1076,4 @@ Made with 💙 by [kommitters Open Source](https://kommit.co)
 [jason_url]: https://github.com/michalmuskala/jason
 [chainweb_pact_api_doc]: https://api.chainweb.com/openapi/pact.html
 [chainweb_pact_api]: https://github.com/kommitters/kadena.ex/blob/main/lib/chainweb/pact.ex
+[chainweb_p2p_api_doc]: https://api.chainweb.com/openapi/#tag/p2p_api

@@ -3,7 +3,7 @@ defmodule Kadena.Chainweb.Pact.CommandResult do
   `CommandResult` struct definition.
   """
 
-  @behaviour Kadena.Chainweb.Pact.Type
+  @behaviour Kadena.Chainweb.Type
 
   @type req_key :: String.t()
   @type tx_id :: number() | nil

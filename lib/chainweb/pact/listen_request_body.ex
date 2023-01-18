@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.Pact.ListenRequestBody do
 
   alias Kadena.Types.Base64Url
 
-  @behaviour Kadena.Chainweb.Pact.Type
+  @behaviour Kadena.Chainweb.Type
 
   @type listen :: Base64Url.t()
 

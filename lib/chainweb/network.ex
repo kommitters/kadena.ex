@@ -16,12 +16,6 @@ defmodule Kadena.Chainweb.Network do
   def base_url(%Request{network_id: nil}), do: nil
   def base_url(%Request{api_type: :pact, chain_id: nil}), do: nil
 
-  def base_url(%Request{api_type: :p2p, network_id: network_id, chain_id: nil}),
-    do: @base_urls[network_id]
-
-  def base_url(%Request{api_type: :p2p, network_id: network_id, chain_id: chain_id}),
-    do: "#{@base_urls[network_id]}/chain/#{chain_id}"
-
   def base_url(%Request{
         api_type: :pact,
         endpoint: "spv",
@@ -32,4 +26,21 @@ defmodule Kadena.Chainweb.Network do
 
   def base_url(%Request{api_type: :pact, network_id: network_id, chain_id: chain_id}),
     do: "#{@base_urls[network_id]}/chain/#{chain_id}/pact/api/v1"
+
+  def base_url(%Request{api_type: :p2p, network_id: network_id, chain_id: nil, location: nil}),
+    do: @base_urls[network_id]
+
+  def base_url(%Request{api_type: :p2p, network_id: network_id, chain_id: nil, location: location}),
+      do: String.replace(@base_urls[network_id], "api", location)
+
+  def base_url(%Request{api_type: :p2p, network_id: network_id, chain_id: chain_id, location: nil}),
+      do: "#{@base_urls[network_id]}/chain/#{chain_id}"
+
+  def base_url(%Request{
+        api_type: :p2p,
+        network_id: network_id,
+        chain_id: chain_id,
+        location: location
+      }),
+      do: String.replace(@base_urls[network_id], "api", location) <> "/chain/#{chain_id}"
 end

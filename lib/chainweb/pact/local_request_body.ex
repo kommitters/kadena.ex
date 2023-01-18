@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.Pact.LocalRequestBody do
 
   alias Kadena.Types.{Command, PactTransactionHash, Signature}
 
-  @behaviour Kadena.Chainweb.Pact.Type
+  @behaviour Kadena.Chainweb.Type
 
   @type command :: Command.t()
   @type hash :: PactTransactionHash.t()

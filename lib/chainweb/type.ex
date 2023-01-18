@@ -1,6 +1,6 @@
-defmodule Kadena.Chainweb.Pact.Type do
+defmodule Kadena.Chainweb.Type do
   @moduledoc """
-  Specifies the contracts to build the Chainweb types for Pact's endpoints.
+  Specifies the contracts to build the Chainweb types for endpoints.
   """
 
   @type attrs :: map() | struct() | Keyword.t() | list() | String.t()
