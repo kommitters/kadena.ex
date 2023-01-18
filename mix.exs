@@ -98,6 +98,7 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.P2P.BlockHash,
         Kadena.Chainweb.Cut,
         Kadena.Chainweb.P2P.Cut,
+        Kadena.Chainweb.P2P.BlockHeader,
         Kadena.Chainweb.Pact,
         Kadena.Chainweb.Pact.Listen,
         Kadena.Chainweb.Pact.Local,
@@ -166,7 +167,8 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.P2P.CutResponse,
         Kadena.Chainweb.P2P.CutRequestBody,
         Kadena.Chainweb.P2P.BlockHashResponse,
-        Kadena.Chainweb.P2P.BlockHashRequestBody
+        Kadena.Chainweb.P2P.BlockHashRequestBody,
+        Kadena.Chainweb.P2P.BlockHeaderResponse
       ],
       Utils: Kadena.Utils.MapCase
     ]

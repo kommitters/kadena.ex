@@ -2,6 +2,7 @@ defmodule Kadena.Chainweb.P2P.BlockHeaderResponse do
   @moduledoc """
   `BlockHeaderResponse` struct definition.
   """
+
   @behaviour Kadena.Chainweb.Type
 
   @type next :: String.t()

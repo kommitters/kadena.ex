@@ -3,14 +3,18 @@ defmodule Kadena.Chainweb.P2P.BlockHeader do
     BlockHeader endpoints implementation for P2P API.
   """
 
-  @endpoint "header"
-  @headers [encode: "application/json", decode: "application/json;blockheader-encoding=object"]
   alias Kadena.Chainweb.P2P.BlockHeaderResponse
   alias Kadena.Chainweb.{Error, Request}
 
   @type network_opts :: Keyword.t()
   @type error :: {:error, Error.t()}
   @type retrieve_response :: BlockHeaderResponse.t() | error()
+
+  @endpoint "header"
+  @headers [
+    encode: "application/json",
+    decode: "application/json;blockheader-encoding=object"
+  ]
 
   @spec retrieve(network_opts :: network_opts()) :: retrieve_response()
   def retrieve(network_opts \\ []) do
