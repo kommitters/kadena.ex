@@ -72,7 +72,7 @@ defmodule Kadena.Chainweb.Cut do
   def set_weight(%__MODULE__{}, _weight), do: {:error, [weight: :not_a_string]}
 
   @spec set_origin(cut :: t(), origin :: origin()) :: result()
-  def set_origin(%__MODULE__{} = cut, %{id: id, address: address} = origin) when is_map(origin) do
+  def set_origin(%__MODULE__{} = cut, %{id: id, address: address} = origin) do
     with {:ok, _id} <- validate_origin_id(id),
          {:ok, _address} <- validate_origin_address(address) do
       %{cut | origin: origin}
