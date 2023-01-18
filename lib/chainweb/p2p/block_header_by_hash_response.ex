@@ -7,9 +7,7 @@ defmodule Kadena.Chainweb.P2P.BlockHeaderByHashResponse do
 
   @type item :: String.t() | map() | binary()
 
-  @type t :: %__MODULE__{
-          item: item()
-        }
+  @type t :: %__MODULE__{item: item()}
 
   defstruct [:item]
 

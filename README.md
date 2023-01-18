@@ -1071,7 +1071,7 @@ Kadena.Chainweb.P2P.BlockHeader.retrieve_by_hash(block_hash, network_opts \\ [])
 
 **Parameters**
 
-- `block_hash` (required): String value. Block hash of a block.
+- `block_hash` (required): String value. Hash of a block.
 - `network_opts`: Network options. Keyword list with:
   - `format` (optional): To specify the format of the returned item, the returned item could be encoded string, decoded map or a binary. Allowed values `:encode`, `:decode` and `:binary`. 
   - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.

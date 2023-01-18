@@ -82,7 +82,7 @@ defmodule Kadena.Chainweb.P2P.BlockHeaderByHashResponseTest do
       } = BlockHeaderByHashResponse.new(decode_attrs)
     end
 
-    test "with bianry item", %{
+    test "with binary item", %{
       binary_item: binary_item
     } do
       %BlockHeaderByHashResponse{
