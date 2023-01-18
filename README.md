@@ -1061,6 +1061,59 @@ BlockHeader.retrieve(format: :decode, query_params: [limit: 1])
    next: "inclusive:3eH11vI_wZuP3lEKcilfCx89_kZ78nFuJJbty44iNBo"
  }}
 ```
+
+#### Get Block Header by Hash
+Query a block header by its hash.
+
+```elixir
+Kadena.Chainweb.P2P.BlockHeader.retrieve_by_hash(block_hash, network_opts \\ [])
+```
+
+**Parameters**
+
+- `block_hash` (required): String value. Block hash of a block.
+- `network_opts`: Network options. Keyword list with:
+  - `format` (optional): To specify the format of the returned item, the returned item could be encoded string, decoded map or a binary. Allowed values `:encode`, `:decode` and `:binary`. 
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+ 
+  Defaults to `[format: :encode, network_id: :testnet04, location: nil, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.BlockHeader
+
+hash = "M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA"
+
+BlockHeader.retrieve_by_hash(hash, format: :decode)
+
+{:ok,
+ %Kadena.Chainweb.P2P.BlockHeaderByHashResponse{
+   item: %{
+     adjacents: %{
+       "2": "OKrakx1LFapdQurxTNFb6qA4P-JxDu21DJuWNKzx9YQ",
+       "3": "o6s-Ne3AmA1EQpNYQFGm9FnuIVGJiyyeCkMKt9Pxlwo",
+       "5": "ihn-S5iteAEmY3B8xTFU6oN_yX6V5-YxrR6UMNJDbhY"
+     },
+     chain_id: 0,
+     chainweb_version: "testnet04",
+     creation_time: 1_585_882_240_125_374,
+     epoch_start: 1_563_388_117_613_832,
+     feature_flags: 0,
+     hash: "M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA",
+     height: 2,
+     nonce: "0",
+     parent: "3eH11vI_wZuP3lEKcilfCx89_kZ78nFuJJbty44iNBo",
+     payload_hash: "R_CYH-5qSKnB9eLlXply7DRFdPUoAF02VNKU2uXR8_0",
+     target: "__________________________________________8",
+     weight: "AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   }
+ }}
+```
 ---
 
 ## Roadmap
