@@ -10,9 +10,10 @@ defmodule Kadena.Chainweb.Cut do
   @type instance :: String.t()
   @type origin :: map() | nil
   @type weight :: String.t()
-  @type chain_id :: non_neg_integer()
+  @type chain_id :: 0..19 | String.t() | atom()
   @type error :: {:error, Keyword.t()}
   @type result :: t() | error()
+  @type validation :: {:ok, map() | chain_id()} | error()
 
   @type t :: %__MODULE__{
           hashes: hashes(),
@@ -32,27 +33,26 @@ defmodule Kadena.Chainweb.Cut do
   def new(_attrs), do: {:error, [args: :invalid_format]}
 
   @spec set_hashes(cut :: t(), hashes :: hashes()) :: result()
-  def set_hashes(%__MODULE__{} = cut, %{} = hashes), do: set_hashes(cut, Map.to_list(hashes))
-
-  def set_hashes(%__MODULE__{} = cut, [{chain_id, hash} | rest]) do
-    cut
-    |> add_hash(String.to_integer(Atom.to_string(chain_id)), hash)
-    |> set_hashes(rest)
+  def set_hashes(%__MODULE__{} = cut, %{} = hashes) do
+    keys = Map.keys(hashes)
+    validate_hashes(cut, keys, hashes)
   end
 
-  def set_hashes(%__MODULE__{} = cut, []), do: cut
-
   def set_hashes(%__MODULE__{}, _hashes), do: {:error, [hashes: :not_a_map]}
-  def set_hashes({:error, reason}, _hashes), do: {:error, [hashes: reason]}
 
   @spec add_hash(cut :: t(), chain_id :: chain_id(), hash :: map()) :: result()
   def add_hash(
         %__MODULE__{hashes: hashes} = cut,
         chain_id,
         %{hash: hash_value, height: height} = hash
-      )
-      when chain_id in 0..19 and is_binary(hash_value) and height >= 0 do
-    %{cut | hashes: Map.put(hashes, String.to_atom("#{chain_id}"), hash)}
+      ) do
+    with {:ok, chain_id} <- validate_chain_id(chain_id),
+         true <- is_binary(hash_value),
+         true <- height >= 0 do
+      %{cut | hashes: Map.put(hashes, chain_id, hash)}
+    else
+      _ -> {:error, [args: :invalid]}
+    end
   end
 
   def add_hash(%__MODULE__{}, _chain_id, _hash), do: {:error, [args: :invalid]}
@@ -91,12 +91,44 @@ defmodule Kadena.Chainweb.Cut do
 
   def set_instance(%__MODULE__{}, _instance), do: {:error, [instance: :not_a_string]}
 
+  @spec validate_chain_id(chain_id :: chain_id()) :: validation()
+  defp validate_chain_id(chain_id) when is_atom(chain_id) do
+    chain_id
+    |> Atom.to_string()
+    |> validate_chain_id()
+  end
+
+  defp validate_chain_id(chain_id) when is_binary(chain_id) do
+    case String.match?(chain_id, ~r/^1?[0-9]$/) do
+      true -> {:ok, String.to_atom(chain_id)}
+      false -> {:error, [chain_id: :invalid]}
+    end
+  end
+
+  defp validate_chain_id(chain_id) when chain_id in 0..19,
+    do: {:ok, String.to_atom("#{chain_id}")}
+
+  defp validate_chain_id(_chain_id), do: {:error, [chain_id: :invalid]}
+
+  @spec validate_origin_id(id :: String.t()) :: validation()
   defp validate_origin_id(id) when is_binary(id), do: {:ok, id}
   defp validate_origin_id(_id), do: {:error, [id: :not_a_string]}
 
+  @spec validate_origin_address(address :: map()) :: validation()
   defp validate_origin_address(%{hostname: hostname, port: port} = address)
        when is_binary(hostname) and port >= 0,
        do: {:ok, address}
 
   defp validate_origin_address(_address), do: {:error, [address: :invalid]}
+
+  @spec validate_hashes(cut :: t(), list(), hashes :: hashes()) :: t() | error()
+  defp validate_hashes(%__MODULE__{} = cut, [], _hashes), do: cut
+
+  defp validate_hashes(%__MODULE__{} = cut, [key | rest], hashes) do
+    cut
+    |> add_hash(key, hashes[key])
+    |> validate_hashes(rest, hashes)
+  end
+
+  defp validate_hashes({:error, reason}, _keys, _hashes), do: {:error, [hashes: reason]}
 end
