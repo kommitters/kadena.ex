@@ -38,9 +38,15 @@ defmodule Kadena.Chainweb.Client.Default do
   defp handle_response({:ok, 204, _headers, _body}),
     do: {:ok, %{status: 204, response: :no_content}}
 
-  defp handle_response({:ok, status, _headers, body}) when status in 200..299 do
-    decoded_body = json_library().decode!(body, keys: &snake_case_atom/1)
-    {:ok, decoded_body}
+  defp handle_response({:ok, status, headers, body}) when status in 200..299 do
+    case {"Content-Type", "application/octet-stream"} in headers do
+      true ->
+        {:ok, body}
+
+      false ->
+        decoded_body = json_library().decode!(body, keys: &snake_case_atom/1)
+        {:ok, decoded_body}
+    end
   end
 
   defp handle_response({:ok, status, _headers, ""}) when status in 400..499 do
