@@ -1,6 +1,6 @@
-defmodule Kadena.Chainweb.P2P.BlockHashRequestBody do
+defmodule Kadena.Chainweb.P2P.BlockBranchesRequestBody do
   @moduledoc """
-  `BlockHashRequestBody` struct definition.
+  `BlockBranchesRequestBody` struct definition.
   """
 
   @behaviour Kadena.Chainweb.Type
