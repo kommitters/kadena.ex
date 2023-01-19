@@ -167,7 +167,7 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.P2P.CutResponse,
         Kadena.Chainweb.P2P.CutRequestBody,
         Kadena.Chainweb.P2P.BlockHashResponse,
-        Kadena.Chainweb.P2P.BlockBranchesBoundsRequestBody,
+        Kadena.Chainweb.P2P.BlockBranchesRequestBody,
         Kadena.Chainweb.P2P.BlockHeaderResponse,
         Kadena.Chainweb.P2P.BlockHeaderByHashResponse
       ],

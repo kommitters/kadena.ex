@@ -1156,7 +1156,7 @@ payload = [
   upper: ["jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"]
 ]
 
-BlockHeader.retrieve_branches(payload, location: "us2", format: :decode ,query_params: [limit: 2])
+BlockHeader.retrieve_branches(payload, location: "us2", format: :decode, query_params: [limit: 2])
 
 {:ok,
  %Kadena.Chainweb.P2P.BlockHeaderResponse{

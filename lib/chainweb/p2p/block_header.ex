@@ -4,7 +4,7 @@ defmodule Kadena.Chainweb.P2P.BlockHeader do
   """
 
   alias Kadena.Chainweb.P2P.{
-    BlockBranchesBoundsRequestBody,
+    BlockBranchesRequestBody,
     BlockHeaderByHashResponse,
     BlockHeaderResponse
   }
@@ -92,7 +92,7 @@ defmodule Kadena.Chainweb.P2P.BlockHeader do
   @spec json_request_body(payload :: payload()) :: json()
   defp json_request_body(payload) do
     payload
-    |> BlockBranchesBoundsRequestBody.new()
-    |> BlockBranchesBoundsRequestBody.to_json!()
+    |> BlockBranchesRequestBody.new()
+    |> BlockBranchesRequestBody.to_json!()
   end
 end
