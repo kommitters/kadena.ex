@@ -1,11 +1,11 @@
-defmodule Kadena.Chainweb.P2P.BlockHashRequestBodyTest do
+defmodule Kadena.Chainweb.P2P.BlockBranchesBoundsRequestBodyTest do
   @moduledoc """
-  `BlockHashRequestBody` struct definition tests.
+  `BlockBranchesBoundsRequestBody` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.P2P.BlockHashRequestBody
+  alias Kadena.Chainweb.P2P.BlockBranchesBoundsRequestBody
 
   describe "new/1" do
     setup do
@@ -19,22 +19,22 @@ defmodule Kadena.Chainweb.P2P.BlockHashRequestBodyTest do
     end
 
     test "with valid params", %{lower: lower, upper: upper} do
-      %BlockHashRequestBody{
+      %BlockBranchesBoundsRequestBody{
         lower: ^lower,
         upper: ^upper
-      } = BlockHashRequestBody.new(lower: lower, upper: upper)
+      } = BlockBranchesBoundsRequestBody.new(lower: lower, upper: upper)
     end
 
     test "with empty params" do
-      %BlockHashRequestBody{
+      %BlockBranchesBoundsRequestBody{
         lower: [],
         upper: []
-      } = BlockHashRequestBody.new(lower: [], upper: [])
+      } = BlockBranchesBoundsRequestBody.new(lower: [], upper: [])
     end
 
     test "with invalid params" do
       {:error, [args: :not_a_string_list]} =
-        BlockHashRequestBody.new(lower: "invalid", upper: "invalid")
+        BlockBranchesBoundsRequestBody.new(lower: "invalid", upper: "invalid")
     end
   end
 
@@ -51,15 +51,15 @@ defmodule Kadena.Chainweb.P2P.BlockHashRequestBodyTest do
       }
     end
 
-    test "with a valid BlockHashRequestBody", %{
+    test "with a valid BlockBranchesBoundsRequestBody", %{
       lower: lower,
       upper: upper,
       json_result: json_result
     } do
       ^json_result =
         [lower: lower, upper: upper]
-        |> BlockHashRequestBody.new()
-        |> BlockHashRequestBody.to_json!()
+        |> BlockBranchesBoundsRequestBody.new()
+        |> BlockBranchesBoundsRequestBody.to_json!()
     end
   end
 end

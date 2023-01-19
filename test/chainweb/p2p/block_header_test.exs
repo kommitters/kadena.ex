@@ -202,6 +202,131 @@ defmodule Kadena.Chainweb.Client.CannedBlockHeaderRequests do
 
     {:error, response}
   end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/header/branch?limit=1&minheight=0&maxheight=6",
+        [
+          {"Content-Type", "application/json"},
+          {"Accept", "application/json;blockheader-encoding=object"}
+        ],
+        _body,
+        _options
+      ) do
+    response = Chainweb.fixture("block_header_retrieve_branches_2")
+    {:ok, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/header/branch?limit=2",
+        _headers,
+        "{\"lower\":[],\"upper\":[\"PIwcqQQ9MGNsSq-4uzKHw-D9QeQaXmDKokB5uPvkoKE\"]}",
+        _options
+      ) do
+    response = Chainweb.fixture("block_header_retrieve_branches_3")
+    {:ok, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/header/branch?limit=2&minheight=0&maxheight=6",
+        _headers,
+        _body,
+        _options
+      ) do
+    response = Chainweb.fixture("block_header_retrieve_branches_1")
+    {:ok, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/header/branch",
+        _headers,
+        "{\"lower\":[],\"upper\":[]}",
+        _options
+      ) do
+    response = Chainweb.fixture("block_hash_retrieve_branches_3")
+    {:ok, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/header/branch",
+        _headers,
+        "{\"lower\":[],\"upper\":[\"\"]}",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title: "Error in $.upper[0]: DecodeException \"not enough bytes\""
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/header/branch",
+        _headers,
+        "{\"lower\":[\"hello\"],\"upper\":[]}",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title: "Error in $.lower[0]: Base64DecodeException \"invalid padding near offset 4\""
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/header/branch",
+        _headers,
+        "{\"lower\":[123,321],\"upper\":[400,403]}",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title:
+             "Error in $.lower[0]: parsing BlockHash failed, expected String, but encountered Number"
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/1/header/branch",
+        _headers,
+        _body,
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 404,
+           title:
+             "{\"reason\":\"key not found\",\"key\":\"HHEJ8CfvcweMTfvSMBYlXLWv0v25Mt-4bK3RUi_L6ls\"}"
+         }}
+      )
+
+    {:error, response}
+  end
 end
 
 defmodule Kadena.Chainweb.P2P.BlockHeaderTest do
@@ -450,6 +575,148 @@ defmodule Kadena.Chainweb.P2P.BlockHeaderTest do
     test "error with invalid chain_id" do
       {:error, %Error{status: 404, title: "not found"}} =
         BlockHeader.retrieve_by_hash("invalid", chain_id: 21)
+    end
+  end
+
+  describe "retrieve_branches/2" do
+    setup do
+      Application.put_env(:kadena, :http_client_impl, CannedBlockHeaderRequests)
+
+      on_exit(fn ->
+        Application.delete_env(:kadena, :http_client_impl)
+      end)
+
+      lower = ["4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI"]
+      upper = ["HHEJ8CfvcweMTfvSMBYlXLWv0v25Mt-4bK3RUi_L6ls"]
+      upper2 = ["PIwcqQQ9MGNsSq-4uzKHw-D9QeQaXmDKokB5uPvkoKE"]
+
+      success_response =
+        {:ok,
+         %BlockHeaderResponse{
+           items: [
+             "AAAAAAAAAADR7-j7WaIFAIJlfqUYudH1HMtovb_HG2vxw48Nvxj-O0SoKSg_tGr_AwACAAAAYChA-AppARXp5afbP3mjmGOKoi3HWBNp7VeTaAp66doDAAAATPMxGYnTi2nhoLVa6VM4AZqnpiTQtwuDBk11q_0niRcFAAAAGy9_1XMZ-RbsMSSxROt2WFVVLbGOLTJO1gHQi2SJUFL___________________________________________Z2S2ObYpHflYBUmid5P-aJyZ04JFOrQOiHpJgOlWFJAAAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAAAAAHAAAACH1lqeSNBQAAAAAAAAAAABxxCfAn73MHjE370jAWJVy1r9L9uTLfuGyt0VIvy-pb",
+             "AAAAAAAAAABTYOf7WaIFAI1T_gQ1gvd0Xw8wVUMaJTyYu0XF9PWsdSDINPyPzDSJAwACAAAAIy_ewx5EwBA5doDDx75OSFnjJ-dKLybFJTCLgUB3Q2kDAAAAzgk61MhXQagUsSFjqK8Y5Rt3DnKqrGd_cJ98nAQDp7QFAAAAjpf32dgqSp5fpgrvkefCLu1fwz39G3yoxQIPMLmAt5T__________________________________________yrhzqPaHg3A_Fm1Dls78j9mH81saw-0xGBJo89d90vJAAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAAAAAAAAAHAAAACH1lqeSNBQAAAAAAAAAAAIJlfqUYudH1HMtovb_HG2vxw48Nvxj-O0SoKSg_tGr_"
+           ],
+           limit: 2,
+           next: "inclusive:jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"
+         }}
+
+      succes_response_decode =
+        {:ok,
+         %BlockHeaderResponse{
+           items: [
+             %{
+               adjacents: %{
+                 "2": "YChA-AppARXp5afbP3mjmGOKoi3HWBNp7VeTaAp66do",
+                 "3": "TPMxGYnTi2nhoLVa6VM4AZqnpiTQtwuDBk11q_0niRc",
+                 "5": "Gy9_1XMZ-RbsMSSxROt2WFVVLbGOLTJO1gHQi2SJUFI"
+               },
+               chain_id: 0,
+               chainweb_version: "testnet04",
+               creation_time: 1_585_882_245_689_297,
+               epoch_start: 1_563_388_117_613_832,
+               feature_flags: 0,
+               hash: "HHEJ8CfvcweMTfvSMBYlXLWv0v25Mt-4bK3RUi_L6ls",
+               height: 6,
+               nonce: "0",
+               parent: "gmV-pRi50fUcy2i9v8cba_HDjw2_GP47RKgpKD-0av8",
+               payload_hash: "9nZLY5tikd-VgFSaJ3k_5onJnTgkU6tA6IekmA6VYUk",
+               target: "__________________________________________8",
+               weight: "BgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+             }
+           ],
+           limit: 1,
+           next: "inclusive:gmV-pRi50fUcy2i9v8cba_HDjw2_GP47RKgpKD-0av8"
+         }}
+
+      success_response2 =
+        {:ok,
+         %BlockHeaderResponse{
+           items: [
+             "AAAAAAAAAAB3UodLdqIFAHl-Q2oAam43lEIM6JLZ-lNiOkkwHjjFLHLQohXRuSPsAwACAAAAgbBksPyd3hDW-lLNTsN1hbPMLfZUCYMW_08R8F3l6NgDAAAAhxKPdyDDGERN2EQQf95rBxFOxS1iOFku0FKg1p1CD10FAAAAhmXfr56OEu9gDDazkEnUOZ9vPCJFWkqrSbECXa5PCSnfNON9mMGBYUwZlHk6Hn9b-BrK2N9kRHQ6G5ozCQUAAOknGKCc3K4OntAMhC-t9O2LjyS_KH0KUr3sZpfzgOJMAAAAAJnH5xkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAHAAAApbyFMHaiBQAioxcAAAAAADyMHKkEPTBjbEqvuLsyh8Pg_UHkGl5gyqJAebj75KCh",
+             "AAAAAAAAAAAW_6tKdqIFAJXLHFLZCyKSFEZ28xtVx-1x4Jxhocz-tiWfu5bbj7e1AwACAAAA-fLwaEf9u-oXrJlyOTGCj5CHYc5lls-00CAv8lIHjDUDAAAAQTbqOXgUAVZK3BPlT-iO1Dm0bYRZAaS0jFCgFhW8mHwFAAAAq6wIXNCpneS94AVB2k4WGxQLpxCb_DNGVRcgCz1cil_fNON9mMGBYUwZlHk6Hn9b-BrK2N9kRHQ6G5ozCQUAAI8juprWAnpRVra4LZ0HSyhujyowP4Ub7gEy8XNN2RCBAAAAAPPxtBkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA_w8AAAAAAAAHAAAApbyFMHaiBQA9OCIAAAAAAHl-Q2oAam43lEIM6JLZ-lNiOkkwHjjFLHLQohXRuSPs"
+           ],
+           limit: 2,
+           next: "inclusive:lcscUtkLIpIURnbzG1XH7XHgnGGhzP62JZ-7ltuPt7U"
+         }}
+
+      success_response3 =
+        {:ok,
+         %BlockHeaderResponse{
+           items: [],
+           limit: 0,
+           next: nil
+         }}
+
+      %{
+        lower: lower,
+        upper: upper,
+        upper2: upper2,
+        success_response: success_response,
+        succes_response_decode: succes_response_decode,
+        success_response2: success_response2,
+        success_response3: success_response3
+      }
+    end
+
+    test "success encode", %{success_response: success_response, lower: lower, upper: upper} do
+      ^success_response =
+        BlockHeader.retrieve_branches([lower: lower, upper: upper],
+          query_params: [limit: 2, minheight: 0, maxheight: 6]
+        )
+    end
+
+    test "success decode", %{
+      succes_response_decode: succes_response_decode,
+      lower: lower,
+      upper: upper
+    } do
+      ^succes_response_decode =
+        BlockHeader.retrieve_branches([lower: lower, upper: upper],
+          query_params: [limit: 1, minheight: 0, maxheight: 6],
+          format: :decode
+        )
+    end
+
+    test "success with only upper", %{success_response2: success_response2, upper2: upper2} do
+      ^success_response2 =
+        BlockHeader.retrieve_branches([upper: upper2], query_params: [limit: 2])
+    end
+
+    test "success with default params", %{success_response3: success_response3} do
+      ^success_response3 = BlockHeader.retrieve_branches()
+    end
+
+    test "error when hashes not in the chain", %{lower: lower, upper: upper} do
+      {:error,
+       %Error{
+         status: 404,
+         title:
+           "{\"reason\":\"key not found\",\"key\":\"HHEJ8CfvcweMTfvSMBYlXLWv0v25Mt-4bK3RUi_L6ls\"}"
+       }} = BlockHeader.retrieve_branches([lower: lower, upper: upper], chain_id: 1)
+    end
+
+    test "error with an invalid upper hash" do
+      {:error,
+       %Error{status: 400, title: "Error in $.upper[0]: DecodeException \"not enough bytes\""}} =
+        BlockHeader.retrieve_branches(upper: [""])
+    end
+
+    test "hash decode error" do
+      {:error,
+       %Error{
+         status: 400,
+         title: "Error in $.lower[0]: Base64DecodeException \"invalid padding near offset 4\""
+       }} = BlockHeader.retrieve_branches(lower: ["hello"])
+    end
+
+    test "hash parsing error" do
+      {:error,
+       %Error{
+         status: 400,
+         title:
+           "Error in $.lower[0]: parsing BlockHash failed, expected String, but encountered Number"
+       }} = BlockHeader.retrieve_branches(lower: [123, 321], upper: [400, 403])
     end
   end
 end

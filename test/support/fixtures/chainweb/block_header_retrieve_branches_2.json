@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "adjacents": {
+        "2": "YChA-AppARXp5afbP3mjmGOKoi3HWBNp7VeTaAp66do",
+        "3": "TPMxGYnTi2nhoLVa6VM4AZqnpiTQtwuDBk11q_0niRc",
+        "5": "Gy9_1XMZ-RbsMSSxROt2WFVVLbGOLTJO1gHQi2SJUFI"
+      },
+      "chain_id": 0,
+      "chainweb_version": "testnet04",
+      "creation_time": 1585882245689297,
+      "epoch_start": 1563388117613832,
+      "feature_flags": 0,
+      "hash": "HHEJ8CfvcweMTfvSMBYlXLWv0v25Mt-4bK3RUi_L6ls",
+      "height": 6,
+      "nonce": "0",
+      "parent": "gmV-pRi50fUcy2i9v8cba_HDjw2_GP47RKgpKD-0av8",
+      "payload_hash": "9nZLY5tikd-VgFSaJ3k_5onJnTgkU6tA6IekmA6VYUk",
+      "target": "__________________________________________8",
+      "weight": "BgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    }
+  ],
+  "limit": 1,
+  "next": "inclusive:gmV-pRi50fUcy2i9v8cba_HDjw2_GP47RKgpKD-0av8"
+}

@@ -5,7 +5,7 @@ defmodule Kadena.Chainweb.P2P.BlockHash do
 
   @endpoint "hash"
 
-  alias Kadena.Chainweb.P2P.{BlockHashRequestBody, BlockHashResponse}
+  alias Kadena.Chainweb.P2P.{BlockBranchesBoundsRequestBody, BlockHashResponse}
   alias Kadena.Chainweb.{Error, Request}
 
   @type network_opts :: Keyword.t()
@@ -58,7 +58,7 @@ defmodule Kadena.Chainweb.P2P.BlockHash do
   @spec json_request_body(payload :: payload()) :: json()
   defp json_request_body(payload) do
     payload
-    |> BlockHashRequestBody.new()
-    |> BlockHashRequestBody.to_json!()
+    |> BlockBranchesBoundsRequestBody.new()
+    |> BlockBranchesBoundsRequestBody.to_json!()
   end
 end

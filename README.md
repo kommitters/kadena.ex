@@ -1114,6 +1114,96 @@ BlockHeader.retrieve_by_hash(hash, format: :decode)
    }
  }}
 ```
+
+#### Get Block Header Branches
+
+A page of block headers from branches of the blockchain in descending order. Only blocks are returned that are ancestors of some block in the set of upper bounds and are not ancestors of any block in the set of lower bounds.
+
+```elixir
+Kadena.Chainweb.P2P.BlockHeader.retrieve_branches(payload \\ [], network_opts \\ [])
+```
+
+**Parameters**
+- `payload`: Keyword list with:
+  - `lower` (required): Array of strings (Block Hash), no block are returned that are predecessors of any block with a hash from this array.
+  - `upper` (required): Array of strings (Block Hash), returned block headers are predecessors of a block with an hash from this array. This includes blocks with hashes from this array.
+
+  Defaults to `[lower: [], upper: []]` if not specified.
+
+- `network_opts`: Network options. Keyword list with:
+  - `format` (optional): To specify the format of the returned items, the returned items could be encoded strings or decoded maps. Allowed values `:encode` and `:decode`. 
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+  - `query_params` (optional): Query parameters. Keyword list with:
+
+    - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
+    - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
+    - `minheight` (optional): Integer (`>=0`) that represents the minimum block height of the returned headers.
+    - `maxheight` (optional): Integer (`>=0`) that represents the maximum block height of the returned headers. 
+
+  Defaults to `[format: :encode, network_id: :testnet04, location: nil, chain_id: 0, query_params: []]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.BlockHeader
+
+payload = [
+  lower: ["r21zg8E011awAbEghzNBOI4RtKUZ-wHLkUwio-5dKpE"],
+  upper: ["jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk"]
+]
+
+BlockHeader.retrieve_branches(payload, location: "us2", format: :decode ,query_params: [limit: 2])
+
+{:ok,
+ %Kadena.Chainweb.P2P.BlockHeaderResponse{
+   items: [
+     %{
+       adjacents: %{
+         "2": "nONRGODRjMHiUwuWflk0wF4lKtdenX4DjWQ1JRFbv_w",
+         "3": "J4rqjk-KRUnm_CpH0YdYgU-s2mVyk5158yYrlO1z_ps",
+         "5": "5_yH2fMvi5YvgfWiy-CKWAX3_fb5PoRLxT-p8dR7GEQ"
+       },
+       chain_id: 0,
+       chainweb_version: "testnet04",
+       creation_time: 1585882245512236,
+       epoch_start: 1563388117613832,
+       feature_flags: 0,
+       hash: "jVP-BDWC93RfDzBVQxolPJi7RcX09ax1IMg0_I_MNIk",
+       height: 4,
+       nonce: "0",
+       parent: "4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI",
+       payload_hash: "EZtAeZN3UdsNsHP2v8hQ3s5uPl0u_G0juWrVIu1XqQ4",
+       target: "__________________________________________8",
+       weight: "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     },
+     %{
+       adjacents: %{
+         "2": "23466XpUOpH-JZHOVrRNp9ZEqreMZzHNEIf-UzQ-UsU",
+         "3": "x-CiDTYa1ZKYVSoAPpkKfMw_kTQykpQBXa6eWl7ZABI",
+         "5": "d3rPJIeypRDoJFTYB2BmKACVaFVfyd2AWTI7fCzUzFw"
+       },
+       chain_id: 0,
+       chainweb_version: "testnet04",
+       creation_time: 1585882245418157,
+       epoch_start: 1563388117613832,
+       feature_flags: 0,
+       hash: "4kaI5Wk-t3mvNZoBmVECbk_xge5SujrVh1s8S-GESKI",
+       height: 3,
+       nonce: "0",
+       parent: "M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA",
+       payload_hash: "tD9gYGoTZX1TktM_V61deSQ7pi5N8DP-bPgeyOkf4cg",
+       target: "__________________________________________8",
+       weight: "AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     }
+   ],
+   limit: 2,
+   next: "inclusive:M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd0yUQA"
+ }}
+```
 ---
 
 ## Roadmap
