@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14.0 (19.01.2023)
+
+- Added [Block Headers endpoints](https://github.com/kommitters/kadena.ex/issues/203)
+
 ## 0.13.0 (18.01.2023)
 
 - Added [Cut endpoints](https://github.com/kommitters/kadena.ex/issues/201)

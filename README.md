@@ -25,7 +25,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.13.0"}
+    {:kadena, "~> 0.14.0"}
   ]
 end
 ```
@@ -1208,7 +1208,7 @@ BlockHeader.retrieve_branches(payload, location: "us2", format: :decode, query_p
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.14`
+The latest updated branch to target a PR is `v0.15`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
