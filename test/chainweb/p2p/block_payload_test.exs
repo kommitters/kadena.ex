@@ -189,7 +189,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadTest do
 
   alias Kadena.Chainweb.Client.CannedBlockPayloadRequests
   alias Kadena.Chainweb.Error
-  alias Kadena.Chainweb.P2P.{BlockPayload, BlockPayloadResponse}
+  alias Kadena.Chainweb.P2P.{BlockPayload, BlockPayloadBatchResponse, BlockPayloadResponse}
 
   describe "retrieve/1" do
     setup do
@@ -228,7 +228,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadTest do
       non_exisitent_payload_hash: non_exisitent_payload_hash
     } do
       {:error,
-       %Kadena.Chainweb.Error{
+       %Error{
          status: 404,
          title:
            "{\"reason\":\"key not found\",\"key\":\"M4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd77774\"}"
@@ -236,7 +236,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadTest do
     end
 
     test "error with an invalid payload_hash" do
-      {:error, %Kadena.Chainweb.Error{status: 400, title: "DecodeException \"not enough bytes\""}} =
+      {:error, %Error{status: 400, title: "DecodeException \"not enough bytes\""}} =
         BlockPayload.retrieve("invalid")
     end
 
@@ -266,7 +266,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadTest do
 
       success_response =
         {:ok,
-         %Kadena.Chainweb.P2P.BlockPayloadBatchResponse{
+         %BlockPayloadBatchResponse{
            batch: [
              %{
                miner_data:
@@ -302,7 +302,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadTest do
 
     test "decode error with an invalid payload_hashes" do
       {:error,
-       %Kadena.Chainweb.Error{
+       %Error{
          status: 400,
          title: "Error in $[0]: Base64DecodeException \"invalid base64 encoding near offset 0\""
        }} = BlockPayload.retrieve_batch(["ññññM4doD-jMHyxi4TvfBDUy3x9VMkcLxgnpjtvbbd77774"])
@@ -310,7 +310,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadTest do
 
     test "parsing error with an invalid payload_hashes" do
       {:error,
-       %Kadena.Chainweb.Error{
+       %Error{
          status: 400,
          title: "Error in $: parsing [] failed, expected Array, but encountered String"
        }} = BlockPayload.retrieve_batch("invalid")
