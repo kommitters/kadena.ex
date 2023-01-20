@@ -3,14 +3,14 @@ defmodule Kadena.Chainweb.P2P.BlockPayload do
   BlockPayload endpoints implementation for P2P API.
   """
 
-  @endpoint "payload"
-
   alias Kadena.Chainweb.P2P.BlockPayloadResponse
   alias Kadena.Chainweb.{Error, Request}
 
   @type network_opts :: Keyword.t()
   @type error :: {:error, Error.t()}
   @type response :: {:ok, BlockPayloadResponse.t()} | error()
+
+  @endpoint "payload"
 
   @spec retrieve(payload_hash :: String.t(), network_opts :: network_opts()) :: response()
   def retrieve(payload_hash, network_opts \\ []) do
