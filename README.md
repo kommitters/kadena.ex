@@ -1274,12 +1274,12 @@ Kadena.Chainweb.P2P.BlockPayload.retrieve_batch(payload_hashes \\ [], network_op
 ```elixir
 alias Kadena.Chainweb.P2P.BlockPayload
 
-payload_hash = [
+payload_hashes = [
   "R_CYH-5qSKnB9eLlXply7DRFdPUoAF02VNKU2uXR8_0",
   "EZtAeZN3UdsNsHP2v8hQ3s5uPl0u_G0juWrVIu1XqQ4"
 ]
 
-BlockPayload.retrieve_batch(payload_hash)
+BlockPayload.retrieve_batch(payload_hashes)
 
 {:ok,
  %Kadena.Chainweb.P2P.BlockPayloadBatchResponse{
