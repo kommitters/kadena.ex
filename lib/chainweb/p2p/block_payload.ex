@@ -3,7 +3,12 @@ defmodule Kadena.Chainweb.P2P.BlockPayload do
   BlockPayload endpoints implementation for P2P API.
   """
 
-  alias Kadena.Chainweb.P2P.{BlockPayloadBatchResponse, BlockPayloadResponse}
+  alias Kadena.Chainweb.P2P.{
+    BlockPayloadBatchResponse,
+    BlockPayloadResponse,
+    BlockPayloadWithOutputsResponse
+  }
+
   alias Kadena.Chainweb.{Error, Request}
 
   @type network_opts :: Keyword.t()
@@ -11,6 +16,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayload do
   @type payload_hashes :: list(String.t())
   @type retrieve_response :: {:ok, BlockPayloadResponse.t()} | error()
   @type retrieve_batch_response :: {:ok, BlockPayloadBatchResponse.t()} | error()
+  @type with_outputs_response :: {:ok, BlockPayloadWithOutputsResponse.t()} | error()
   @type json :: String.t()
 
   @endpoint "payload"
@@ -49,6 +55,22 @@ defmodule Kadena.Chainweb.P2P.BlockPayload do
     |> Request.add_body(body)
     |> Request.perform()
     |> Request.results(as: BlockPayloadBatchResponse)
+  end
+
+  @spec with_outputs(payload_hash :: String.t(), network_opts :: network_opts()) ::
+          with_outputs_response()
+  def with_outputs(payload_hash, network_opts \\ []) do
+    location = Keyword.get(network_opts, :location)
+    network_id = Keyword.get(network_opts, :network_id, :testnet04)
+    chain_id = Keyword.get(network_opts, :chain_id, 0)
+
+    :get
+    |> Request.new(p2p: [endpoint: @endpoint, path: payload_hash, segment: "outputs"])
+    |> Request.set_network(network_id)
+    |> Request.set_location(location)
+    |> Request.set_chain_id(chain_id)
+    |> Request.perform()
+    |> Request.results(as: BlockPayloadWithOutputsResponse)
   end
 
   @spec json_request_body(payload_hashes :: payload_hashes()) :: json()
