@@ -29,7 +29,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadBatchResponseTest do
     ]
 
     %{
-      attrs: Chainweb.fixture("block_payload_hash_retrieve_batch"),
+      attrs: Chainweb.fixture("block_payload_retrieve_batch"),
       batch: batch
     }
   end

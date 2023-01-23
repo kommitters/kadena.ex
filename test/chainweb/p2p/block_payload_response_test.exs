@@ -21,7 +21,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadResponseTest do
     payload_hash = "jcQOWz7K9qKnkUv4Z883D2ZjkFFGgccoSroWGaoogLM"
 
     %{
-      attrs: Chainweb.fixture("block_payload_hash_retrieve_2"),
+      attrs: Chainweb.fixture("block_payload_retrieve_2"),
       outputs_hash: outputs_hash,
       payload_hash: payload_hash,
       transactions: transactions,

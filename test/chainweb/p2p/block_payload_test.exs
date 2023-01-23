@@ -11,7 +11,7 @@ defmodule Kadena.Chainweb.Client.CannedBlockPayloadRequests do
         _body,
         _options
       ) do
-    response = Chainweb.fixture("block_payload_hash_retrieve")
+    response = Chainweb.fixture("block_payload_retrieve")
     {:ok, response}
   end
 
@@ -99,7 +99,7 @@ defmodule Kadena.Chainweb.Client.CannedBlockPayloadRequests do
         "[\"tD9gYGoTZX1TktM_V61deSQ7pi5N8DP-bPgeyOkf4cg\",\"EZtAeZN3UdsNsHP2v8hQ3s5uPl0u_G0juWrVIu1XqQ4\"]",
         _options
       ) do
-    response = Chainweb.fixture("block_payload_hash_retrieve_batch")
+    response = Chainweb.fixture("block_payload_retrieve_batch")
     {:ok, response}
   end
 
@@ -544,7 +544,7 @@ defmodule Kadena.Chainweb.P2P.BlockPayloadTest do
       ^success_response = BlockPayload.with_outputs(payload_hash)
     end
 
-    test "error with an non existing payload_hash", %{
+    test "error with a non existing payload_hash", %{
       non_exisitent_payload_hash: non_exisitent_payload_hash
     } do
       {:error,
