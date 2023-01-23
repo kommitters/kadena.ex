@@ -1304,6 +1304,106 @@ BlockPayload.retrieve_batch(payload_hashes)
  }}
 
 ```
+
+#### Get Block Payload With Outputs
+
+Query a block with outputs by its payload hash.
+
+```elixir
+Kadena.Chainweb.P2P.BlockPayload.retrieve(payload_hash, network_opts \\ [])
+```
+
+**Parameters**
+
+- `payload_hash` (required): String value. Payload hash of a block.
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+ 
+  Defaults to `[network_id: :testnet04, location: nil, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.BlockPayload
+
+payload_hash = "R_CYH-5qSKnB9eLlXply7DRFdPUoAF02VNKU2uXR8_0"
+
+BlockPayload.with_outputs(payload_hash)
+
+{:ok,
+ %Kadena.Chainweb.P2P.BlockPayloadWithOutputsResponse{
+   coinbase:
+     "eyJnYXMiOjAsInJlc3VsdCI6eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6IldyaXRlIHN1Y2NlZWRlZCJ9LCJyZXFLZXkiOiJJak5sU0RFeGRrbGZkMXAxVUROc1JVdGphV3htUTNnNE9WOXJXamM0YmtaMVNrcGlkSGswTkdsT1FtOGkiLCJsb2dzIjoiUkFuWnh1S2NfaFNrZU5OVHBZQUZFVDZTS1BDWVVhczRvOUlEVl92MlNPayIsIm1ldGFEYXRhIjpudWxsLCJjb250aW51YXRpb24iOm51bGwsInR4SWQiOjEwfQ",
+   miner_data:
+     "eyJhY2NvdW50IjoidXMxIiwicHJlZGljYXRlIjoia2V5cy1hbGwiLCJwdWJsaWMta2V5cyI6WyJkYjc3Njc5M2JlMGZjZjhlNzZjNzViZGIzNWEzNmU2N2YyOTgxMTFkYzYxNDVjNjY2OTNiMDEzMzE5MmUyNjE2Il19",
+   outputs_hash: "Ph2jHKpKxXh5UFOfU7L8_Zb-8I91WlQtCzfn6UTC5cU",
+   payload_hash: "R_CYH-5qSKnB9eLlXply7DRFdPUoAF02VNKU2uXR8_0",
+   transactions: [],
+   transactions_hash: "AvpbbrgkfNtMI6Hq0hJWZatbwggEKppNYL5rAXJakrw"
+ }}
+```
+#### Get Batch of Block Payload With Outputs
+
+Query a batch with outputs for its payload hashes.
+
+```elixir
+Kadena.Chainweb.P2P.BlockPayload.retrieve_batch(payload_hashes \\ [], network_opts \\ [])
+```
+
+**Parameters**
+
+- `payload_hashes` (required): Array of Strings (block payload hashes).
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+ 
+  Defaults to `[network_id: :testnet04, location: nil, chain_id: 0]` if not specified.
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.BlockPayload
+
+payload_hashes = [
+  "R_CYH-5qSKnB9eLlXply7DRFdPUoAF02VNKU2uXR8_0",
+  "EZtAeZN3UdsNsHP2v8hQ3s5uPl0u_G0juWrVIu1XqQ4"
+]
+
+BlockPayload.batch_with_outputs(payload_hashes)
+
+{:ok,
+ %Kadena.Chainweb.P2P.BlockPayloadBatchWithOutputsResponse{
+   batch: [
+     %{
+       coinbase:
+         "eyJnYXMiOjAsInJlc3VsdCI6eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6IldyaXRlIHN1Y2NlZWRlZCJ9LCJyZXFLZXkiOiJJak5sU0RFeGRrbGZkMXAxVUROc1JVdGphV3htUTNnNE9WOXJXamM0YmtaMVNrcGlkSGswTkdsT1FtOGkiLCJsb2dzIjoiUkFuWnh1S2NfaFNrZU5OVHBZQUZFVDZTS1BDWVVhczRvOUlEVl92MlNPayIsIm1ldGFEYXRhIjpudWxsLCJjb250aW51YXRpb24iOm51bGwsInR4SWQiOjEwfQ",
+       miner_data:
+         "eyJhY2NvdW50IjoidXMxIiwicHJlZGljYXRlIjoia2V5cy1hbGwiLCJwdWJsaWMta2V5cyI6WyJkYjc3Njc5M2JlMGZjZjhlNzZjNzViZGIzNWEzNmU2N2YyOTgxMTFkYzYxNDVjNjY2OTNiMDEzMzE5MmUyNjE2Il19",
+       outputs_hash: "Ph2jHKpKxXh5UFOfU7L8_Zb-8I91WlQtCzfn6UTC5cU",
+       payload_hash: "R_CYH-5qSKnB9eLlXply7DRFdPUoAF02VNKU2uXR8_0",
+       transactions: [],
+       transactions_hash: "AvpbbrgkfNtMI6Hq0hJWZatbwggEKppNYL5rAXJakrw"
+     },
+     %{
+       coinbase:
+         "eyJnYXMiOjAsInJlc3VsdCI6eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6IldyaXRlIHN1Y2NlZWRlZCJ9LCJyZXFLZXkiOiJJalJyWVVrMVYyc3RkRE50ZGs1YWIwSnRWa1ZEWW10ZmVHZGxOVk4xYW5KV2FERnpPRk10UjBWVFMwa2kiLCJsb2dzIjoidHBJUG8zR3g0QXV6QjFZRk9jWEhyTVU3R1lmaW9BcEp6YWNVSjVqc0RvWSIsIm1ldGFEYXRhIjpudWxsLCJjb250aW51YXRpb24iOm51bGwsInR4SWQiOjEyfQ",
+       miner_data:
+         "eyJhY2NvdW50IjoidXMxIiwicHJlZGljYXRlIjoia2V5cy1hbGwiLCJwdWJsaWMta2V5cyI6WyJkYjc3Njc5M2JlMGZjZjhlNzZjNzViZGIzNWEzNmU2N2YyOTgxMTFkYzYxNDVjNjY2OTNiMDEzMzE5MmUyNjE2Il19",
+       outputs_hash: "KG91xchUDjg0z9HPbe8u1_8q-aotv1e2Q1QtMIqII2c",
+       payload_hash: "EZtAeZN3UdsNsHP2v8hQ3s5uPl0u_G0juWrVIu1XqQ4",
+       transactions: [],
+       transactions_hash: "AvpbbrgkfNtMI6Hq0hJWZatbwggEKppNYL5rAXJakrw"
+     }
+   ]
+ }}
+```
 ---
 
 ## Roadmap
