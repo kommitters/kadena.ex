@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.15.0 (23.01.2023)
+
+- Added [Block Payload endpoints](https://github.com/kommitters/kadena.ex/issues/204)
+
 ## 0.14.0 (19.01.2023)
 
 - Added [Block Headers endpoints](https://github.com/kommitters/kadena.ex/issues/203)
