@@ -1446,6 +1446,40 @@ Mempool.retrieve_pending_txs(
  }}
 
 ```
+
+#### Check for Pending Transactions in the Mempool
+
+```elixir
+Kadena.Chainweb.P2P.Mempool.check_pending_txs(request_keys \\[], network_opts \\ [])
+```
+
+**Parameters**
+
+- `request_keys` (required): Array of Strings.
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, location: "us1", chaind_id: 0]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+  
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Mempool
+
+request_keys = [
+  "C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo",
+  "hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc"
+]
+
+Mempool.check_pending_txs(request_keys, network_id: :mainnet01)
+
+{:ok, %Kadena.Chainweb.P2P.MempoolCheckResponse{results: [true, false]}}
+
+```
 ---
 
 ## Roadmap
