@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.14.0"
+  @version "0.15.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -171,7 +171,10 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.P2P.BlockBranchesRequestBody,
         Kadena.Chainweb.P2P.BlockHeaderResponse,
         Kadena.Chainweb.P2P.BlockHeaderByHashResponse,
-        Kadena.Chainweb.P2P.BlockPayloadResponse
+        Kadena.Chainweb.P2P.BlockPayloadResponse,
+        Kadena.Chainweb.P2P.BlockPayloadWithOutputsResponse,
+        Kadena.Chainweb.P2P.BlockPayloadBatchResponse,
+        Kadena.Chainweb.P2P.BlockPayloadBatchWithOutputsResponse
       ],
       Utils: Kadena.Utils.MapCase
     ]

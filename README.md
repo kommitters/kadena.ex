@@ -25,7 +25,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.14.0"}
+    {:kadena, "~> 0.15.0"}
   ]
 end
 ```
@@ -1408,7 +1408,7 @@ BlockPayload.batch_with_outputs(payload_hashes)
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.15`
+The latest updated branch to target a PR is `v0.16`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
