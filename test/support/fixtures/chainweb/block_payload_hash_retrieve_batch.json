@@ -1,0 +1,16 @@
+[
+  {
+    "transactions": [],
+    "minerData": "eyJhY2NvdW50IjoidXMxIiwicHJlZGljYXRlIjoia2V5cy1hbGwiLCJwdWJsaWMta2V5cyI6WyJkYjc3Njc5M2JlMGZjZjhlNzZjNzViZGIzNWEzNmU2N2YyOTgxMTFkYzYxNDVjNjY2OTNiMDEzMzE5MmUyNjE2Il19",
+    "payloadHash": "tD9gYGoTZX1TktM_V61deSQ7pi5N8DP-bPgeyOkf4cg",
+    "transactionsHash": "AvpbbrgkfNtMI6Hq0hJWZatbwggEKppNYL5rAXJakrw",
+    "outputsHash": "mAf5H9c4D8j3s6FhIlOdZgrvoffwnhrBM20zzhOK5SA"
+  },
+  {
+    "transactions": [],
+    "minerData": "eyJhY2NvdW50IjoidXMxIiwicHJlZGljYXRlIjoia2V5cy1hbGwiLCJwdWJsaWMta2V5cyI6WyJkYjc3Njc5M2JlMGZjZjhlNzZjNzViZGIzNWEzNmU2N2YyOTgxMTFkYzYxNDVjNjY2OTNiMDEzMzE5MmUyNjE2Il19",
+    "payloadHash": "EZtAeZN3UdsNsHP2v8hQ3s5uPl0u_G0juWrVIu1XqQ4",
+    "transactionsHash": "AvpbbrgkfNtMI6Hq0hJWZatbwggEKppNYL5rAXJakrw",
+    "outputsHash": "KG91xchUDjg0z9HPbe8u1_8q-aotv1e2Q1QtMIqII2c"
+  }
+]
