@@ -1452,7 +1452,7 @@ Mempool.retrieve_pending_txs(
 #### Check for Pending Transactions in the Mempool
 
 ```elixir
-Kadena.Chainweb.P2P.Mempool.check_pending_txs(request_keys \\[], network_opts \\ [])
+Kadena.Chainweb.P2P.Mempool.check_pending_txs(request_keys \\ [], network_opts \\ [])
 ```
 
 **Parameters**
@@ -1485,7 +1485,7 @@ Mempool.check_pending_txs(request_keys, network_id: :mainnet01)
 #### Lookup Pending Transactions in the Mempool
 
 ```elixir
-Kadena.Chainweb.P2P.Mempool.lookup_pending_tx(request_keys \\[], network_opts \\ [])
+Kadena.Chainweb.P2P.Mempool.lookup_pending_tx(request_keys \\ [], network_opts \\ [])
 ```
 
 **Parameters**
@@ -1510,7 +1510,7 @@ request_keys = [
   "hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc"
 ]
 
-Mempool.lookup_pending_tx(request_keys, network_id: :mainnet01)
+Mempool.lookup_pending_txs(request_keys, network_id: :mainnet01)
 
 {:ok,
  %Kadena.Chainweb.P2P.MempoolLookupResponse{
