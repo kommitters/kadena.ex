@@ -1586,6 +1586,52 @@ Peer.retrieve_cut_info(network_id: :mainnet01, query_params: [next: "inclusive:5
  }}
 
 ```
+
+#### Put Cut-Network Peer Info
+The peer that is added to the peer database of the cut P2P network of the remote host.
+
+```elixir
+Kadena.Chainweb.P2P.Peer.put_cut_info(peer, network_opts \\ [])
+```
+
+**Parameters**
+
+- `peer`: A Peer struct which can be created with `Kadena.Chainweb.Peer.new()`
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+
+  Defaults to `[network_id: :testnet04, location: "us1", query_params: []]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+alias Kadena.Chainweb.P2P.Peer
+
+address = %{
+  hostname: "77.197.133.174",
+  port: 31_350
+}
+
+id = "PRLmVUcc9AH3fyfMYiWeC4nV2i1iHwc0-aM7iAO8h18"
+
+Chainweb.Peer.new()
+|> Chainweb.Peer.set_id(id)
+|> Chainweb.Peer.set_address(address)
+|> Peer.put_cut_info(network_id: :mainnet01)
+
+{:ok,
+ %Kadena.Chainweb.P2P.PeerPutResponse{
+   peer: %Kadena.Chainweb.Peer{
+     address: %{hostname: "77.197.133.174", port: 31_350},
+     id: "PRLmVUcc9AH3fyfMYiWeC4nV2i1iHwc0-aM7iAO8h18"
+   }
+ }}
+
+```
 ---
 
 ## Roadmap
