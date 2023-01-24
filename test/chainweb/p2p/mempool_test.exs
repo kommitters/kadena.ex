@@ -78,7 +78,97 @@ defmodule Kadena.Chainweb.Client.CannedMempoolRequests do
 
   def request(
         :post,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/member",
+        _headers,
+        "[123]",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title:
+             "Error in $[0]: parsing TransactionHash failed, expected String, but encountered Number"
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/member",
+        _headers,
+        "[\"invalid\"]",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title:
+             "not enough bytes\nCallStack (from HasCallStack):\n  error, called at src/Chainweb/Mempool/Mempool.hs:574:25 in chainweb-2.17.2-inplace:Chainweb.Mempool.Mempool"
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://col1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/member",
+        _headers,
+        "[\"C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo\",\"hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc\"]",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: :network_error,
+           title: :nxdomain
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/member",
+        _headers,
+        _body,
+        _options
+      ) do
+    response = [true, false]
+
+    {:ok, response}
+  end
+
+  def request(
+        :post,
         "https://jp1.chainweb.com/chainweb/0.0/mainnet01/chain/20/mempool/getPending",
+        _headers,
+        _body,
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 404,
+           title: "not found"
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://jp1.chainweb.com/chainweb/0.0/mainnet01/chain/20/mempool/member",
         _headers,
         _body,
         _options
@@ -103,9 +193,9 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb
   alias Kadena.Chainweb.Client.CannedMempoolRequests
-  alias Kadena.Chainweb.P2P.{Mempool, MempoolRetrieveResponse}
+  alias Kadena.Chainweb.Error
+  alias Kadena.Chainweb.P2P.{Mempool, MempoolCheckResponse, MempoolRetrieveResponse}
 
   describe "retrieve_pending_txs/1" do
     setup do
@@ -204,13 +294,13 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
     end
 
     test "error with a non existing location" do
-      {:error, %Chainweb.Error{status: :network_error, title: :nxdomain}} =
+      {:error, %Error{status: :network_error, title: :nxdomain}} =
         Mempool.retrieve_pending_txs(location: "col1", network_id: :mainnet01)
     end
 
     test "error with an invalid query params value" do
       {:error,
-       %Chainweb.Error{
+       %Error{
          status: 400,
          title:
            "Error parsing query parameter nonce failed: could not parse: `f' (input does not start with a digit)"
@@ -218,8 +308,66 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
     end
 
     test "error with an invalid chain_id" do
-      {:error, %Chainweb.Error{status: 404, title: "not found"}} =
+      {:error, %Error{status: 404, title: "not found"}} =
         Mempool.retrieve_pending_txs(location: "jp1", network_id: :mainnet01, chain_id: 20)
+    end
+  end
+
+  describe "check_pending_txs/2" do
+    setup do
+      Application.put_env(:kadena, :http_client_impl, CannedMempoolRequests)
+
+      on_exit(fn ->
+        Application.delete_env(:kadena, :http_client_impl)
+      end)
+
+      response = {:ok, %MempoolCheckResponse{results: [true, false]}}
+
+      request_keys = [
+        "C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo",
+        "hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc"
+      ]
+
+      %{
+        response: response,
+        request_keys: request_keys
+      }
+    end
+
+    test "success", %{request_keys: request_keys, response: response} do
+      ^response = Mempool.check_pending_txs(request_keys, network_id: :mainnet01)
+    end
+
+    test "error with a non existing location", %{request_keys: request_keys} do
+      {:error, %Error{status: :network_error, title: :nxdomain}} =
+        Mempool.check_pending_txs(request_keys, location: "col1", network_id: :mainnet01)
+    end
+
+    test "error with an invalid size in request_keys" do
+      {:error,
+       %Error{
+         status: 400,
+         title:
+           "not enough bytes\nCallStack (from HasCallStack):\n  error, called at src/Chainweb/Mempool/Mempool.hs:574:25 in chainweb-2.17.2-inplace:Chainweb.Mempool.Mempool"
+       }} = Mempool.check_pending_txs(["invalid"], network_id: :mainnet01)
+    end
+
+    test "error with an invalid format in request_keys" do
+      {:error,
+       %Error{
+         status: 400,
+         title:
+           "Error in $[0]: parsing TransactionHash failed, expected String, but encountered Number"
+       }} = Mempool.check_pending_txs([123], network_id: :mainnet01)
+    end
+
+    test "error with an invalid chain_id", %{request_keys: request_keys} do
+      {:error, %Error{status: 404, title: "not found"}} =
+        Mempool.check_pending_txs(request_keys,
+          location: "jp1",
+          network_id: :mainnet01,
+          chain_id: 20
+        )
     end
   end
 end
