@@ -1,6 +1,6 @@
-defmodule Kadena.Chainweb.P2P.MempoolResponse do
+defmodule Kadena.Chainweb.P2P.MempoolRetrieveResponse do
   @moduledoc """
-  `MempoolResponse` struct definition.
+  `MempoolRetrieveResponse` struct definition.
   """
 
   @behaviour Kadena.Chainweb.Type

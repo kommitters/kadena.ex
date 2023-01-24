@@ -105,7 +105,7 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
 
   alias Kadena.Chainweb
   alias Kadena.Chainweb.Client.CannedMempoolRequests
-  alias Kadena.Chainweb.P2P.{Mempool, MempoolResponse}
+  alias Kadena.Chainweb.P2P.{Mempool, MempoolRetrieveResponse}
 
   describe "retrieve_pending_txs/1" do
     setup do
@@ -117,7 +117,7 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
 
       response_mainnet =
         {:ok,
-         %MempoolResponse{
+         %MempoolRetrieveResponse{
            hashes: [
              "bCBI9Z9RvNLoPX6J8UMwW3a09I6z9_IP7dN0NAGsFfw",
              "vArBe6MHlLzJjp3QC7vlincur9muOjX9tSTrHjon43M",
@@ -148,14 +148,14 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
 
       response_testnet =
         {:ok,
-         %MempoolResponse{
+         %MempoolRetrieveResponse{
            hashes: [],
            highwater_mark: [2_619_999_507_090_149_325, 866]
          }}
 
       query_response =
         {:ok,
-         %MempoolResponse{
+         %MempoolRetrieveResponse{
            hashes: [
              "LB0ZmDAhkiY6y0bp8H5UF8au9VGW8eFABh-cpwQ-Y1M",
              "nFFmcUPBoJRqNQ2_Iqt7xkA1Dr_wiQHE5QTsdPwyhZU",

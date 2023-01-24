@@ -1,11 +1,11 @@
-defmodule Kadena.Chainweb.P2P.MempoolResponseTest do
+defmodule Kadena.Chainweb.P2P.MempoolRetrieveResponseTest do
   @moduledoc """
-  `MempoolResponse` struct definition tests.
+  `MempoolRetrieveResponse` struct definition tests.
   """
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.P2P.MempoolResponse
+  alias Kadena.Chainweb.P2P.MempoolRetrieveResponse
   alias Kadena.Test.Fixtures.Chainweb
 
   setup do
@@ -49,7 +49,7 @@ defmodule Kadena.Chainweb.P2P.MempoolResponseTest do
     hashes: hashes,
     highwater_mark: highwater_mark
   } do
-    %MempoolResponse{hashes: ^hashes, highwater_mark: ^highwater_mark} =
-      MempoolResponse.new(attrs)
+    %MempoolRetrieveResponse{hashes: ^hashes, highwater_mark: ^highwater_mark} =
+      MempoolRetrieveResponse.new(attrs)
   end
 end

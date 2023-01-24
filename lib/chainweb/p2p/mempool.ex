@@ -3,14 +3,14 @@ defmodule Kadena.Chainweb.P2P.Mempool do
   Mempool endpoints implementation for P2P API.
   """
 
-  alias Kadena.Chainweb.P2P.MempoolResponse
+  alias Kadena.Chainweb.P2P.MempoolRetrieveResponse
   alias Kadena.Chainweb.{Error, Request}
 
   @type network_opts :: Keyword.t()
   @type error :: {:error, Error.t()}
   @type network_id :: :mainnet01 | :testnet04
   @type location :: String.t()
-  @type response :: {:ok, MempoolResponse.t()} | error()
+  @type response :: {:ok, MempoolRetrieveResponse.t()} | error()
 
   @endpoint "mempool"
 
@@ -28,7 +28,7 @@ defmodule Kadena.Chainweb.P2P.Mempool do
     |> Request.add_query(query_params)
     |> Request.set_chain_id(chain_id)
     |> Request.perform()
-    |> Request.results(as: MempoolResponse)
+    |> Request.results(as: MempoolRetrieveResponse)
   end
 
   @spec set_default_location(network_id :: network_id()) :: location()

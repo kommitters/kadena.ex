@@ -1434,7 +1434,7 @@ alias Kadena.Chainweb.P2P.Mempool
 Mempool.retrieve_pending_txs(network_id: :mainnet01)
 
 {:ok,
- %Kadena.Chainweb.P2P.MempoolResponse{
+ %Kadena.Chainweb.P2P.MempoolRetrieveResponse{
    hashes: [
      "jCNv2dvA0tLUmxJBmIkcgclln1-slQwd_T2rlHmKtWM",
      "zStNSKpuc1vvzRHKlYh7H9Az2CqFN5He4zqhf_t7AxQ",
