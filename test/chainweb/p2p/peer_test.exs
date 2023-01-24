@@ -48,7 +48,7 @@ defmodule Kadena.Chainweb.Client.CannedPeerRequests do
 
   def request(
         :get,
-        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/cut/peer?limit=5&next=123",
+        "https://us1.testnet.chainweb.com/chainweb/0.0/testnet04/cut/peer?limit=5&next=123",
         _headers,
         _body,
         _options
@@ -202,7 +202,7 @@ defmodule Kadena.Chainweb.P2P.PeerTest do
          title:
            "Error parsing query parameter next failed: TextFormatException \"missing ':' in next item: \\\"123\\\".\""
        }} =
-        Peer.retrieve_cut_info(network_id: :mainnet01, query_params: [limit: limit, next: 123])
+        Peer.retrieve_cut_info(network_id: :testnet04, query_params: [limit: limit, next: 123])
     end
 
     test "error query params: invalid limit value" do
