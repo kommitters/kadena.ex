@@ -25,7 +25,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.15.0"}
+    {:kadena, "~> 0.16.0"}
   ]
 end
 ```
@@ -1530,7 +1530,7 @@ Mempool.lookup_pending_txs(request_keys, network_id: :mainnet01)
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.16`
+The latest updated branch to target a PR is `v0.17`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 

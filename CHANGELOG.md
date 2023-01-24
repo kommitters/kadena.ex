@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.16.0 (24.01.2023)
+
+- Added [Mempool endpoints](https://github.com/kommitters/kadena.ex/issues/205)
+
 ## 0.15.0 (23.01.2023)
 
 - Added [Block Payload endpoints](https://github.com/kommitters/kadena.ex/issues/204)
