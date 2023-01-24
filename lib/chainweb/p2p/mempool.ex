@@ -12,7 +12,8 @@ defmodule Kadena.Chainweb.P2P.Mempool do
   @type network_id :: :mainnet01 | :testnet04
   @type request_keys :: list(String.t())
   @type location :: String.t()
-  @type response :: {:ok, MempoolRetrieveResponse.t()} | error()
+  @type mempool_response :: MempoolRetrieveResponse.t() | MempoolCheckResponse.t()
+  @type response :: {:ok, mempool_response()} | error()
 
   @endpoint "mempool"
 

@@ -1455,7 +1455,7 @@ Kadena.Chainweb.P2P.Mempool.check_pending_txs(request_keys \\[], network_opts \\
 
 **Parameters**
 
-- `request_keys` (required): Array of Strings.
+- `request_keys` (required): Array of Strings. Request key of a Pact transaction.
 - `network_opts`: Network options. Keyword list with:
   - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
   - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:

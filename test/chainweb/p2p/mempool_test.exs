@@ -193,8 +193,8 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
 
   use ExUnit.Case
 
-  alias Kadena.Chainweb.Error
   alias Kadena.Chainweb.Client.CannedMempoolRequests
+  alias Kadena.Chainweb.Error
   alias Kadena.Chainweb.P2P.{Mempool, MempoolCheckResponse, MempoolRetrieveResponse}
 
   describe "retrieve_pending_txs/1" do
