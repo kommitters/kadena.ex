@@ -184,6 +184,96 @@ defmodule Kadena.Chainweb.Client.CannedMempoolRequests do
 
     {:error, response}
   end
+
+  def request(
+        :post,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/lookup",
+        _headers,
+        "[123]",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title:
+             "Error in $[0]: parsing TransactionHash failed, expected String, but encountered Number"
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/lookup",
+        _headers,
+        "[\"invalid\"]",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title:
+             "not enough bytes\nCallStack (from HasCallStack):\n  error, called at src/Chainweb/Mempool/Mempool.hs:574:25 in chainweb-2.17.2-inplace:Chainweb.Mempool.Mempool"
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://col1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/lookup",
+        _headers,
+        "[\"C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo\",\"hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc\"]",
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: :network_error,
+           title: :nxdomain
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :post,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/lookup",
+        _headers,
+        _body,
+        _options
+      ) do
+    response = Chainweb.fixture("mempool_lookup")
+
+    {:ok, response}
+  end
+
+  def request(
+        :post,
+        "https://jp1.chainweb.com/chainweb/0.0/mainnet01/chain/20/mempool/lookup",
+        _headers,
+        _body,
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 404,
+           title: "not found"
+         }}
+      )
+
+    {:error, response}
+  end
 end
 
 defmodule Kadena.Chainweb.P2P.MempoolTest do
@@ -195,7 +285,13 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
 
   alias Kadena.Chainweb.Client.CannedMempoolRequests
   alias Kadena.Chainweb.Error
-  alias Kadena.Chainweb.P2P.{Mempool, MempoolCheckResponse, MempoolRetrieveResponse}
+
+  alias Kadena.Chainweb.P2P.{
+    Mempool,
+    MempoolCheckResponse,
+    MempoolLookupResponse,
+    MempoolRetrieveResponse
+  }
 
   describe "retrieve_pending_txs/1" do
     setup do
@@ -364,6 +460,77 @@ defmodule Kadena.Chainweb.P2P.MempoolTest do
     test "error with an invalid chain_id", %{request_keys: request_keys} do
       {:error, %Error{status: 404, title: "not found"}} =
         Mempool.check_pending_txs(request_keys,
+          location: "jp1",
+          network_id: :mainnet01,
+          chain_id: 20
+        )
+    end
+  end
+
+  describe "lookup_pending_txs/2" do
+    setup do
+      Application.put_env(:kadena, :http_client_impl, CannedMempoolRequests)
+
+      on_exit(fn ->
+        Application.delete_env(:kadena, :http_client_impl)
+      end)
+
+      response =
+        {:ok,
+         %MempoolLookupResponse{
+           results: [
+             %{
+               contents:
+                 "{\"hash\":\"C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo\",\"sigs\":[],\"cmd\":\"{\\\"networkId\\\":\\\"mainnet01\\\",\\\"payload\\\":{\\\"cont\\\":{\\\"proof\\\":\\\"eyJjaGFpbiI6MCwib2JqZWN0IjoiQUFBQUVRQUFBQUFBQUFBQ0FNQldwNWtIdGs2bnpxVXVJMzhIdlZ5bUNaS21BUU9DMlp1RHFqWEx1Z3VjQUxvcTk2R0lsZGlaSnNNYnI5Y0VTYl9Gam9TVlI0QTRBMThQNS0zVnl2OFRBVjhtRkcyc1RyVVN5bGVzVmlqWUxVVmFWSE1wbE1zRlhPRHRyTGNYOVdxbkFhOVk3eFVXSUN2cmVMSmctZVpGQWQ0aDAtbFlUVVFydkZiQl9tZnNMaWRQQUUzWXh0WHJJcl9qenpUbkhuOWdCd0Vrc19EUzZtUXBmblZ0dEIySVFCRUVBYUtsZ05mdFd6VGpib2xWS0tBNDBIWDltTUxkZU44TzJnSm5HZm9jMlpsT0FJUlZWcU9ULXlDSjFaSC1qWGJMVzB6X21MUlB2QVZtblJCS3NiZnF1VlZ3QUtzN0lCTFN4M2VtOFdFSS1RV3k1UEI3bDY3QUpzZ2NoemxzV21FUjBiUVhBZWpZUEFmUm5ONDByUExfZ1QtUHpnZVZzU1A0VEtqcXVlaVdTQjZUc3M0bEFMaG04bFFSdFFKSkV4bVJtRTZZU0lFeE1VM2w5UkVQT0ZFN3lDcHc4MTE2QWVYWHhGcFJMUlh4ZWlranR3QnpteS1HZ1FMVnUwQVpSbnpJa1hUcS02bnRBQUpvSVl4Rjloeld5Zjc1VVJlUFJ2enV1eW1ZUjRDdkI2OW1laHR5UnBLUUFGRUZDMVdMY2Z4bWNCeG5la21yUnFtcUV1Qlk2eXZvWEg2T2NaeVRFX2xoQUV5cVlxekZDdUZCWXhCMkJXOWJPYjF3dnF1U1l5QmNQMFR6MElkYTlVYUVBSGJKeWxyU01TYzRNMTdKMjRXTU1TYV9HNFp5Sjc0ampIVWkzbTdPT0RfdUFYdlNrWTlvbjRlaHI5ZmlvN1puTUJnTlRlSFM1S1hqRVBZTjFGNGV3SllBQUFnWU94eWdYV2NKeTBQakppa0hERnpkbkVGVDdXX3k3am50SnBtYU0wejMiLCJzdWJqZWN0Ijp7ImlucHV0IjoiQUJSN0ltZGhjeUk2TmpJeExDSnlaWE4xYkhRaU9uc2ljM1JoZEhWeklqb2ljM1ZqWTJWemN5SXNJbVJoZEdFaU9uc2lZVzF2ZFc1MElqb3lMakV5T1RZd056Z3pMQ0p5WldObGFYWmxjaUk2SW1zNk1UQmpNakExT1Rrd05XUXpOR1ptWVRrMVpEUXdORGs1TlRReE1ESmhOV1EzWlRrd1lXRXdNekptTldFM05UTTJOakZqWm1Fek1UZ3pNVGt5T0RVMk5DSXNJbk52ZFhKalpTMWphR0ZwYmlJNklqSWlMQ0p5WldObGFYWmxjaTFuZFdGeVpDSTZleUp3Y21Wa0lqb2lhMlY1Y3kxaGJHd2lMQ0pyWlhseklqcGJJakV3WXpJd05UazVNRFZrTXpSbVptRTVOV1EwTURRNU9UVTBNVEF5WVRWa04yVTVNR0ZoTURNeVpqVmhOelV6TmpZeFkyWmhNekU0TXpFNU1qZzFOalFpWFgxOWZTd2ljbVZ4UzJWNUlqb2lXa3gxV1MxM05uUTNkMmwxV1UxT1NUUjJhVnA0VkVveE5uVm9kMEpJUlVzNVNsaG9XR051UzNWUU1DSXNJbXh2WjNNaU9pSnpRaTFGVFdSUlgyVTViMlp2U1ZOT2RXc3hlVXh1YTB4UlZqUTRkMHc0ZVdaNGQzRXlRamhsYlROTklpd2laWFpsYm5SeklqcGJleUp3WVhKaGJYTWlPbHNpYXpveE1HTXlNRFU1T1RBMVpETTBabVpoT1RWa05EQTBPVGsxTkRFd01tRTFaRGRsT1RCaFlUQXpNbVkxWVRjMU16WTJNV05tWVRNeE9ETXhPVEk0TlRZMElpd2lPVGxqWWpjd01EaGtOMlEzTUdNNU5HWXhNemhqWXpNMk5tRTRNalZtTUdRNVl6Z3pZVGhoTW1ZMFltRTRNbU00Tm1NMk5qWmxNR0ZpTm1abFkyWXpZU0lzTmk0eU1XVXRObDBzSW01aGJXVWlPaUpVVWtGT1UwWkZVaUlzSW0xdlpIVnNaU0k2ZXlKdVlXMWxjM0JoWTJVaU9tNTFiR3dzSW01aGJXVWlPaUpqYjJsdUluMHNJbTF2WkhWc1pVaGhjMmdpT2lKeVJUZEVWVGhxYkZGTU9YaGZUVkJaZFc1cFdrcG1OVWxEUWxSQlJVaEJTVVpSUTBJMFlteHZabEEwSW4wc2V5SndZWEpoYlhNaU9sc2lhem94TUdNeU1EVTVPVEExWkRNMFptWmhPVFZrTkRBME9UazFOREV3TW1FMVpEZGxPVEJoWVRBek1tWTFZVGMxTXpZMk1XTm1ZVE14T0RNeE9USTROVFkwSWl3aWF6b3hNR015TURVNU9UQTFaRE0wWm1aaE9UVmtOREEwT1RrMU5ERXdNbUUxWkRkbE9UQmhZVEF6TW1ZMVlUYzFNelkyTVdObVlUTXhPRE14T1RJNE5UWTBJaXd5TGpFeU9UWXdOemd6TENJd0lsMHNJbTVoYldVaU9pSlVVa0ZPVTBaRlVsOVlRMGhCU1U0aUxDSnRiMlIxYkdVaU9uc2libUZ0WlhOd1lXTmxJanB1ZFd4c0xDSnVZVzFsSWpvaVkyOXBiaUo5TENKdGIyUjFiR1ZJWVhOb0lqb2lja1UzUkZVNGFteFJURGw0WDAxUVdYVnVhVnBLWmpWSlEwSlVRVVZJUVVsR1VVTkNOR0pzYjJaUU5DSjlMSHNpY0dGeVlXMXpJanBiSW1zNk1UQmpNakExT1Rrd05XUXpOR1ptWVRrMVpEUXdORGs1TlRReE1ESmhOV1EzWlRrd1lXRXdNekptTldFM05UTTJOakZqWm1Fek1UZ3pNVGt5T0RVMk5DSXNJaUlzTWk0eE1qazJNRGM0TTEwc0ltNWhiV1VpT2lKVVVrRk9VMFpGVWlJc0ltMXZaSFZzWlNJNmV5SnVZVzFsYzNCaFkyVWlPbTUxYkd3c0ltNWhiV1VpT2lKamIybHVJbjBzSW0xdlpIVnNaVWhoYzJnaU9pSnlSVGRFVlRocWJGRk1PWGhmVFZCWmRXNXBXa3BtTlVsRFFsUkJSVWhCU1VaUlEwSTBZbXh2WmxBMEluMHNleUp3WVhKaGJYTWlPbHNpTUNJc0ltTnZhVzR1ZEhKaGJuTm1aWEl0WTNKdmMzTmphR0ZwYmlJc1d5SnJPakV3WXpJd05UazVNRFZrTXpSbVptRTVOV1EwTURRNU9UVTBNVEF5WVRWa04yVTVNR0ZoTURNeVpqVmhOelV6TmpZeFkyWmhNekU0TXpFNU1qZzFOalFpTENKck9qRXdZekl3TlRrNU1EVmtNelJtWm1FNU5XUTBNRFE1T1RVME1UQXlZVFZrTjJVNU1HRmhNRE15WmpWaE56VXpOall4WTJaaE16RTRNekU1TWpnMU5qUWlMSHNpY0hKbFpDSTZJbXRsZVhNdFlXeHNJaXdpYTJWNWN5STZXeUl4TUdNeU1EVTVPVEExWkRNMFptWmhPVFZrTkRBME9UazFOREV3TW1FMVpEZGxPVEJoWVRBek1tWTFZVGMxTXpZMk1XTm1ZVE14T0RNeE9USTROVFkwSWwxOUxDSXdJaXd5TGpFeU9UWXdOemd6WFYwc0ltNWhiV1VpT2lKWVgxbEpSVXhFSWl3aWJXOWtkV3hsSWpwN0ltNWhiV1Z6Y0dGalpTSTZiblZzYkN3aWJtRnRaU0k2SW5CaFkzUWlmU3dpYlc5a2RXeGxTR0Z6YUNJNkluSkZOMFJWT0dwc1VVdzVlRjlOVUZsMWJtbGFTbVkxU1VOQ1ZFRkZTRUZKUmxGRFFqUmliRzltVURRaWZWMHNJbTFsZEdGRVlYUmhJanB1ZFd4c0xDSmpiMjUwYVc1MVlYUnBiMjRpT25zaVpYaGxZM1YwWldRaU9tNTFiR3dzSW5CaFkzUkpaQ0k2SWxwTWRWa3RkelowTjNkcGRWbE5Ua2swZG1sYWVGUktNVFoxYUhkQ1NFVkxPVXBZYUZoamJrdDFVREFpTENKemRHVndTR0Z6VW05c2JHSmhZMnNpT21aaGJITmxMQ0p6ZEdWd0lqb3dMQ0o1YVdWc1pDSTZleUprWVhSaElqcDdJbUZ0YjNWdWRDSTZNaTR4TWprMk1EYzRNeXdpY21WalpXbDJaWElpT2lKck9qRXdZekl3TlRrNU1EVmtNelJtWm1FNU5XUTBNRFE1T1RVME1UQXlZVFZrTjJVNU1HRmhNRE15WmpWaE56VXpOall4WTJaaE16RTRNekU1TWpnMU5qUWlMQ0p6YjNWeVkyVXRZMmhoYVc0aU9pSXlJaXdpY21WalpXbDJaWEl0WjNWaGNtUWlPbnNpY0hKbFpDSTZJbXRsZVhNdFlXeHNJaXdpYTJWNWN5STZXeUl4TUdNeU1EVTVPVEExWkRNMFptWmhPVFZrTkRBME9UazFOREV3TW1FMVpEZGxPVEJoWVRBek1tWTFZVGMxTXpZMk1XTm1ZVE14T0RNeE9USTROVFkwSWwxOWZTd2ljMjkxY21ObElqb2lNaUlzSW5CeWIzWmxibUZ1WTJVaU9uc2lkR0Z5WjJWMFEyaGhhVzVKWkNJNklqQWlMQ0p0YjJSMWJHVklZWE5vSWpvaWNrVTNSRlU0YW14UlREbDRYMDFRV1hWdWFWcEtaalZKUTBKVVFVVklRVWxHVVVOQ05HSnNiMlpRTkNKOWZTd2lZMjl1ZEdsdWRXRjBhVzl1SWpwN0ltRnlaM01pT2xzaWF6b3hNR015TURVNU9UQTFaRE0wWm1aaE9UVmtOREEwT1RrMU5ERXdNbUUxWkRkbE9UQmhZVEF6TW1ZMVlUYzFNelkyTVdObVlUTXhPRE14T1RJNE5UWTBJaXdpYXpveE1HTXlNRFU1T1RBMVpETTBabVpoT1RWa05EQTBPVGsxTkRFd01tRTFaRGRsT1RCaFlUQXpNbVkxWVRjMU16WTJNV05tWVRNeE9ETXhPVEk0TlRZMElpeDdJbkJ5WldRaU9pSnJaWGx6TFdGc2JDSXNJbXRsZVhNaU9sc2lNVEJqTWpBMU9Ua3dOV1F6TkdabVlUazFaRFF3TkRrNU5UUXhNREpoTldRM1pUa3dZV0V3TXpKbU5XRTNOVE0yTmpGalptRXpNVGd6TVRreU9EVTJOQ0pkZlN3aU1DSXNNaTR4TWprMk1EYzRNMTBzSW1SbFppSTZJbU52YVc0dWRISmhibk5tWlhJdFkzSnZjM05qYUdGcGJpSjlMQ0p6ZEdWd1EyOTFiblFpT2pKOUxDSjBlRWxrSWpvMk1UWXlNVEV5ZlEifSwiYWxnb3JpdGhtIjoiU0hBNTEydF8yNTYifQ\\\",\\\"pactId\\\":\\\"ZLuY-w6t7wiuYMNI4viZxTJ16uhwBHEK9JXhXcnKuP0\\\",\\\"rollback\\\":false,\\\"step\\\":1,\\\"data\\\":{}}},\\\"signers\\\":[],\\\"meta\\\":{\\\"creationTime\\\":1674478129,\\\"ttl\\\":28800,\\\"gasLimit\\\":300,\\\"chainId\\\":\\\"0\\\",\\\"gasPrice\\\":1e-8,\\\"sender\\\":\\\"kadena-xchain-gas\\\"},\\\"nonce\\\":\\\"\\\\\\\"2023-01-23T12:49:04.486Z\\\\\\\"\\\"}\"}",
+               tag: "Pending"
+             },
+             %{
+               tag: "Missing"
+             }
+           ]
+         }}
+
+      request_keys = [
+        "C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo",
+        "hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc"
+      ]
+
+      %{
+        response: response,
+        request_keys: request_keys
+      }
+    end
+
+    test "success", %{request_keys: request_keys, response: response} do
+      ^response = Mempool.lookup_pending_txs(request_keys, network_id: :mainnet01)
+    end
+
+    test "error with a non existing location", %{request_keys: request_keys} do
+      {:error, %Error{status: :network_error, title: :nxdomain}} =
+        Mempool.lookup_pending_txs(request_keys, location: "col1", network_id: :mainnet01)
+    end
+
+    test "error with an invalid size in request_keys" do
+      {:error,
+       %Error{
+         status: 400,
+         title:
+           "not enough bytes\nCallStack (from HasCallStack):\n  error, called at src/Chainweb/Mempool/Mempool.hs:574:25 in chainweb-2.17.2-inplace:Chainweb.Mempool.Mempool"
+       }} = Mempool.lookup_pending_txs(["invalid"], network_id: :mainnet01)
+    end
+
+    test "error with an invalid format in request_keys" do
+      {:error,
+       %Error{
+         status: 400,
+         title:
+           "Error in $[0]: parsing TransactionHash failed, expected String, but encountered Number"
+       }} = Mempool.lookup_pending_txs([123], network_id: :mainnet01)
+    end
+
+    test "error with an invalid chain_id", %{request_keys: request_keys} do
+      {:error, %Error{status: 404, title: "not found"}} =
+        Mempool.lookup_pending_txs(request_keys,
           location: "jp1",
           network_id: :mainnet01,
           chain_id: 20
