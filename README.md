@@ -1404,6 +1404,48 @@ BlockPayload.batch_with_outputs(payload_hashes)
    ]
  }}
 ```
+
+### Mempool P2P Endpoints
+Mempool P2P endpoints for communication between mempools. Endusers are not supposed to use these endpoints directly. Instead, the respective Pact endpoints should be used for submitting transactions into the network.
+
+#### Get Pending Transactions from the Mempool
+
+```elixir
+Kadena.Chainweb.P2P.Mempool.retrieve_pending_txs(network_opts \\ [])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+  - `query_params` (optional): Query parameters. Keyword list with:
+    - `nonce`: Integer value. Server nonce value.
+    - `since`: Integer value. Mempool tx id value.
+
+  Defaults to `[network_id: :testnet04, location: "us1", chaind_id: 0]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+  
+```elixir
+alias Kadena.Chainweb.P2P.Mempool
+
+Mempool.retrieve_pending_txs(
+  network_id: :mainnet01,
+  query_params: [nonce: 1_585_882_245_418_157, since: 20_160_180]
+)
+
+{:ok,
+ %Kadena.Chainweb.P2P.MempoolRetrieveResponse{
+   hashes: [
+     "XXmh7EV8fZpb0facydq2bWOKMDrFC9wZTbbolYaFsgQ",
+     "cTAhpGkkBnXkPJPlawx1iPo2V-N54f83cpSQfXN-nNI"
+   ],
+   highwater_mark: [-2_247_324_167_920_489_014, 103_370]
+ }}
+
+```
 ---
 
 ## Roadmap
