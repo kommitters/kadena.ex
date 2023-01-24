@@ -25,7 +25,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.15.0"}
+    {:kadena, "~> 0.16.0"}
   ]
 end
 ```
@@ -1404,11 +1404,133 @@ BlockPayload.batch_with_outputs(payload_hashes)
    ]
  }}
 ```
+
+### Mempool P2P Endpoints
+Mempool P2P endpoints for communication between mempools. Endusers are not supposed to use these endpoints directly. Instead, the respective Pact endpoints should be used for submitting transactions into the network.
+
+#### Get Pending Transactions from the Mempool
+
+```elixir
+Kadena.Chainweb.P2P.Mempool.retrieve_pending_txs(network_opts \\ [])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+  - `query_params` (optional): Query parameters. Keyword list with:
+    - `nonce`: Integer value. Server nonce value.
+    - `since`: Integer value. Mempool tx id value.
+
+  Defaults to `[network_id: :testnet04, location: "us1", chaind_id: 0]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Mempool
+
+Mempool.retrieve_pending_txs(
+  network_id: :mainnet01,
+  query_params: [nonce: 1_585_882_245_418_157, since: 20_160_180]
+)
+
+{:ok,
+ %Kadena.Chainweb.P2P.MempoolRetrieveResponse{
+   hashes: [
+     "XXmh7EV8fZpb0facydq2bWOKMDrFC9wZTbbolYaFsgQ",
+     "cTAhpGkkBnXkPJPlawx1iPo2V-N54f83cpSQfXN-nNI"
+   ],
+   highwater_mark: [-2_247_324_167_920_489_014, 103_370]
+ }}
+
+```
+
+#### Check for Pending Transactions in the Mempool
+
+```elixir
+Kadena.Chainweb.P2P.Mempool.check_pending_txs(request_keys \\ [], network_opts \\ [])
+```
+
+**Parameters**
+
+- `request_keys` (required): Array of Strings. Request key of a Pact transaction.
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, location: "us1", chaind_id: 0]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+  
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Mempool
+
+request_keys = [
+  "C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo",
+  "hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc"
+]
+
+Mempool.check_pending_txs(request_keys, network_id: :mainnet01)
+
+{:ok, %Kadena.Chainweb.P2P.MempoolCheckResponse{results: [true, false]}}
+
+```
+#### Lookup Pending Transactions in the Mempool
+
+```elixir
+Kadena.Chainweb.P2P.Mempool.lookup_pending_tx(request_keys \\ [], network_opts \\ [])
+```
+
+**Parameters**
+
+- `request_keys` (required): Array of Strings. Request key of a Pact transaction.
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+
+  Defaults to `[network_id: :testnet04, location: "us1", chaind_id: 0]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+  
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Mempool
+
+request_keys = [
+  "C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo",
+  "hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc"
+]
+
+Mempool.lookup_pending_txs(request_keys, network_id: :mainnet01)
+
+{:ok,
+ %Kadena.Chainweb.P2P.MempoolLookupResponse{
+   results: [
+     %{
+       contents:
+         "{\"hash\":\"C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo\",\"sigs\":[],\"cmd\":\"{\\\"networkId\\\":\\\"mainnet01\\\",\\\"payload\\\":{\\\"cont\\\":{\\\"proof\\\":\\\"eyJjaGFpbiI6MCwib2JqZWN0IjoiQUFBQUVRQUFBQUFBQUFBQ0FNQldwNWtIdGs2bnpxVXVJMzhIdlZ5bUNaS21BUU9DMlp1RHFqWEx1Z3VjQUxvcTk2R0lsZGlaSnNNYnI5Y0VTYl9Gam9TVlI0QTRBMThQNS0zVnl2OFRBVjhtRkcyc1RyVVN5bGVzVmlqWUxVVmFWSE1wbE1zRlhPRHRyTGNYOVdxbkFhOVk3eFVXSUN2cmVMSmctZVpGQWQ0aDAtbFlUVVFydkZiQl9tZnNMaWRQQUUzWXh0WHJJcl9qenpUbkhuOWdCd0Vrc19EUzZtUXBmblZ0dEIySVFCRUVBYUtsZ05mdFd6VGpib2xWS0tBNDBIWDltTUxkZU44TzJnSm5HZm9jMlpsT0FJUlZWcU9ULXlDSjFaSC1qWGJMVzB6X21MUlB2QVZtblJCS3NiZnF1VlZ3QUtzN0lCTFN4M2VtOFdFSS1RV3k1UEI3bDY3QUpzZ2NoemxzV21FUjBiUVhBZWpZUEFmUm5ONDByUExfZ1QtUHpnZVZzU1A0VEtqcXVlaVdTQjZUc3M0bEFMaG04bFFSdFFKSkV4bVJtRTZZU0lFeE1VM2w5UkVQT0ZFN3lDcHc4MTE2QWVYWHhGcFJMUlh4ZWlranR3QnpteS1HZ1FMVnUwQVpSbnpJa1hUcS02bnRBQUpvSVl4Rjloeld5Zjc1VVJlUFJ2enV1eW1ZUjRDdkI2OW1laHR5UnBLUUFGRUZDMVdMY2Z4bWNCe" <>
+           ...,
+       tag: "Pending"
+     },
+     %{tag: "Missing"}
+   ]
+ }}
+
+```
 ---
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.16`
+The latest updated branch to target a PR is `v0.17`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
