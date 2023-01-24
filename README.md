@@ -1431,30 +1431,18 @@ Kadena.Chainweb.P2P.Mempool.retrieve_pending_txs(network_opts \\ [])
 ```elixir
 alias Kadena.Chainweb.P2P.Mempool
 
-Mempool.retrieve_pending_txs(network_id: :mainnet01)
+Mempool.retrieve_pending_txs(
+  network_id: :mainnet01,
+  query_params: [nonce: 1_585_882_245_418_157, since: 20_160_180]
+)
 
 {:ok,
  %Kadena.Chainweb.P2P.MempoolRetrieveResponse{
    hashes: [
-     "jCNv2dvA0tLUmxJBmIkcgclln1-slQwd_T2rlHmKtWM",
-     "zStNSKpuc1vvzRHKlYh7H9Az2CqFN5He4zqhf_t7AxQ",
-     "bsslUCR93WCwQ7VT4YLkTCjdah7pdFkOkl2zShZdtb8",
-     "SIHfvd0R5Dm4ZjIRDu4mrQJwByCwi2H23PlyJpBoF2o",
-     "6E2Ak5BfG7-i-5_pedS2Rs0GH4vX8dXdB6b1knCFSVE",
-     "6RalAOOgJwVtJtYVmoT2t8V1VbuEawp0lrXNvRubqOo",
-     "6ZqWX6l16nmgK55v6EdMDLEbnR9Ie2ihealJM4QVvI8",
-     "avjoE1NxEAYEIOLPucS-sjmw-JqVfjUOx6Cxw0cjNwk",
-     "C385m6e9S7WzelUFCyW-JoZFJGQNlcI0jqCO8YrPMVo",
-     "hK1dutkawvL5Pt79rMzA8JnQZyUesAY0ce8XL0sHIqc",
-     "9HgO9Q47EcQFfNggaeio43KXqR1acezyxzMFZxavnjc",
-     "BSyDvmN4varpyVrxGUiy6rBKhZe4QkNGD8MLWQvA-MI",
-     "ldyt5_FB6-CwM3G2ccGyU4eeWsMVpg0yDDd3jtY_tjs",
-     "JrK3340Q513CHrdZ-EIdUa7nHu4WJSc1GtHn-xkBUSs",
-     "QHUIyBa0kUwF8WwOO_HSxdhVsh6zYu3LllFJeNEndGI",
-     "wo3iU8tm4Q3vIcK3-4UB19TV0LXideuJ7OQK09axbTs",
-     "0lzHjlVHMmqFyLAFjW8R4osVS2xE4_SNu5KwtYwLSps"
+     "XXmh7EV8fZpb0facydq2bWOKMDrFC9wZTbbolYaFsgQ",
+     "cTAhpGkkBnXkPJPlawx1iPo2V-N54f83cpSQfXN-nNI"
    ],
-   highwater_mark: [-2_247_324_167_920_489_014, 71414]
+   highwater_mark: [-2_247_324_167_920_489_014, 103_370]
  }}
 
 ```
