@@ -190,7 +190,7 @@ defmodule Kadena.Chainweb.P2P.PeerTest do
         )
     end
 
-    test "error not existing location" do
+    test "error with a non existing location" do
       {:error, %Error{status: :network_error, title: :nxdomain}} =
         Peer.retrieve_cut_info(location: "col1", network_id: :mainnet01)
     end
