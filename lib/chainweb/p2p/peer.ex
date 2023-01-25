@@ -69,6 +69,25 @@ defmodule Kadena.Chainweb.P2P.Peer do
     |> Request.results(as: PeerResponse)
   end
 
+  @spec put_mempool_info(peer :: peer(), network_opts :: network_opts()) :: response()
+  def put_mempool_info(%Peer{} = peer, network_opts \\ []) do
+    network_id = Keyword.get(network_opts, :network_id, :testnet04)
+    chain_id = Keyword.get(network_opts, :chain_id, 0)
+    location = Keyword.get(network_opts, :location, set_default_location(network_id))
+    body = json_request_body(peer)
+    headers = [{"Content-Type", "application/json"}]
+
+    :put
+    |> Request.new(p2p: [endpoint: @mempool_endpoint, path: @path])
+    |> Request.set_network(network_id)
+    |> Request.set_chain_id(chain_id)
+    |> Request.set_location(location)
+    |> Request.add_headers(headers)
+    |> Request.add_body(body)
+    |> Request.perform()
+    |> return_response(peer)
+  end
+
   @spec json_request_body(peer :: peer()) :: json()
   defp json_request_body(peer) do
     peer

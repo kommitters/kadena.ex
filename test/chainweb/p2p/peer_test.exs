@@ -214,6 +214,55 @@ defmodule Kadena.Chainweb.Client.CannedPeerRequests do
 
     {:error, response}
   end
+
+  def request(
+        :put,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/peer",
+        _headers,
+        _body,
+        _options
+      ) do
+    response = %{response: :no_content, status: 204}
+    {:ok, response}
+  end
+
+  def request(
+        :put,
+        "https://us1.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/mempool/peer",
+        _headers,
+        _body,
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title: Chainweb.fixture("peer_retrieve_put_info")
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :put,
+        "https://col1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/peer",
+        _headers,
+        _body,
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: :network_error,
+           title: :nxdomain
+         }}
+      )
+
+    {:error, response}
+  end
 end
 
 defmodule Kadena.Chainweb.P2P.PeerTest do
@@ -494,6 +543,60 @@ defmodule Kadena.Chainweb.P2P.PeerTest do
          title:
            "Error parsing query parameter limit failed: could not parse: `f' (input does not start with a digit)"
        }} = Peer.retrieve_mempool_info(network_id: :mainnet01, query_params: [limit: "f"])
+    end
+  end
+
+  describe "put_mempool_info/1" do
+    setup do
+      Application.put_env(:kadena, :http_client_impl, CannedPeerRequests)
+
+      on_exit(fn ->
+        Application.delete_env(:kadena, :http_client_impl)
+      end)
+
+      response =
+        {:ok,
+         %PeerPutResponse{
+           peer: %Chainweb.Peer{
+             address: %{hostname: "77.197.133.174", port: 31_350},
+             id: "H807vFwc8mADojurOO93gT-KRTbEhClpmn6iu5t_cCA"
+           }
+         }}
+
+      peer = %Chainweb.Peer{
+        address: %{hostname: "77.197.133.174", port: 31_350},
+        id: "H807vFwc8mADojurOO93gT-KRTbEhClpmn6iu5t_cCA"
+      }
+
+      response_peer_not_rechable =
+        {:error,
+         %Error{
+           status: 400,
+           title:
+             "Invalid hostaddress: IsNotReachable (PeerInfo {_peerId = Just (PeerId \"\\US\\205;\\188\\\\\\FS\\242`\\ETX\\162;\\171\\&8\\239w\\129?\\138E6\\196\\132)i\\154~\\162\\187\\155\\DELp \"), _peerAddr = HostAddress {_hostAddressHost = 77.197.133.174, _hostAddressPort = 31350}}) \"\\\"HttpExceptionRequest Request {\\\\n  host                 = \\\\\\\"77.197.133.174\\\\\\\"\\\\n  port                 = 31350\\\\n  secure               = True\\\\n  requestHeaders       = [(\\\\\\\"X-Chainweb-Node-Version\\\\\\\",\\\\\\\"2.17.2\\\\\\\")]\\\\n  path                 = \\\\\\\"/chainweb/0.0/testnet04/cut/peer\\\\\\\"\\\\n  queryString          = \\\\\\\"\\\\\\\"\\\\n  method               = \\\\\\\"GET\\\\\\\"\\\\n  proxy                = Nothing\\\\n  rawBody              = False\\\\n  redirectCount        = 10\\\\n  responseTimeout      = ResponseTimeoutMicro 2000000\\\\n  requestVersion       = HTTP/1.1\\\\n  proxySecureMode      = ProxySecureWithConnect\\\\n}\\\\n (StatusCodeException (Response {responseStatus = Status {statusCode = 404, statusMessage = \\\\\\\"Not Found\\\\\\\"}, responseVersion = HTTP/1.1, responseHeaders = [(\\\\\\\"Transfer-Encoding\\\\\\\",\\\\\\\"chunked\\\\\\\"),(\\\\\\\"Date\\\\\\\",\\\\\\\"Tue, 24 Jan 2023 22:15:09 GMT\\\\\\\"),(\\\\\\\"Server\\\\\\\",\\\\\\\"Warp/3.3.23\\\\\\\"),(\\\\\\\"X-Server-Timestamp\\\\\\\",\\\\\\\"1674598509\\\\\\\"),(\\\\\\\"X-Peer-Addr\\\\\\\",\\\\\\\"34.86.6.55:35202\\\\\\\"),(\\\\\\\"X-Chainweb-Node-Version\\\\\\\",\\\\\\\"2.17\\\\\\\")], responseBody = (), responseCookieJar = CJ {expose = []}, responseClose' = ResponseClose, responseOriginalRequest = Request {\\\\n  host                 = \\\\\\\"77.197.133.174\\\\\\\"\\\\n  port                 = 31350\\\\n  secure               = True\\\\n  requestHeaders       = [(\\\\\\\"X-Chainweb-Node-Version\\\\\\\",\\\\\\\"2.17.2\\\\\\\")]\\\\n  path                 = \\\\\\\"/chainweb/0.0/testnet04/cut/peer\\\\\\\"\\\\n  queryString          = \\\\\\\"\\\\\\\"\\\\n  method               = \\\\\\\"GET\\\\\\\"\\\\n  proxy                = Nothing\\\\n  rawBody              = False\\\\n  redirectCount        = 10\\\\n  responseTimeout      = ResponseTimeoutMicro 2000000\\\\n  requestVersion       = HTTP/1.1\\\\n  proxySecureMode      = ProxySecureWithConnect\\\\n}\\\\n}) \\\\\\\"\\\\\\\")\\\"\""
+         }}
+
+      %{
+        response: response,
+        response_peer_not_rechable: response_peer_not_rechable,
+        peer: peer
+      }
+    end
+
+    test "success", %{response: response, peer: peer} do
+      ^response = Peer.put_mempool_info(peer, network_id: :mainnet01)
+    end
+
+    test "error peer not reachable.", %{
+      peer: peer,
+      response_peer_not_rechable: response_peer_not_rechable
+    } do
+      ^response_peer_not_rechable = Peer.put_mempool_info(peer)
+    end
+
+    test "error with a non existing location", %{peer: peer} do
+      {:error, %Error{status: :network_error, title: :nxdomain}} =
+        Peer.put_mempool_info(peer, location: "col1", network_id: :mainnet01)
     end
   end
 end
