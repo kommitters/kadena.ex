@@ -75,7 +75,7 @@ defmodule Kadena.Chainweb.PeerTest do
       {:error, [address: [args: :invalid]]} = Peer.set_address(Peer.new(), invalid_address)
     end
 
-    test "with and invalid id" do
+    test "with an invalid id" do
       {:error, [id: :invalid]} = Peer.set_id(Peer.new(), 123)
     end
   end

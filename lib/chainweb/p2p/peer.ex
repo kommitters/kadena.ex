@@ -12,7 +12,7 @@ defmodule Kadena.Chainweb.P2P.Peer do
   @type error :: {:error, Error.t()}
   @type location :: String.t()
   @type peer :: Peer.t()
-  @type peer_response :: PeerResponse.t()
+  @type peer_response :: PeerResponse.t() | PeerPutResponse.t()
   @type response :: {:ok, peer_response()} | error()
 
   @cut_endpoint "cut"

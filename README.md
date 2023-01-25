@@ -1588,7 +1588,7 @@ Peer.retrieve_cut_info(network_id: :mainnet01, query_params: [next: "inclusive:5
 ```
 
 #### Put Cut-Network Peer Info
-The peer that is added to the peer database of the cut P2P network of the remote host.
+Allows to add a peer to the peer database of the cut P2P network of the remote host.
 
 ```elixir
 Kadena.Chainweb.P2P.Peer.put_cut_info(peer, network_opts \\ [])
