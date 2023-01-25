@@ -133,6 +133,87 @@ defmodule Kadena.Chainweb.Client.CannedPeerRequests do
 
     {:error, response}
   end
+
+  def request(
+        :get,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/peer?limit=2",
+        _headers,
+        _body,
+        _options
+      ) do
+    response = Chainweb.fixture("peer_retrieve_mempool_info")
+    {:ok, response}
+  end
+
+  def request(
+        :get,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/peer?limit=2&next=inclusive%3A2",
+        _headers,
+        _body,
+        _options
+      ) do
+    response = Chainweb.fixture("peer_retrieve_mempool_info_2")
+    {:ok, response}
+  end
+
+  def request(
+        :get,
+        "https://us-e1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/peer?limit=f",
+        _headers,
+        _body,
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title:
+             "Error parsing query parameter limit failed: could not parse: `f' (input does not start with a digit)"
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :get,
+        "https://us1.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/mempool/peer?limit=2&next=123",
+        _headers,
+        _body,
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: 400,
+           title:
+             "Error parsing query parameter next failed: TextFormatException \"missing ':' in next item: \\\"123\\\".\""
+         }}
+      )
+
+    {:error, response}
+  end
+
+  def request(
+        :get,
+        "https://col1.chainweb.com/chainweb/0.0/mainnet01/chain/0/mempool/peer",
+        _headers,
+        _body,
+        _options
+      ) do
+    response =
+      Error.new(
+        {:chainweb,
+         %{
+           status: :network_error,
+           title: :nxdomain
+         }}
+      )
+
+    {:error, response}
+  end
 end
 
 defmodule Kadena.Chainweb.P2P.PeerTest do
@@ -316,6 +397,103 @@ defmodule Kadena.Chainweb.P2P.PeerTest do
     test "error not existing location", %{peer: peer} do
       {:error, %Error{status: :network_error, title: :nxdomain}} =
         Peer.put_cut_info(peer, location: "col1", network_id: :mainnet01)
+    end
+  end
+
+  describe "retrieve_mempool_info/1" do
+    setup do
+      Application.put_env(:kadena, :http_client_impl, CannedPeerRequests)
+
+      on_exit(fn ->
+        Application.delete_env(:kadena, :http_client_impl)
+      end)
+
+      response =
+        {:ok,
+         %PeerResponse{
+           items: [
+             %{
+               address: %{hostname: "65.109.23.84", port: 31_350},
+               id: "MR1TFkDqCV557hwh1VOEJM1MfdFlOWt-ejpw58RwMzA"
+             },
+             %{
+               address: %{hostname: "65.108.202.106", port: 31_350},
+               id: "D0zC4BvxBseLKRljsyIHYkOtPLGkK96xfiE08yft34g"
+             }
+           ],
+           limit: 2,
+           next: "inclusive:2"
+         }}
+
+      query_response =
+        {:ok,
+         %Kadena.Chainweb.P2P.PeerResponse{
+           items: [
+             %{
+               address: %{hostname: "65.108.9.161", port: 31_350},
+               id: "_VA2_QqnUHXxekBiJT4ypxAi7znsR7oEsVRS_wk46nk"
+             },
+             %{
+               address: %{hostname: "65.108.9.188", port: 31_350},
+               id: "VQmD_ESHjDc_PBq15BShzJJZ74btZ_pIsK3jQSnXOkc"
+             }
+           ],
+           limit: 2,
+           next: "inclusive:4"
+         }}
+
+      limit = 2
+      next = "inclusive:2"
+
+      %{
+        response: response,
+        query_response: query_response,
+        limit: limit,
+        next: next
+      }
+    end
+
+    test "success", %{response: response, limit: limit} do
+      ^response = Peer.retrieve_mempool_info(network_id: :mainnet01, query_params: [limit: limit])
+    end
+
+    test "success with all query params", %{
+      query_response: query_response,
+      limit: limit,
+      next: next
+    } do
+      ^query_response =
+        Peer.retrieve_mempool_info(
+          network_id: :mainnet01,
+          query_params: [limit: limit, next: next]
+        )
+    end
+
+    test "error with a non existing location" do
+      {:error, %Error{status: :network_error, title: :nxdomain}} =
+        Peer.retrieve_mempool_info(location: "col1", network_id: :mainnet01)
+    end
+
+    test "error query params: invalid next value", %{limit: limit} do
+      {:error,
+       %Error{
+         status: 400,
+         title:
+           "Error parsing query parameter next failed: TextFormatException \"missing ':' in next item: \\\"123\\\".\""
+       }} =
+        Peer.retrieve_mempool_info(
+          network_id: :testnet04,
+          query_params: [limit: limit, next: 123]
+        )
+    end
+
+    test "error query params: invalid limit value" do
+      {:error,
+       %Error{
+         status: 400,
+         title:
+           "Error parsing query parameter limit failed: could not parse: `f' (input does not start with a digit)"
+       }} = Peer.retrieve_mempool_info(network_id: :mainnet01, query_params: [limit: "f"])
     end
   end
 end

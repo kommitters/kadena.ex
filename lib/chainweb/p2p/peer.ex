@@ -16,10 +16,10 @@ defmodule Kadena.Chainweb.P2P.Peer do
   @type response :: {:ok, peer_response()} | error()
 
   @cut_endpoint "cut"
+  @mempool_endpoint "mempool"
   @path "peer"
 
-  @spec retrieve_cut_info(network_opts :: network_opts()) ::
-          response()
+  @spec retrieve_cut_info(network_opts :: network_opts()) :: response()
   def retrieve_cut_info(network_opts \\ []) do
     network_id = Keyword.get(network_opts, :network_id, :testnet04)
     location = Keyword.get(network_opts, :location, set_default_location(network_id))
@@ -52,6 +52,23 @@ defmodule Kadena.Chainweb.P2P.Peer do
     |> return_response(peer)
   end
 
+  @spec retrieve_mempool_info(network_opts :: network_opts()) :: response()
+  def retrieve_mempool_info(network_opts \\ []) do
+    network_id = Keyword.get(network_opts, :network_id, :testnet04)
+    location = Keyword.get(network_opts, :location, set_default_location(network_id))
+    chain_id = Keyword.get(network_opts, :chain_id, 0)
+    query_params = Keyword.get(network_opts, :query_params, [])
+
+    :get
+    |> Request.new(p2p: [endpoint: @mempool_endpoint, path: @path])
+    |> Request.set_network(network_id)
+    |> Request.set_chain_id(chain_id)
+    |> Request.set_location(location)
+    |> Request.add_query(query_params)
+    |> Request.perform()
+    |> Request.results(as: PeerResponse)
+  end
+
   @spec json_request_body(peer :: peer()) :: json()
   defp json_request_body(peer) do
     peer
@@ -59,13 +76,13 @@ defmodule Kadena.Chainweb.P2P.Peer do
     |> PeerRequestBody.to_json!()
   end
 
-  @spec set_default_location(network_id :: network_id()) :: location()
-  defp set_default_location(:testnet04), do: "us1"
-  defp set_default_location(:mainnet01), do: "us-e1"
-
   @spec return_response(response :: {:ok, map()}, peer :: peer()) :: response()
   defp return_response({:ok, %{response: :no_content, status: 204}}, peer),
     do: {:ok, PeerPutResponse.new(peer)}
 
   defp return_response({:error, error}, _cut), do: {:error, error}
+
+  @spec set_default_location(network_id :: network_id()) :: location()
+  defp set_default_location(:testnet04), do: "us1"
+  defp set_default_location(:mainnet01), do: "us-e1"
 end
