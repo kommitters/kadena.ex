@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.16.0"
+  @version "0.17.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -101,6 +101,8 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.P2P.BlockHeader,
         Kadena.Chainweb.P2P.BlockPayload,
         Kadena.Chainweb.P2P.Mempool,
+        Kadena.Chainweb.Peer,
+        Kadena.Chainweb.P2P.Peer,
         Kadena.Chainweb.Pact,
         Kadena.Chainweb.Pact.Listen,
         Kadena.Chainweb.Pact.Local,
@@ -178,7 +180,9 @@ defmodule Kadena.MixProject do
         Kadena.Chainweb.P2P.BlockPayloadBatchWithOutputsResponse,
         Kadena.Chainweb.P2P.MempoolCheckResponse,
         Kadena.Chainweb.P2P.MempoolLookupResponse,
-        Kadena.Chainweb.P2P.MempoolRetrieveResponse
+        Kadena.Chainweb.P2P.MempoolRetrieveResponse,
+        Kadena.Chainweb.P2P.PeerResponse,
+        Kadena.Chainweb.P2P.PeerPutResponse
       ],
       Utils: Kadena.Utils.MapCase
     ]

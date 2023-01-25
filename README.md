@@ -25,7 +25,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.16.0"}
+    {:kadena, "~> 0.17.0"}
   ]
 end
 ```
@@ -1526,11 +1526,221 @@ Mempool.lookup_pending_txs(request_keys, network_id: :mainnet01)
  }}
 
 ```
+
+### Peer Endpoints
+
+The P2P communication between chainweb-nodes is sharded into several independent P2P network. The `cut` network is exchanging consensus state. There is also one mempool P2P network for each chain.
+
+#### Get Cut-Network Peer Info
+
+```elixir
+Kadena.Chainweb.P2P.Peer.retrieve_cut_info(network_opts \\ [])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `query_params` (optional): Query parameters. Keyword list with:
+    - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
+    - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
+
+  Defaults to `[network_id: :testnet04, location: "us1", query_params: []]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Peer
+
+Peer.retrieve_cut_info(network_id: :mainnet01, query_params: [next: "inclusive:5", limit: 5])
+
+{:ok,
+ %Kadena.Chainweb.P2P.PeerResponse{
+   items: [
+     %{
+       address: %{hostname: "202.61.244.124", port: 31_350},
+       id: "NGWAyrXN7KTJ0pGCrSjepT2JIkmQoR3F6uShBakwogU"
+     },
+     %{
+       address: %{hostname: "202.61.244.182", port: 31_350},
+       id: "jzeetZdYpIVVMakXF3gPZewFvA2y7ITl-s9n88onPrk"
+     },
+     %{
+       address: %{hostname: "34.68.148.186", port: 1789},
+       id: "LeRJC7adbr2Mtbpo1jGJYST0X1_QKNBmXGVNApX-Edo"
+     },
+     %{
+       address: %{hostname: "77.197.133.174", port: 31_350},
+       id: "H807vFwc8mADojurOO93gT-KRTbEhClpmn6iu5t_cCA"
+     },
+     %{
+       address: %{hostname: "35.76.76.135", port: 1789},
+       id: "flE2czzEK67A22L7iz2qrWoYXkjqG0E9e1TNii-bXpE"
+     }
+   ],
+   limit: 5,
+   next: "inclusive:10"
+ }}
+
+```
+
+#### Put Cut-Network Peer Info
+Allows to add a peer to the peer database of the cut P2P network of the remote host.
+
+```elixir
+Kadena.Chainweb.P2P.Peer.put_cut_info(peer, network_opts \\ [])
+```
+
+**Parameters**
+
+- `peer`: A Peer struct which can be created with `Kadena.Chainweb.Peer.new()`
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+
+  Defaults to `[network_id: :testnet04, location: "us1", query_params: []]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+alias Kadena.Chainweb.P2P.Peer
+
+address = %{
+  hostname: "77.197.133.174",
+  port: 31_350
+}
+
+id = "PRLmVUcc9AH3fyfMYiWeC4nV2i1iHwc0-aM7iAO8h18"
+
+Chainweb.Peer.new()
+|> Chainweb.Peer.set_id(id)
+|> Chainweb.Peer.set_address(address)
+|> Peer.put_cut_info(network_id: :mainnet01)
+
+{:ok,
+ %Kadena.Chainweb.P2P.PeerPutResponse{
+   peer: %Kadena.Chainweb.Peer{
+     address: %{hostname: "77.197.133.174", port: 31_350},
+     id: "PRLmVUcc9AH3fyfMYiWeC4nV2i1iHwc0-aM7iAO8h18"
+   }
+ }}
+
+```
+
+#### Get Chain Mempool-Network Peer Info
+
+```elixir
+Kadena.Chainweb.P2P.Peer.retrieve_mempool_info(network_opts \\ [])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `query_params` (optional): Query parameters. Keyword list with:
+    - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
+    - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
+
+  Defaults to `[network_id: :testnet04, chain_id: 0, location: "us1", query_params: []]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Peer
+
+Peer.retrieve_mempool_info(network_id: :mainnet01, query_params: [next: "inclusive:2", limit: 5])
+
+{:ok,
+ %Kadena.Chainweb.P2P.PeerResponse{
+   items: [
+     %{
+       address: %{hostname: "65.108.9.161", port: 31_350},
+       id: "_VA2_QqnUHXxekBiJT4ypxAi7znsR7oEsVRS_wk46nk"
+     },
+     %{
+       address: %{hostname: "65.108.9.188", port: 31_350},
+       id: "VQmD_ESHjDc_PBq15BShzJJZ74btZ_pIsK3jQSnXOkc"
+     },
+     %{
+       address: %{hostname: "202.61.244.124", port: 31_350},
+       id: "NGWAyrXN7KTJ0pGCrSjepT2JIkmQoR3F6uShBakwogU"
+     },
+     %{
+       address: %{hostname: "202.61.244.182", port: 31_350},
+       id: "jzeetZdYpIVVMakXF3gPZewFvA2y7ITl-s9n88onPrk"
+     },
+     %{
+       address: %{hostname: "34.68.148.186", port: 1789},
+       id: "LeRJC7adbr2Mtbpo1jGJYST0X1_QKNBmXGVNApX-Edo"
+     }
+   ],
+   limit: 5,
+   next: "inclusive:7"
+ }}
+
+```
+
+#### Put Chain Mempool-Network Peer Info
+Allows to add a peer to the peer database of the mempool P2P network of the chain `chain_id` of remote host.
+
+```elixir
+Kadena.Chainweb.P2P.Peer.put_mempool_info(peer, network_opts \\ [])
+```
+
+**Parameters**
+
+- `peer`: A Peer struct which can be created with `Kadena.Chainweb.Peer.new()`
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `chain_id` (required): Id of the chain to which the request is sent. Allowed values: integer or string-encoded integer from 0 to 19.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+
+  Defaults to `[network_id: :testnet04, chain_id: 0, location: "us1", query_params: []]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb
+alias Kadena.Chainweb.P2P.Peer
+
+address = %{
+  hostname: "77.197.133.174",
+  port: 31_350
+}
+
+id = "PRLmVUcc9AH3fyfMYiWeC4nV2i1iHwc0-aM7iAO8h18"
+
+Chainweb.Peer.new()
+|> Chainweb.Peer.set_id(id)
+|> Chainweb.Peer.set_address(address)
+|> Peer.put_mempool_info(network_id: :mainnet01)
+
+{:ok,
+ %Kadena.Chainweb.P2P.PeerPutResponse{
+   peer: %Kadena.Chainweb.Peer{
+     address: %{hostname: "77.197.133.174", port: 31_350},
+     id: "PRLmVUcc9AH3fyfMYiWeC4nV2i1iHwc0-aM7iAO8h18"
+   }
+ }}
+
+```
 ---
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.17`
+The latest updated branch to target a PR is `v0.18`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
