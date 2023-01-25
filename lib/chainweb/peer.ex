@@ -32,7 +32,7 @@ defmodule Kadena.Chainweb.Peer do
   def new(_attrs), do: %__MODULE__{}
 
   @spec set_address(peer :: t(), address :: address()) :: result()
-  def set_address(%__MODULE__{} = peer, address) when is_map(address) do
+  def set_address(%__MODULE__{} = peer, %{} = address) do
     with {:ok, _address} <- validate_origin_address(address) do
       %{peer | address: address}
     end
