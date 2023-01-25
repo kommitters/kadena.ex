@@ -12,7 +12,8 @@ defmodule Kadena.Chainweb.P2P.Peer do
   @type location :: String.t()
   @type retrieve_cut_info_response :: {:ok, PeerResponse.t()} | error()
 
-  @endpoint [cut: "cut/peer", mempool: "mempool/peer"]
+  @cut_endpoint "cut"
+  @path "peer"
 
   @spec retrieve_cut_info(network_opts :: network_opts()) ::
           retrieve_cut_info_response()
@@ -22,7 +23,7 @@ defmodule Kadena.Chainweb.P2P.Peer do
     query_params = Keyword.get(network_opts, :query_params, [])
 
     :get
-    |> Request.new(p2p: [endpoint: @endpoint[:cut]])
+    |> Request.new(p2p: [endpoint: @cut_endpoint, path: @path])
     |> Request.set_network(network_id)
     |> Request.set_location(location)
     |> Request.add_query(query_params)
