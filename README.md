@@ -1651,7 +1651,7 @@ Kadena.Chainweb.P2P.Peer.retrieve_mempool_info(network_opts \\ [])
     - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
     - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
 
-  Defaults to `[network_id: :testnet04, location: "us1", query_params: []]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+  Defaults to `[network_id: :testnet04, chain_id: 0, location: "us1", query_params: []]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
 
 **Example**
 
