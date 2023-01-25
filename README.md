@@ -16,7 +16,9 @@
 - Build PACT commands for transactions.
 - Implement the cryptography required by the network.
 - Send, test and update smart contracts.
-- Interact with Chainweb endpoints: `listen, local, poll, send, spv.`
+- Interact with Chainweb endpoints.
+  - Pact API: `listen, local, poll, send, spv`.
+  - P2P API: `Cut, Block Hashes, Block Headers, Block Payload, Mempool, Peer`.
 
 ## Installation
 
@@ -25,7 +27,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.17.0"}
+    {:kadena, "~> 0.17.1"}
   ]
 end
 ```
@@ -1746,7 +1748,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
 ### What we're working on now 🎉
 
-- [Chainweb P2P API](https://github.com/kommitters/kadena.ex/milestone/1)
+- [Accept request commands as YAML files](https://github.com/kommitters/kadena.ex/milestone/2)
 
 ### Done - What we've already developed! 🚀
 
@@ -1773,6 +1775,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [Kadena Pact](https://github.com/kommitters/kadena.ex/issues/55)
 - [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 - [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
+- [Chainweb P2P API](https://github.com/kommitters/kadena.ex/milestone/1)
 
 </details>
 

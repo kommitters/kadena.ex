@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.1 (25.01.2023)
+
+- Updated README 
+
 ## 0.17.0 (25.01.2023)
 
 - Added [Peer endpoints](https://github.com/kommitters/kadena.ex/issues/206)
