@@ -1526,6 +1526,66 @@ Mempool.lookup_pending_txs(request_keys, network_id: :mainnet01)
  }}
 
 ```
+
+### Peer Endpoints
+
+The P2P communication between chainweb-nodes is sharded into several independent P2P network. The `cut` network is exchanging consensus state. There is also one mempool P2P network for each chain.
+
+#### Get Cut-Network Peer Info
+
+```elixir
+Kadena.Chainweb.P2P.Peer.retrieve_cut_info(network_opts \\ [])
+```
+
+**Parameters**
+
+- `network_opts`: Network options. Keyword list with:
+  - `network_id` (required): Allowed values: `:testnet04` `:mainnet01`.
+  - `location` (optional): Location to access a Chainweb P2P bootstrap node. Allowed values:
+    - testnet: `"us1"`, `"us2"`, `"eu1"`, `"eu2"`, `"ap1"`, `"ap2"`
+    - mainnet: `"us-e1"`, `"us-e2"`, `"us-e3"`, `"us-w1"`, `"us-w2"`, `"us-w3"`, `"fr1"`, `"fr2"`, `"fr3"`, `"jp1"`, `"jp2"`, `"jp3"`
+  - `query_params` (optional): Query parameters. Keyword list with:
+    - `limit` (optional): Integer (`>=0`) that represents the maximum number of records that may be returned.
+    - `next` (optional): String of the cursor for the next page. This value can be found as value of the next property of the previous page.
+
+  Defaults to `[network_id: :testnet04, location: "us1", query_params: []]` if not specified. If `network_id` is set as `:mainnet01` the default `location` is `"us-e1"`
+
+**Example**
+
+```elixir
+alias Kadena.Chainweb.P2P.Peer
+
+Peer.retrieve_cut_info(network_id: :mainnet01, query_params: [next: "inclusive:5", limit: 5])
+
+{:ok,
+ %Kadena.Chainweb.P2P.PeerResponse{
+   items: [
+     %{
+       address: %{hostname: "202.61.244.124", port: 31_350},
+       id: "NGWAyrXN7KTJ0pGCrSjepT2JIkmQoR3F6uShBakwogU"
+     },
+     %{
+       address: %{hostname: "202.61.244.182", port: 31_350},
+       id: "jzeetZdYpIVVMakXF3gPZewFvA2y7ITl-s9n88onPrk"
+     },
+     %{
+       address: %{hostname: "34.68.148.186", port: 1789},
+       id: "LeRJC7adbr2Mtbpo1jGJYST0X1_QKNBmXGVNApX-Edo"
+     },
+     %{
+       address: %{hostname: "77.197.133.174", port: 31_350},
+       id: "H807vFwc8mADojurOO93gT-KRTbEhClpmn6iu5t_cCA"
+     },
+     %{
+       address: %{hostname: "35.76.76.135", port: 1789},
+       id: "flE2czzEK67A22L7iz2qrWoYXkjqG0E9e1TNii-bXpE"
+     }
+   ],
+   limit: 5,
+   next: "inclusive:10"
+ }}
+
+```
 ---
 
 ## Roadmap
