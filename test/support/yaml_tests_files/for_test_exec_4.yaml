@@ -8,7 +8,7 @@ publicMeta:
   creationTime: 1667249173
   chainId: "0"
   gasLimit: 2500
-  gasPrice: 0.00000001
+  gasPrice: invalid_value
   ttl: 7200
   sender: "k:37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
 keyPairs:

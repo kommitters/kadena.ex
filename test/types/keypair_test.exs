@@ -29,6 +29,14 @@ defmodule Kadena.Types.KeypairTest do
       } = KeyPair.new(pub_key: pub_key, secret_key: secret_key, clist: clist)
     end
 
+    test "with valid map arguments", %{pub_key: pub_key, secret_key: secret_key} do
+      %KeyPair{
+        pub_key: ^pub_key,
+        secret_key: ^secret_key,
+        clist: nil
+      } = KeyPair.new(%{"public" => pub_key, "secret" => secret_key})
+    end
+
     test "with only required arguments", %{pub_key: pub_key, secret_key: secret_key} do
       %KeyPair{pub_key: ^pub_key, secret_key: ^secret_key, clist: nil} =
         KeyPair.new(pub_key: pub_key, secret_key: secret_key)

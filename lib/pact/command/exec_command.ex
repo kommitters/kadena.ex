@@ -90,7 +90,7 @@ defmodule Kadena.Pact.ExecCommand do
 
   @impl true
   def from_yaml(path) when is_binary(path) do
-    with {:ok, map_result} <- YamlReader.read_yaml(path) do
+    with {:ok, map_result} <- YamlReader.read(path) do
       network_id = Map.get(map_result, "networkId")
       code = Map.get(map_result, "code", "")
       data = Map.get(map_result, "data")
@@ -100,13 +100,13 @@ defmodule Kadena.Pact.ExecCommand do
       signers = Map.get(map_result, "signers", [])
 
       %__MODULE__{}
+      |> process_metadata(meta_data)
+      |> process_keypairs(keypairs)
+      |> process_signers(signers)
       |> set_network(network_id)
       |> set_data(data)
       |> set_code(code)
       |> set_nonce(nonce)
-      |> process_keypairs(keypairs)
-      |> process_metadata(meta_data)
-      |> process_signers(signers)
     end
   end
 
@@ -293,6 +293,9 @@ defmodule Kadena.Pact.ExecCommand do
   defp build_signatures([%SignCommand{sig: sig} | rest], result),
     do: build_signatures(rest, result ++ [Signature.new(sig)])
 
+  defp process_metadata(%__MODULE__{} = cmd_request, %MetaData{} = metadata),
+    do: set_metadata(cmd_request, metadata)
+
   defp process_metadata(%__MODULE__{} = cmd_request, %{} = metadata) do
     case MetaData.new(MapCase.to_snake!(metadata)) do
       %MetaData{} = result -> %{cmd_request | meta_data: result}
@@ -300,10 +303,6 @@ defmodule Kadena.Pact.ExecCommand do
     end
   end
 
-  defp process_metadata(%__MODULE__{} = cmd_request, %MetaData{} = metadata),
-    do: set_metadata(cmd_request, metadata)
-
-  defp process_metadata({:error, reason}, _metadata), do: {:error, reason}
   defp process_metadata(%__MODULE__{}, _metadata), do: {:error, [metadata: :invalid]}
 
   defp process_keypairs(%__MODULE__{} = cmd_request, [%{} = keypair_data | rest]) do

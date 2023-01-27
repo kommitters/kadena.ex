@@ -43,7 +43,7 @@ defmodule Kadena.Types.Signer do
     pub_key = Map.get(args, "publicKey")
     scheme = Map.get(args, "scheme")
     addr = Map.get(args, "addr")
-    clist = Map.get(args, "CapsList")
+    clist = Map.get(args, "capsList")
 
     with {:ok, pub_key} <- validate_pub_key(pub_key),
          {:ok, scheme} <- validate_scheme(scheme),

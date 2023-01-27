@@ -9,17 +9,20 @@ defmodule Kadena.Types.SignerTest do
 
   describe "new/1" do
     setup do
-      cap = Cap.new(name: "gas", args: ["COIN.gas", 0.02])
+      cap_data = [name: "gas", args: ["COIN.gas", 0.02]]
+      cap = Cap.new(cap_data)
       caps_list = [cap, cap, cap]
+      caps_list2 = [cap]
 
       %{
         base16string: "64617373646164617364617364616473616461736461736464",
         signer_scheme: :ed25519,
-        caps_list: caps_list
+        caps_list: caps_list,
+        caps_list2: caps_list2
       }
     end
 
-    test "with valid params", %{
+    test "with valid list params", %{
       base16string: base16string,
       signer_scheme: signer_scheme,
       caps_list: caps_list
@@ -36,6 +39,43 @@ defmodule Kadena.Types.SignerTest do
           addr: base16string,
           clist: caps_list
         )
+    end
+
+    test "with valid map params", %{
+      base16string: base16string,
+      signer_scheme: signer_scheme
+    } do
+      %Signer{
+        pub_key: %Base16String{value: ^base16string},
+        scheme: ^signer_scheme,
+        addr: %Base16String{value: ^base16string},
+        clist: nil
+      } =
+        Signer.new(%{
+          "publicKey" => base16string,
+          "scheme" => signer_scheme,
+          "addr" => base16string,
+          "clist" => nil
+        })
+    end
+
+    test "with caps_data map from map params", %{
+      base16string: base16string,
+      signer_scheme: signer_scheme,
+      caps_list2: caps_list2
+    } do
+      %Signer{
+        pub_key: %Base16String{value: ^base16string},
+        scheme: ^signer_scheme,
+        addr: %Base16String{value: ^base16string},
+        clist: ^caps_list2
+      } =
+        Signer.new(%{
+          "publicKey" => base16string,
+          "scheme" => signer_scheme,
+          "addr" => base16string,
+          "capsList" => [%{name: "gas", args: ["COIN.gas", 0.02]}]
+        })
     end
 
     test "with only the required valid params", %{base16string: base16string} do

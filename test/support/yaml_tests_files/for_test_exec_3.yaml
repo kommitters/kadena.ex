@@ -1,0 +1,7 @@
+networkId: :testnet04
+code: "(+ 5 6)"
+data:
+  accounts-admin-keyset:
+    ["ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"]
+nonce: step01
+publicMeta: unknown

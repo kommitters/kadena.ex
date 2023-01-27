@@ -18,6 +18,31 @@ defmodule Kadena.Pact.ContCommandTest do
     Signer
   }
 
+  describe "create ContCommand with YAMl file" do
+    setup do
+      path = ""
+
+      %{
+        path: path
+      }
+    end
+
+    test "with a valid YAML file", %{path: path} do
+      %Kadena.Pact.ContCommand{
+        data: nil,
+        keypairs: [],
+        meta_data: nil,
+        network_id: nil,
+        nonce: nil,
+        pact_tx_hash: nil,
+        proof: nil,
+        rollback: nil,
+        signers: [],
+        step: nil
+      } = ContCommand.from_yaml(path)
+    end
+  end
+
   describe "create ContCommand" do
     setup do
       secret_key = "99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4"

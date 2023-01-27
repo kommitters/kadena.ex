@@ -8,7 +8,7 @@ defmodule Kadena.Types.MetaDataTest do
   use ExUnit.Case
 
   describe "new/1" do
-    test "with a valid param list" do
+    test "with a valid list params" do
       %MetaData{
         creation_time: 0,
         ttl: 0,
@@ -25,6 +25,25 @@ defmodule Kadena.Types.MetaDataTest do
           sender: "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca",
           chain_id: "0"
         )
+    end
+
+    test "with a valid map params" do
+      %MetaData{
+        creation_time: 0,
+        ttl: 0,
+        gas_limit: 2500,
+        gas_price: 1.0e-2,
+        sender: "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca",
+        chain_id: %ChainID{id: "0"}
+      } =
+        MetaData.new(%{
+          "creation_time" => 0,
+          "ttl" => 0,
+          "gas_limit" => 2500,
+          "gas_price" => 1.0e-2,
+          "sender" => "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca",
+          "chain_id" => "0"
+        })
     end
 
     test "with an invalid cration_time" do
