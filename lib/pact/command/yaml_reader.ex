@@ -12,7 +12,7 @@ defmodule Kadena.Pact.Command.YamlReader do
   def read(path) do
     root_path = Path.dirname(path)
 
-    with {:ok, map_result} <- YamlElixir.read_from_file(path),
+    with {:ok, map_result} <- YamlElixir.read_from_file(path, atoms: true),
          {:ok, map_result} <- process_code(map_result, root_path) do
       process_data(map_result, root_path)
     end

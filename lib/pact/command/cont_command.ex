@@ -103,6 +103,11 @@ defmodule Kadena.Pact.ContCommand do
   def new(_opts), do: %__MODULE__{}
 
   @impl true
+  def from_yaml(_path) do
+    new()
+  end
+
+  @impl true
   def set_network(%__MODULE__{} = cmd_request, network) do
     case NetworkID.new(network) do
       %NetworkID{} = network_id -> %{cmd_request | network_id: network_id}

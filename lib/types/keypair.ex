@@ -31,8 +31,21 @@ defmodule Kadena.Types.KeyPair do
     end
   end
 
+  def new(args) when is_map(args) do
+    pub_key_arg = Map.get(args, "public")
+    secret_key_arg = Map.get(args, "secret")
+    # clist_arg = Keyword.get(args, :clist)
+
+    with {:ok, pub_key} <- validate_key({:pub_key, pub_key_arg}),
+         {:ok, secret_key} <- validate_key({:secret_key, secret_key_arg}) do
+      #  {:ok, clist} <- validate_caps_list({:clist, clist_arg}) do
+      %__MODULE__{pub_key: pub_key, secret_key: secret_key}
+    end
+  end
+
   def new(_args), do: {:error, [args: :not_a_list]}
 
+  # need a review, is it necessary to add caps??? In this case, how would they be added with the yaml?
   @spec add_caps(keypair :: t(), caps :: clist()) :: validated_keypair()
   def add_caps(%__MODULE__{} = keypair, caps) do
     case validate_caps_list({:clist, caps}) do
