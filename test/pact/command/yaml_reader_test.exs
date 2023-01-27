@@ -7,7 +7,7 @@ defmodule Kadena.Pact.Command.YamlReaderTest do
 
   alias Kadena.Pact.Command.YamlReader
 
-  describe "read_yaml/1" do
+  describe "read/1" do
     setup do
       yaml_result =
         {:ok,
@@ -67,37 +67,37 @@ defmodule Kadena.Pact.Command.YamlReaderTest do
     end
 
     test "when yaml file has code and data values", %{path: path, yaml_result: yaml_result} do
-      ^yaml_result = YamlReader.read_yaml(path <> "with_values.yaml")
+      ^yaml_result = YamlReader.read(path <> "with_values.yaml")
     end
 
     test "when yaml file has code and data files", %{path: path, yaml_result: yaml_result} do
-      ^yaml_result = YamlReader.read_yaml(path <> "with_files.yaml")
+      ^yaml_result = YamlReader.read(path <> "with_files.yaml")
     end
 
     test "without code nor code_file", %{path: path, without_code_result: without_code_result} do
-      ^without_code_result = YamlReader.read_yaml(path <> "with_files_no_code.yaml")
+      ^without_code_result = YamlReader.read(path <> "with_files_no_code.yaml")
     end
 
     test "without data nor data_file", %{path: path, without_data_result: without_data_result} do
-      ^without_data_result = YamlReader.read_yaml(path <> "with_files_no_data.yaml")
+      ^without_data_result = YamlReader.read(path <> "with_files_no_data.yaml")
     end
 
     test "without code_file and data_file set", %{path: path} do
-      {:ok, %{}} = YamlReader.read_yaml(path <> "with_files_not_set.yaml")
+      {:ok, %{}} = YamlReader.read(path <> "with_files_not_set.yaml")
     end
 
     test "without code and data set", %{path: path} do
-      {:ok, %{}} = YamlReader.read_yaml(path <> "with_values_not_set.yaml")
+      {:ok, %{}} = YamlReader.read(path <> "with_values_not_set.yaml")
     end
 
     test "error with an invalid code_file", %{path: path} do
       {:error, [code_file: :not_a_pact_file]} =
-        YamlReader.read_yaml(path <> "with_files_code_error.yaml")
+        YamlReader.read(path <> "with_files_code_error.yaml")
     end
 
     test "error with an invalid data_file", %{path: path} do
       {:error, [data_file: :not_a_json_file]} =
-        YamlReader.read_yaml(path <> "with_files_data_error.yaml")
+        YamlReader.read(path <> "with_files_data_error.yaml")
     end
 
     test "error with a non existing yaml", %{path: path} do
@@ -105,7 +105,7 @@ defmodule Kadena.Pact.Command.YamlReaderTest do
        %YamlElixir.FileNotFoundError{
          message:
            "Failed to open file \"test/support/yaml_tests_files/non_existent.yaml\": no such file or directory"
-       }} = YamlReader.read_yaml(path <> "non_existent.yaml")
+       }} = YamlReader.read(path <> "non_existent.yaml")
     end
   end
 end

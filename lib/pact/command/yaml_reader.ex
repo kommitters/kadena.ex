@@ -8,8 +8,8 @@ defmodule Kadena.Pact.Command.YamlReader do
   @type map_result :: map()
   @type processed_map :: {:ok, map_result()} | {:error, Keyword.t() | struct()}
 
-  @spec read_yaml(path :: path()) :: processed_map()
-  def read_yaml(path) do
+  @spec read(path :: path()) :: processed_map()
+  def read(path) do
     root_path = Path.dirname(path)
 
     with {:ok, map_result} <- YamlElixir.read_from_file(path),
