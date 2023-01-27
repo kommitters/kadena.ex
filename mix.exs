@@ -43,6 +43,7 @@ defmodule Kadena.MixProject do
       {:blake2, "~> 1.0.4"},
       {:decimal, "~> 2.0"},
       {:hackney, "~> 1.18"},
+      {:yaml_elixir, "~> 2.9"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
