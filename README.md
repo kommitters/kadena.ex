@@ -399,7 +399,7 @@ YAML file:
 networkId: :testnet04 
 code: "(+ 1 2)"
 data:
-  accounts-admin-keyset:
+  accounts_admin_keyset:
     - 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
 nonce: 2023-01-01 00:00:00.000000 UTC
 publicMeta:
@@ -412,6 +412,10 @@ publicMeta:
 keyPairs:
   - public: 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
     secret: 99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4
+    capsList: 
+      name: coin.GAS
+      args: 
+        - 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
 
 ```
 
