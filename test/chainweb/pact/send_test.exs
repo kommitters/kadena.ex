@@ -8,6 +8,17 @@ defmodule Kadena.Chainweb.Client.CannedSendRequests do
         :post,
         "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/1/pact/api/v1/send",
         _headers,
+        "{\"cmds\":[{\"cmd\":\"{\\\"meta\\\":{\\\"chainId\\\":\\\"1\\\",\\\"creationTime\\\":1675093790,\\\"gasLimit\\\":1000,\\\"gasPrice\\\":1.0e-6,\\\"sender\\\":\\\"k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7\\\",\\\"ttl\\\":28800},\\\"networkId\\\":\\\"testnet04\\\",\\\"nonce\\\":\\\"2022-01-01 00:00:00.000000 UTC\\\",\\\"payload\\\":{\\\"exec\\\":{\\\"code\\\":\\\"(+ 1 10)\\\",\\\"data\\\":null}},\\\"signers\\\":[{\\\"addr\\\":null,\\\"clist\\\":[],\\\"pubKey\\\":\\\"d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7\\\",\\\"scheme\\\":\\\"ED25519\\\"}]}\",\"hash\":\"64rRUBVnKEJOw0-zjqqAoFz5KRPHN95uPRt9hNi44jM\",\"sigs\":[{\"sig\":\"9d034184bac92b896d22a3ba6473955e5080e8341d3016cf43bc9c62de69a8796dd4efc1ab23cd9db2521cca9bd5d271c24a0981daa749d11e9ab18385cdd907\"}]}]}",
+        _options
+      ) do
+    response = Chainweb.fixture("send_2")
+    {:ok, response}
+  end
+
+  def request(
+        :post,
+        "https://api.testnet.chainweb.com/chainweb/0.0/testnet04/chain/1/pact/api/v1/send",
+        _headers,
         _body,
         _options
       ) do
@@ -96,8 +107,13 @@ defmodule Kadena.Chainweb.Pact.SendTest do
       |> ExecCommand.add_keypair(keypair)
       |> ExecCommand.build()
 
+    {:ok, cmd_from_yaml} =
+      ExecCommand.from_yaml("test/support/yaml_tests_files/for_test_send.yaml")
+      |> ExecCommand.build()
+
     %{
-      cmds: [cmd1, cmd2]
+      cmds: [cmd1, cmd2],
+      cmd_yaml: [cmd_from_yaml]
     }
   end
 
@@ -109,6 +125,13 @@ defmodule Kadena.Chainweb.Pact.SendTest do
          "gyShUgtFBk5xDoiBoLURbU_5vUG0benKroNDRhz8wqA"
        ]
      }} = Pact.send(cmds, network_id: :testnet04, chain_id: 1)
+  end
+
+  test "process with a ExecCommand from a YAML file", %{cmd_yaml: cmd_yaml} do
+    {:ok,
+     %SendResponse{
+       request_keys: ["64rRUBVnKEJOw0-zjqqAoFz5KRPHN95uPRt9hNi44jM"]
+     }} = Pact.send(cmd_yaml, network_id: :testnet04, chain_id: 1)
   end
 
   test "process/2 conflict with chain_id", %{cmds: cmds} do

@@ -57,12 +57,12 @@ defmodule Kadena.Types.MetaData do
   end
 
   def new(args) when is_map(args) do
-    creation_time = Map.get(args, "creation_time", 0)
+    creation_time = Map.get(args, "creationTime", 0)
     ttl = Map.get(args, "ttl", 0)
-    gas_limit = Map.get(args, "gas_limit", 0)
-    gas_price = Map.get(args, "gas_price", 0)
+    gas_limit = Map.get(args, "gasLimit", 0)
+    gas_price = Map.get(args, "gasPrice", 0)
     sender = Map.get(args, "sender", "")
-    chain_id = Map.get(args, "chain_id", "0")
+    chain_id = Map.get(args, "chainId", "0")
 
     with {:ok, creation_time} <- validate_creation_time(creation_time),
          {:ok, ttl} <- validate_number(:ttl, ttl),

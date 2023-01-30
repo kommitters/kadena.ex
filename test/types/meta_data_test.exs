@@ -37,12 +37,12 @@ defmodule Kadena.Types.MetaDataTest do
         chain_id: %ChainID{id: "0"}
       } =
         MetaData.new(%{
-          "creation_time" => 0,
+          "creationTime" => 0,
           "ttl" => 0,
-          "gas_limit" => 2500,
-          "gas_price" => 1.0e-2,
+          "gasLimit" => 2500,
+          "gasPrice" => 1.0e-2,
           "sender" => "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca",
-          "chain_id" => "0"
+          "chainId" => "0"
         })
     end
 

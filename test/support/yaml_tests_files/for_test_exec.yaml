@@ -2,24 +2,23 @@ networkId: :testnet04
 code: "(+ 5 6)"
 data:
   accounts-admin-keyset:
-    ["ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d"]
-nonce: step01
+    ["6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7"]
+nonce: 2023-06-13 17:45:18.211131 UTC
 publicMeta:
   creationTime: 1667249173
   chainId: "0"
-  gasLimit: 2500
-  gasPrice: 0.00000001
-  ttl: 7200
-  sender: "k:37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
+  gasLimit: 1000
+  gasPrice: 0.000001
+  ttl: 28800
+  sender: k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94
 keyPairs:
-  - public: ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d
-    secret: 8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332
-signers: 
-  - publicKey: 8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332
+  - public: 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+    secret: 99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4
+signers:
+  - publicKey: cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea
     scheme: :ed25519
-    addr: 8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332
-    capsList: 
-      - :name: coin.GAS
-        :args: 
+    addr: cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea
+    capsList:
+      - name: coin.GAS
+        args:
           - 8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332
-

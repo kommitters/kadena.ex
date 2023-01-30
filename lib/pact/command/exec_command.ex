@@ -7,7 +7,6 @@ defmodule Kadena.Pact.ExecCommand do
   alias Kadena.Chainweb.Pact.CommandPayload
   alias Kadena.Cryptography.{Sign, Utils}
   alias Kadena.Pact.Command.{Hash, YamlReader}
-  alias Kadena.Utils.MapCase
 
   alias Kadena.Types.{
     Command,
@@ -297,7 +296,7 @@ defmodule Kadena.Pact.ExecCommand do
     do: set_metadata(cmd_request, metadata)
 
   defp process_metadata(%__MODULE__{} = cmd_request, %{} = metadata) do
-    case MetaData.new(MapCase.to_snake!(metadata)) do
+    case MetaData.new(metadata) do
       %MetaData{} = result -> %{cmd_request | meta_data: result}
       {:error, reason} -> {:error, [meta_data: :invalid] ++ reason}
     end

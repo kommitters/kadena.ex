@@ -74,7 +74,7 @@ defmodule Kadena.Types.SignerTest do
           "publicKey" => base16string,
           "scheme" => signer_scheme,
           "addr" => base16string,
-          "capsList" => [%{name: "gas", args: ["COIN.gas", 0.02]}]
+          "capsList" => [%{"name" => "gas", "args" => ["COIN.gas", 0.02]}]
         })
     end
 

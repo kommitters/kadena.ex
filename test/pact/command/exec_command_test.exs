@@ -47,14 +47,14 @@ defmodule Kadena.Pact.ExecCommandTest do
       {:ok,
        %Kadena.Types.Command{
          cmd:
-           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":1.0e-8,\"sender\":\"k:37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9\",\"ttl\":7200},\"networkId\":\"testnet04\",\"nonce\":\"step01\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{\"accounts-admin-keyset\":[\"ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d\"]}}},\"signers\":[{\"addr\":null,\"clist\":[],\"pubKey\":\"ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d\",\"scheme\":\"ED25519\"},{\"addr\":\"8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332\",\"clist\":[{\"args\":[\"8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332\",\"scheme\":\"ED25519\"}]}",
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{\"accounts-admin-keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":null,\"clist\":[],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"clist\":[{\"args\":[\"8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"}]}",
          hash: %Kadena.Types.PactTransactionHash{
-           hash: "X25idt6FsE8UbL07O4-220zJ4Nb3_gm3NZ7FEAviAL4"
+           hash: "S7nmnln18fwy7_sASguWoJXw3_2svm6TWmSMQ3alCv8"
          },
          sigs: [
            %Kadena.Types.Signature{
              sig:
-               "ce9aa4727b8299df67b50495fd9dacea9e10c2be9f800aa4bcd38475e8b59e07946c3931dc2a966829ff049233ea98b9bd40b3473cdc8a5d77677305504dc605"
+               "d0435fba35fcb57f04810d932d942de81001ba16992977bbf14761a7f5c676a2f2b91a2ab6c04b9bd509ec3392668485ae1b53ea1f1882843c12dea777636d02"
            }
          ]
        }} =

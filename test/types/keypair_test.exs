@@ -11,11 +11,13 @@ defmodule Kadena.Types.KeypairTest do
     cap1 = Cap.new(%{name: "gas", args: ["COIN.gas", 0.02]})
     cap2 = Cap.new(%{name: "transfer", args: ["COIN.transfer", "key_1", 50, "key_2"]})
     clist = [cap1, cap2]
+    clist2 = [cap1]
 
     %{
       pub_key: "ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d",
       secret_key: "99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4",
       clist: clist,
+      clist2: clist2,
       invalid_key: "ba54b224d1924dd98403f5c751abd"
     }
   end
@@ -35,6 +37,23 @@ defmodule Kadena.Types.KeypairTest do
         secret_key: ^secret_key,
         clist: nil
       } = KeyPair.new(%{"public" => pub_key, "secret" => secret_key})
+    end
+
+    test "with caps_data map from map params", %{
+      pub_key: pub_key,
+      secret_key: secret_key,
+      clist2: clist2
+    } do
+      %KeyPair{
+        pub_key: ^pub_key,
+        secret_key: ^secret_key,
+        clist: ^clist2
+      } =
+        KeyPair.new(%{
+          "public" => pub_key,
+          "secret" => secret_key,
+          "capsList" => [%{"name" => "gas", "args" => ["COIN.gas", 0.02]}]
+        })
     end
 
     test "with only required arguments", %{pub_key: pub_key, secret_key: secret_key} do

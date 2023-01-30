@@ -1,0 +1,13 @@
+networkId: :testnet04
+code: "(+ 1 10)"
+nonce: "2022-01-01 00:00:00.000000 UTC"
+publicMeta:
+  creationTime: 1675093790
+  chainId: "1"
+  gasLimit: 1000
+  gasPrice: 0.000001
+  ttl: 28800
+  sender: "k:d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7"
+keyPairs:
+  - public: d1a361d721cf81dbc21f676e6897f7e7a336671c0d5d25f87c10933cac6d8cf7
+    secret: 28834b7a0d6d1f84ae2c2efcb5b1de28122e07e2e4caad04a32988a3c79c547c
