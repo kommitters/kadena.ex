@@ -119,7 +119,7 @@ defmodule Kadena.Types.MetaDataTest do
     end
 
     test "with an invalid KeywordList" do
-      {:error, [args: :not_a_list]} = MetaData.new("invalid_args")
+      {:error, [args: :invalid]} = MetaData.new("invalid_args")
     end
   end
 end

@@ -28,7 +28,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       rollback = true
 
       # Signer args
-      cap = Cap.new(%{name: "gas", args: ["coin.GAS", 0.02]})
+      cap = Cap.new(name: "gas", args: ["coin.GAS", 0.02])
       base16string = "64617373646164617364617364616473616461736461736464"
       signer_scheme = :ed25519
 
@@ -319,7 +319,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       signer_scheme: signer_scheme,
       exec_payload: exec_payload
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: [pub_key]})
+      cap = Cap.new(name: "coin.GAS", args: [pub_key])
 
       signer_value = [
         pub_key: pub_key,
@@ -362,7 +362,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       signer_scheme: signer_scheme,
       exec_payload: exec_payload
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: [9_007_199_254_740_992]})
+      cap = Cap.new(name: "coin.GAS", args: [9_007_199_254_740_992])
 
       signer_value = [
         pub_key: pub_key,
@@ -405,7 +405,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       signer_scheme: signer_scheme,
       exec_payload: exec_payload
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: ["9007199254740992.553"]})
+      cap = Cap.new(name: "coin.GAS", args: ["9007199254740992.553"])
 
       signer_value = [
         pub_key: pub_key,
@@ -448,7 +448,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       signer_scheme: signer_scheme,
       exec_payload: exec_payload
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: [["9007199254740992.553"]]})
+      cap = Cap.new(name: "coin.GAS", args: [["9007199254740992.553"]])
 
       signer_value = [
         pub_key: pub_key,
@@ -491,7 +491,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       signer_scheme: signer_scheme,
       exec_payload: exec_payload
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: [pub_key]})
+      cap = Cap.new(name: "coin.GAS", args: [pub_key])
 
       signer_value = [
         pub_key: pub_key,
@@ -533,7 +533,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       pub_key: pub_key,
       exec_payload: exec_payload
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: [pub_key]})
+      cap = Cap.new(name: "coin.GAS", args: [pub_key])
 
       signer_value = [
         pub_key: pub_key,
@@ -616,7 +616,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       pub_key: pub_key,
       signer_scheme: signer_scheme
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: [pub_key]})
+      cap = Cap.new(name: "coin.GAS", args: [pub_key])
 
       signer_value = [
         pub_key: pub_key,
@@ -658,7 +658,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       pub_key: pub_key,
       signer_scheme: signer_scheme
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: [["9007199254740992.553"]]})
+      cap = Cap.new(name: "coin.GAS", args: [["9007199254740992.553"]])
 
       signer_value = [
         pub_key: pub_key,
@@ -709,7 +709,7 @@ defmodule Kadena.Chainweb.Pact.CommandPayloadTest do
       pub_key: pub_key,
       signer_scheme: signer_scheme
     } do
-      cap = Cap.new(%{name: "coin.GAS", args: [["9007199254740992.553"]]})
+      cap = Cap.new(name: "coin.GAS", args: [["9007199254740992.553"]])
 
       signer_value = [
         pub_key: pub_key,

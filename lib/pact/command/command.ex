@@ -22,7 +22,7 @@ defmodule Kadena.Pact.Command do
   @type hash :: String.t()
 
   @callback new() :: cmd_request()
-  @callback from_yaml(path: string_value()) :: cmd_request()
+  @callback from_yaml(path :: string_value()) :: cmd_request()
   @callback set_network(cmd :: cmd_request(), network :: atom()) :: cmd_request()
   @callback set_data(cmd :: cmd_request(), data :: map()) :: cmd_request()
   @callback set_nonce(cmd :: cmd_request(), nonce :: string_value()) :: cmd_request()

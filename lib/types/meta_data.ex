@@ -81,7 +81,7 @@ defmodule Kadena.Types.MetaData do
     end
   end
 
-  def new(_args), do: {:error, [args: :not_a_list]}
+  def new(_args), do: {:error, [args: :invalid]}
 
   @spec validate_creation_time(creation_time :: creation_time()) :: validation()
   defp validate_creation_time(creation_time) when is_number(creation_time),

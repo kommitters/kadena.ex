@@ -103,9 +103,7 @@ defmodule Kadena.Pact.ContCommand do
   def new(_opts), do: %__MODULE__{}
 
   @impl true
-  def from_yaml(_path) do
-    new()
-  end
+  def from_yaml(_path), do: new()
 
   @impl true
   def set_network(%__MODULE__{} = cmd_request, network) do

@@ -74,7 +74,6 @@ defmodule Kadena.Types.Signer do
 
   defp create_clist(caps) when is_list(caps) do
     caps
-    |> Enum.map(fn x -> Enum.map(x, fn {key, value} -> {String.to_atom(key), value} end) end)
     |> Enum.map(fn cap -> Cap.new(cap) end)
     |> validate_clist()
   end

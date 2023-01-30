@@ -43,7 +43,7 @@ defmodule Kadena.Types.KeyPair do
     end
   end
 
-  def new(_args), do: {:error, [args: :not_a_list]}
+  def new(_args), do: {:error, [args: :invalid]}
 
   @spec add_caps(keypair :: t(), caps :: clist()) :: validated_keypair()
   def add_caps(%__MODULE__{} = keypair, caps) do
@@ -64,7 +64,6 @@ defmodule Kadena.Types.KeyPair do
 
   defp create_clist({arg, caps}) when is_list(caps) do
     caps
-    |> Enum.map(fn x -> Enum.map(x, fn {key, value} -> {String.to_atom(key), value} end) end)
     |> Enum.map(fn cap -> Cap.new(cap) end)
     |> (&validate_caps_list({arg, &1})).()
   end

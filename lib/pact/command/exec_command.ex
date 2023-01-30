@@ -306,8 +306,13 @@ defmodule Kadena.Pact.ExecCommand do
 
   defp process_keypairs(%__MODULE__{} = cmd_request, [%{} = keypair_data | rest]) do
     case KeyPair.new(keypair_data) do
-      %KeyPair{} = result -> add_keypair(cmd_request, result) |> process_keypairs(rest)
-      {:error, reason} -> {:error, [keypair: :invalid] ++ reason}
+      %KeyPair{} = result ->
+        cmd_request
+        |> add_keypair(result)
+        |> process_keypairs(rest)
+
+      {:error, reason} ->
+        {:error, [keypair: :invalid] ++ reason}
     end
   end
 
@@ -317,8 +322,13 @@ defmodule Kadena.Pact.ExecCommand do
 
   defp process_signers(%__MODULE__{} = cmd_request, [%{} = signers_data | rest]) do
     case Signer.new(signers_data) do
-      %Signer{} = result -> add_signer(cmd_request, result) |> process_signers(rest)
-      {:error, reason} -> {:error, [signers: :invalid] ++ reason}
+      %Signer{} = result ->
+        cmd_request
+        |> add_signer(result)
+        |> process_signers(rest)
+
+      {:error, reason} ->
+        {:error, [signers: :invalid] ++ reason}
     end
   end
 

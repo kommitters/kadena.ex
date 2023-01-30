@@ -2,7 +2,7 @@ networkId: :testnet04
 code: "(+ 5 6)"
 data:
   accounts-admin-keyset:
-    ["6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7"]
+    - 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
 nonce: 2023-06-13 17:45:18.211131 UTC
 publicMeta:
   creationTime: 1667249173
