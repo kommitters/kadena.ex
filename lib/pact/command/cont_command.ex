@@ -6,7 +6,7 @@ defmodule Kadena.Pact.ContCommand do
 
   alias Kadena.Chainweb.Pact.CommandPayload
   alias Kadena.Cryptography.{Sign, Utils}
-  alias Kadena.Pact.Command.Hash
+  alias Kadena.Pact.Command.{Hash, YamlReader}
 
   alias Kadena.Types.{
     Command,
@@ -103,7 +103,34 @@ defmodule Kadena.Pact.ContCommand do
   def new(_opts), do: %__MODULE__{}
 
   @impl true
-  def from_yaml(_path), do: new()
+  def from_yaml(path) when is_binary(path) do
+    with {:ok, map_result} <- YamlReader.read(path) do
+      network_id = Map.get(map_result, "networkId")
+      data = Map.get(map_result, "data")
+      nonce = Map.get(map_result, "nonce", "")
+      meta_data = Map.get(map_result, "publicMeta", MetaData.new())
+      pact_tx_hash = Map.get(map_result, "pactTxHash", "")
+      step = Map.get(map_result, "step", 0)
+      proof = Map.get(map_result, "proof")
+      rollback = Map.get(map_result, "rollback", true)
+      keypairs = Map.get(map_result, "keyPairs", [])
+      signers = Map.get(map_result, "signers", [])
+
+      %__MODULE__{}
+      |> process_metadata(meta_data)
+      |> process_keypairs(keypairs)
+      |> process_signers(signers)
+      |> set_network(network_id)
+      |> set_data(data)
+      |> set_nonce(nonce)
+      |> set_pact_tx_hash(pact_tx_hash)
+      |> set_proof(proof)
+      |> set_step(step)
+      |> set_rollback(rollback)
+    end
+  end
+
+  def from_yaml(_path), do: {:error, [path: :invalid]}
 
   @impl true
   def set_network(%__MODULE__{} = cmd_request, network) do
@@ -313,4 +340,48 @@ defmodule Kadena.Pact.ContCommand do
 
   defp build_signatures([%SignCommand{sig: sig} | rest], result),
     do: build_signatures(rest, result ++ [Signature.new(sig)])
+
+  defp process_metadata(%__MODULE__{} = cmd_request, %MetaData{} = metadata),
+    do: set_metadata(cmd_request, metadata)
+
+  defp process_metadata(%__MODULE__{} = cmd_request, %{} = metadata) do
+    case MetaData.new(metadata) do
+      %MetaData{} = result -> %{cmd_request | meta_data: result}
+      {:error, reason} -> {:error, [meta_data: :invalid] ++ reason}
+    end
+  end
+
+  defp process_metadata(%__MODULE__{}, _metadata), do: {:error, [metadata: :invalid]}
+
+  defp process_keypairs(%__MODULE__{} = cmd_request, [%{} = keypair_data | rest]) do
+    case KeyPair.new(keypair_data) do
+      %KeyPair{} = result ->
+        cmd_request
+        |> add_keypair(result)
+        |> process_keypairs(rest)
+
+      {:error, reason} ->
+        {:error, [keypair: :invalid] ++ reason}
+    end
+  end
+
+  defp process_keypairs(%__MODULE__{} = cmd_request, []), do: cmd_request
+  defp process_keypairs(%__MODULE__{}, _keypair), do: {:error, [keypair: :invalid]}
+  defp process_keypairs({:error, reason}, _keypairs), do: {:error, reason}
+
+  defp process_signers(%__MODULE__{} = cmd_request, [%{} = signers_data | rest]) do
+    case Signer.new(signers_data) do
+      %Signer{} = result ->
+        cmd_request
+        |> add_signer(result)
+        |> process_signers(rest)
+
+      {:error, reason} ->
+        {:error, [signers: :invalid] ++ reason}
+    end
+  end
+
+  defp process_signers(%__MODULE__{} = cmd_request, []), do: cmd_request
+  defp process_signers({:error, reason}, _signers), do: {:error, reason}
+  defp process_signers(%__MODULE__{}, _signers), do: {:error, [signers: :invalid]}
 end

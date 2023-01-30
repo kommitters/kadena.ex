@@ -445,6 +445,10 @@ alias Kadena.Pact.ExecCommand
 
 ### Building a Continuation Command
 
+There are two ways to create a ContCommand.
+
+#### Using [attributes](#attributes) structures
+
 ```elixir
 alias Kadena.Cryptography
 alias Kadena.Pact
@@ -506,6 +510,107 @@ rollback = true
      }
    ]
  }}
+```
+
+#### With a `YAML` file
+
+YAML struct:
+
+- `networkId`: [NetworkID](#networkid) value.
+- `data`: there are two ways to set the data from the `YAML` file:
+  - `data`: [EnvData](#envdata) value.
+  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file.
+- `nonce`:  [Nonce](#nonce) value.
+- `publicMeta`: [Metadata](#metadata) value.
+- `keyPairs`: [KeyPairs](#keypairs) values.
+- `signers`: [Signers](#signers) values.
+- `pactTxHash`: [PactTxHash](#pacttxhash-continuation-command) value.
+- `rollback`: [Rollback](#rollback-continuation-command) value.
+- `Step`: [Step](#step-continuation-command) value.
+- `proof`: [Proof](#proof-continuation-command) value.
+
+
+The scheme below shows how to set the different values of a `ContCommand`
+
+```YAML
+networkId:
+data/dataFile:
+nonce: 
+publicMeta:
+  creationTime: 
+  chainId: 
+  gasLimit: 
+  gasPrice: 
+  ttl:
+  sender: 
+keyPairs:
+  - public: 
+    secret: 
+signers:
+  - publicKey: 
+    scheme: 
+    addr: 
+    capsList:
+      - name: 
+        args:
+          - 
+pactTxHash: 
+step: 
+rollback: 
+proof:
+
+```
+**Example**
+
+YAML file: 
+```YAML
+networkId: :testnet04
+data:
+  accounts_admin_keyset:
+    - 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+nonce: 2023-01-01 00:00:00.000000 UTC
+publicMeta:
+  creationTime: 1667249173
+  chainId: "0"
+  gasLimit: 2500
+  gasPrice: 0.01
+  ttl: 28800
+  sender: k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+keyPairs:
+  - public: 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+    secret: 99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4
+    capsList: 
+      name: coin.GAS
+      args: 
+        - 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+pactTxHash: yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4
+step: 1
+rollback: true
+
+```
+
+```elixir
+alias Kadena.Pact.ContCommand
+
+"~/your_file_path"
+|> ContCommand.from_yaml()
+|> ContCommand.build()
+
+{:ok,
+ %Kadena.Types.Command{
+   cmd:
+     "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-01-01 00:00:00.000000 UTC\",\"payload\":{\"cont\":{\"data\":{\"accounts_admin_keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]},\"pactId\":\"\",\"proof\":null,\"rollback\":true,\"step\":0}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+   hash: %Kadena.Types.PactTransactionHash{
+     hash: "psIXOGGneMAV1Ie3zx5O1VWMFueFZrShvaBx4YOCkjQ"
+   },
+   sigs: [
+     %Kadena.Types.Signature{
+       sig:
+         "1ae6e796bbf8e1ddb005945508ac6fd13cc6435c4f63609cff299114865fd13879b8b5bcad13383ae377acc10411e49e745397320a2ba5bf9d1370cafbf90a06"
+     }
+   ]
+ }}
+
 ```
 
 ## Chainweb Pact API

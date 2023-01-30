@@ -21,13 +21,13 @@ defmodule Kadena.Pact.ExecCommandTest do
   describe "create ExecCommand with YAMl file" do
     setup do
       path = "test/support/yaml_tests_files/for_test_exec.yaml"
-      path2 = "test/support/yaml_tests_files/for_test_exec_2.yaml"
-      path3 = "test/support/yaml_tests_files/for_test_exec_3.yaml"
-      path4 = "test/support/yaml_tests_files/for_test_exec_4.yaml"
-      path5 = "test/support/yaml_tests_files/for_test_exec_5.yaml"
-      path6 = "test/support/yaml_tests_files/for_test_exec_6.yaml"
-      path7 = "test/support/yaml_tests_files/for_test_exec_7.yaml"
-      path8 = "test/support/yaml_tests_files/for_test_exec_8.yaml"
+      path2 = "test/support/yaml_tests_files/for_test_commands_1.yaml"
+      path3 = "test/support/yaml_tests_files/for_test_commands_2.yaml"
+      path4 = "test/support/yaml_tests_files/for_test_commands_3.yaml"
+      path5 = "test/support/yaml_tests_files/for_test_commands_4.yaml"
+      path6 = "test/support/yaml_tests_files/for_test_commands_5.yaml"
+      path7 = "test/support/yaml_tests_files/for_test_commands_6.yaml"
+      path8 = "test/support/yaml_tests_files/for_test_commands_7.yaml"
       bad_path = "test/support/yaml_tests_files/no_existent.yaml"
 
       %{
