@@ -357,10 +357,10 @@ YAML struct:
 - `networkId`: [NetworkID](#networkid) value.
 - `code`: there are two ways to set the code from the `YAML` file:
   - `code`: [Code](#code) value.
-  - `codeFile`: The name of a `pact` file in the same directory as the `YAML` file.
+  - `codeFile`: The name of a `pact` file in the same directory as the `YAML` file, ex: `code.pact`.
 - `data`: there are two ways to set the data from the `YAML` file:
   - `data`: [EnvData](#envdata) value.
-  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file.
+  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file, ex: `data.json`.
 - `nonce`:  [Nonce](#nonce) value.
 - `publicMeta`: [Metadata](#metadata) value.
 - `keyPairs`: [KeyPairs](#keypairs) values.
@@ -519,7 +519,7 @@ YAML struct:
 - `networkId`: [NetworkID](#networkid) value.
 - `data`: there are two ways to set the data from the `YAML` file:
   - `data`: [EnvData](#envdata) value.
-  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file.
+  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file, ex: `"data.json"`.
 - `nonce`:  [Nonce](#nonce) value.
 - `publicMeta`: [Metadata](#metadata) value.
 - `keyPairs`: [KeyPairs](#keypairs) values.
