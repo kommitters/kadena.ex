@@ -23,7 +23,7 @@ defmodule Kadena.Types.CapTest do
       %Cap{
         name: "gas",
         args: [%PactValue{literal: "COIN.gas"}, %PactValue{literal: ^decimal}]
-      } = Cap.new(%{name: "gas", args: ["COIN.gas", 1.0e-2]})
+      } = Cap.new(name: "gas", args: ["COIN.gas", 1.0e-2])
     end
 
     test "with valid pact value list" do

@@ -31,7 +31,19 @@ defmodule Kadena.Types.KeyPair do
     end
   end
 
-  def new(_args), do: {:error, [args: :not_a_list]}
+  def new(args) when is_map(args) do
+    pub_key_arg = Map.get(args, "public")
+    secret_key_arg = Map.get(args, "secret")
+    clist_arg = Map.get(args, "capsList")
+
+    with {:ok, pub_key} <- validate_key({:pub_key, pub_key_arg}),
+         {:ok, secret_key} <- validate_key({:secret_key, secret_key_arg}),
+         {:ok, clist} <- create_clist({:clist, clist_arg}) do
+      %__MODULE__{pub_key: pub_key, secret_key: secret_key, clist: clist}
+    end
+  end
+
+  def new(_args), do: {:error, [args: :invalid]}
 
   @spec add_caps(keypair :: t(), caps :: clist()) :: validated_keypair()
   def add_caps(%__MODULE__{} = keypair, caps) do
@@ -49,4 +61,12 @@ defmodule Kadena.Types.KeyPair do
   defp validate_caps_list({_arg, nil}), do: {:ok, nil}
   defp validate_caps_list({_arg, [%Cap{} | _tail] = clist}), do: {:ok, clist}
   defp validate_caps_list({arg, _clist}), do: {:error, [{arg, :invalid}]}
+
+  defp create_clist({arg, caps}) when is_list(caps) do
+    caps
+    |> Enum.map(fn cap -> Cap.new(cap) end)
+    |> (&validate_caps_list({arg, &1})).()
+  end
+
+  defp create_clist({_arg, nil}), do: {:ok, nil}
 end

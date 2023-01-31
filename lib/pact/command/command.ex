@@ -13,7 +13,6 @@ defmodule Kadena.Pact.Command do
   @type exec_request :: ExecCommand.t()
   @type error :: {:error, Keyword.t()}
   @type cmd_request :: cont_request() | exec_request()
-
   @type string_value :: String.t()
   @type meta_data :: MetaData.t()
   @type keypair :: KeyPair.t()
@@ -23,6 +22,7 @@ defmodule Kadena.Pact.Command do
   @type hash :: String.t()
 
   @callback new() :: cmd_request()
+  @callback from_yaml(path :: string_value()) :: cmd_request()
   @callback set_network(cmd :: cmd_request(), network :: atom()) :: cmd_request()
   @callback set_data(cmd :: cmd_request(), data :: map()) :: cmd_request()
   @callback set_nonce(cmd :: cmd_request(), nonce :: string_value()) :: cmd_request()
