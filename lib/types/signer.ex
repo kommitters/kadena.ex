@@ -25,7 +25,7 @@ defmodule Kadena.Types.Signer do
   defstruct [:pub_key, :scheme, :addr, :clist]
 
   @impl true
-  def new(args) do
+  def new(args) when is_list(args) do
     pub_key = Keyword.get(args, :pub_key)
     scheme = Keyword.get(args, :scheme)
     addr = Keyword.get(args, :addr)
@@ -35,6 +35,20 @@ defmodule Kadena.Types.Signer do
          {:ok, scheme} <- validate_scheme(scheme),
          {:ok, addr} <- validate_addr(addr),
          {:ok, clist} <- validate_clist(clist) do
+      %__MODULE__{pub_key: pub_key, scheme: scheme, addr: addr, clist: clist}
+    end
+  end
+
+  def new(args) when is_map(args) do
+    pub_key = Map.get(args, "publicKey")
+    scheme = Map.get(args, "scheme")
+    addr = Map.get(args, "addr")
+    clist = Map.get(args, "capsList")
+
+    with {:ok, pub_key} <- validate_pub_key(pub_key),
+         {:ok, scheme} <- validate_scheme(scheme),
+         {:ok, addr} <- validate_addr(addr),
+         {:ok, clist} <- create_clist(clist) do
       %__MODULE__{pub_key: pub_key, scheme: scheme, addr: addr, clist: clist}
     end
   end
@@ -57,4 +71,12 @@ defmodule Kadena.Types.Signer do
   defp validate_clist(nil), do: {:ok, nil}
   defp validate_clist([%Cap{} | _tail] = clist), do: {:ok, clist}
   defp validate_clist(_clist), do: {:error, [clist: :not_a_caps_list]}
+
+  defp create_clist(caps) when is_list(caps) do
+    caps
+    |> Enum.map(fn cap -> Cap.new(cap) end)
+    |> validate_clist()
+  end
+
+  defp create_clist(nil), do: {:ok, nil}
 end

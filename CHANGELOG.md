@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.18.0 (31.01.2023)
+
+- Added [YAML reader](https://github.com/kommitters/kadena.ex/issues/253)
+- Added [YAML Execution command](https://github.com/kommitters/kadena.ex/issues/208)
+
 ## 0.17.1 (25.01.2023)
 
 - Updated README 

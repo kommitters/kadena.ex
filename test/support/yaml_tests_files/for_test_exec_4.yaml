@@ -1,0 +1,24 @@
+networkId: :testnet04
+code: "(+ 5 6)"
+data:
+  accounts-admin-keyset:
+    - ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d
+nonce: step01
+publicMeta:
+  creationTime: 1667249173
+  chainId: "0"
+  gasLimit: 2500
+  gasPrice: invalid_value
+  ttl: 7200
+  sender: "k:37e60c00779cacaef1f0a8697387a5945ef3cb82963980db486dc26ec5f424d9"
+keyPairs:
+  - public: ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d
+    secret: 8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332
+signers:
+  - publicKey: 8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332
+    scheme: :ed25519
+    addr: 8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332
+    capsList:
+      - name: coin.GAS
+        args:
+          - 8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332

@@ -27,8 +27,8 @@ defmodule Kadena.Types.Cap do
   end
 
   def new(args) when is_map(args) do
-    name = Map.get(args, :name)
-    args = Map.get(args, :args)
+    name = Map.get(args, "name")
+    args = Map.get(args, "args")
 
     with {:ok, name} <- validate_name(name),
          {:ok, args} <- validate_args(args) do

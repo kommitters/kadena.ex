@@ -18,11 +18,108 @@ defmodule Kadena.Pact.ExecCommandTest do
     Signer
   }
 
+  describe "create ExecCommand with YAMl file" do
+    setup do
+      path = "test/support/yaml_tests_files/for_test_exec.yaml"
+      path2 = "test/support/yaml_tests_files/for_test_exec_2.yaml"
+      path3 = "test/support/yaml_tests_files/for_test_exec_3.yaml"
+      path4 = "test/support/yaml_tests_files/for_test_exec_4.yaml"
+      path5 = "test/support/yaml_tests_files/for_test_exec_5.yaml"
+      path6 = "test/support/yaml_tests_files/for_test_exec_6.yaml"
+      path7 = "test/support/yaml_tests_files/for_test_exec_7.yaml"
+      path8 = "test/support/yaml_tests_files/for_test_exec_8.yaml"
+      bad_path = "test/support/yaml_tests_files/no_existent.yaml"
+
+      %{
+        path: path,
+        path2: path2,
+        path3: path3,
+        path4: path4,
+        path5: path5,
+        path6: path6,
+        path7: path7,
+        path8: path8,
+        bad_path: bad_path
+      }
+    end
+
+    test "with a valid YAML file", %{path: path} do
+      {:ok,
+       %Kadena.Types.Command{
+         cmd:
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{\"accounts-admin-keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":null,\"clist\":[],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"clist\":[{\"args\":[\"8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"}]}",
+         hash: %Kadena.Types.PactTransactionHash{
+           hash: "S7nmnln18fwy7_sASguWoJXw3_2svm6TWmSMQ3alCv8"
+         },
+         sigs: [
+           %Kadena.Types.Signature{
+             sig:
+               "d0435fba35fcb57f04810d932d942de81001ba16992977bbf14761a7f5c676a2f2b91a2ab6c04b9bd509ec3392668485ae1b53ea1f1882843c12dea777636d02"
+           }
+         ]
+       }} =
+        path
+        |> ExecCommand.from_yaml()
+        |> ExecCommand.build()
+    end
+
+    test "without metadata, signers and keypairs", %{path2: path2} do
+      {:ok,
+       %Kadena.Types.Command{
+         cmd:
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":\"testnet04\",\"nonce\":\"step01\",\"payload\":{\"exec\":{\"code\":\"(+ 5 6)\",\"data\":{\"accounts-admin-keyset\":[\"ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d\"]}}},\"signers\":[]}",
+         hash: %Kadena.Types.PactTransactionHash{
+           hash: "5PF8EzDCdBLiW6lSzQWi9asTYvxx6ehc3cwJ-O4O5HY"
+         },
+         sigs: []
+       }} =
+        path2
+        |> ExecCommand.from_yaml()
+        |> ExecCommand.build()
+    end
+
+    test "with an invalid path" do
+      {:error, [path: :invalid]} = ExecCommand.from_yaml(123)
+    end
+
+    test "with a non existing YAML file", %{bad_path: bad_path} do
+      {:error,
+       %YamlElixir.FileNotFoundError{
+         message:
+           "Failed to open file \"test/support/yaml_tests_files/no_existent.yaml\": no such file or directory"
+       }} = ExecCommand.from_yaml(bad_path)
+    end
+
+    test "with an invalid meta_data", %{path3: path3} do
+      {:error, [metadata: :invalid]} = ExecCommand.from_yaml(path3)
+    end
+
+    test "with an invalid meta_data args", %{path4: path4} do
+      {:error, [meta_data: :invalid, gas_price: :invalid]} = ExecCommand.from_yaml(path4)
+    end
+
+    test "with an invalid keypair", %{path5: path5} do
+      {:error, [keypair: :invalid]} = ExecCommand.from_yaml(path5)
+    end
+
+    test "with an invalid keypair args", %{path6: path6} do
+      {:error, [keypair: :invalid, pub_key: :invalid]} = ExecCommand.from_yaml(path6)
+    end
+
+    test "with an invalid signers", %{path7: path7} do
+      {:error, [signers: :invalid]} = ExecCommand.from_yaml(path7)
+    end
+
+    test "with an invalid signers args", %{path8: path8} do
+      {:error, [signers: :invalid, scheme: :invalid]} = ExecCommand.from_yaml(path8)
+    end
+  end
+
   describe "create ExecCommand" do
     setup do
       secret_key = "99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4"
       {:ok, %KeyPair{pub_key: pub_key}} = CryptographyKeyPair.from_secret_key(secret_key)
-      cap = Cap.new(%{name: "coin.GAS", args: [pub_key]})
+      cap = Cap.new(name: "coin.GAS", args: [pub_key])
       clist = [cap]
 
       keypair_data = [pub_key: pub_key, secret_key: secret_key, clist: clist]

@@ -1,7 +1,7 @@
 defmodule Kadena.MixProject do
   use Mix.Project
 
-  @version "0.17.1"
+  @version "0.18.0"
   @github_url "https://github.com/kommitters/kadena.ex"
 
   def project do
@@ -43,6 +43,7 @@ defmodule Kadena.MixProject do
       {:blake2, "~> 1.0.4"},
       {:decimal, "~> 2.0"},
       {:hackney, "~> 1.18"},
+      {:yaml_elixir, "~> 2.9"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
@@ -87,7 +88,8 @@ defmodule Kadena.MixProject do
         Kadena.Pact.Command,
         Kadena.Pact.Command.Hash,
         Kadena.Pact.ExecCommand,
-        Kadena.Pact.ContCommand
+        Kadena.Pact.ContCommand,
+        Kadena.Pact.YamlReader
       ],
       "Kadena Chainweb": [
         Kadena.Chainweb.Client,

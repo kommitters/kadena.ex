@@ -56,7 +56,32 @@ defmodule Kadena.Types.MetaData do
     end
   end
 
-  def new(_args), do: {:error, [args: :not_a_list]}
+  def new(args) when is_map(args) do
+    creation_time = Map.get(args, "creationTime", 0)
+    ttl = Map.get(args, "ttl", 0)
+    gas_limit = Map.get(args, "gasLimit", 0)
+    gas_price = Map.get(args, "gasPrice", 0)
+    sender = Map.get(args, "sender", "")
+    chain_id = Map.get(args, "chainId", "0")
+
+    with {:ok, creation_time} <- validate_creation_time(creation_time),
+         {:ok, ttl} <- validate_number(:ttl, ttl),
+         {:ok, gas_limit} <- validate_number(:gas_limit, gas_limit),
+         {:ok, gas_price} <- validate_number(:gas_price, gas_price),
+         {:ok, sender} <- validate_sender(sender),
+         {:ok, chain_id} <- validate_chain_id(chain_id) do
+      %__MODULE__{
+        creation_time: creation_time,
+        ttl: ttl,
+        gas_limit: gas_limit,
+        gas_price: gas_price,
+        sender: sender,
+        chain_id: chain_id
+      }
+    end
+  end
+
+  def new(_args), do: {:error, [args: :invalid]}
 
   @spec validate_creation_time(creation_time :: creation_time()) :: validation()
   defp validate_creation_time(creation_time) when is_number(creation_time),

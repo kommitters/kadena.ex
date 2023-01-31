@@ -27,7 +27,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.17.1"}
+    {:kadena, "~> 0.18.0"}
   ]
 end
 ```
@@ -288,6 +288,10 @@ Pact.ContCommand.new() |> Pact.ContCommand.set_pact_tx_hash(pact_tx_hash)
 
 ### Building an Execution Command
 
+There are two ways to create an ExecCommand.
+
+#### Using [attributes](#attributes) structures
+
 ```elixir
 alias Kadena.Cryptography
 alias Kadena.Pact
@@ -344,6 +348,99 @@ env_data = %{accounts_admin_keyset: [keypair.pub_key]}
      }
    ]
  }}
+```
+
+#### With a `YAML` file
+
+YAML struct:
+
+- `networkId`: [NetworkID](#networkid) value.
+- `code`: there are two ways to set the code from the `YAML` file:
+  - `code`: [Code](#code) value.
+  - `codeFile`: The name of a `pact` file in the same directory as the `YAML` file.
+- `data`: there are two ways to set the data from the `YAML` file:
+  - `data`: [EnvData](#envdata) value.
+  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file.
+- `nonce`:  [Nonce](#nonce) value.
+- `publicMeta`: [Metadata](#metadata) value.
+- `keyPairs`: [KeyPairs](#keypairs) values.
+- `signers`: [Signers](#signers) values.
+
+The scheme below shows how to set the different values of an `ExecCommand`
+
+```YAML
+networkId:
+code/codeFile:
+data/dataFile:
+nonce: 
+publicMeta:
+  creationTime: 
+  chainId: 
+  gasLimit: 
+  gasPrice: 
+  ttl:
+  sender: 
+keyPairs:
+  - public: 
+    secret: 
+signers:
+  - publicKey: 
+    scheme: 
+    addr: 
+    capsList:
+      - name: 
+        args:
+          - 
+```
+**Example**
+
+YAML file: 
+```YAML
+networkId: :testnet04 
+code: "(+ 1 2)"
+data:
+  accounts_admin_keyset:
+    - 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+nonce: 2023-01-01 00:00:00.000000 UTC
+publicMeta:
+  creationTime: 1667249173
+  chainId: "0"
+  gasLimit: 2500
+  gasPrice: 0.01
+  ttl: 28800
+  sender: k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+keyPairs:
+  - public: 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+    secret: 99f7e1e8f2f334ae8374aa28bebdb997271a0e0a5e92c80be9609684a3d6f0d4
+    capsList: 
+      name: coin.GAS
+      args: 
+        - 6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7
+
+```
+
+```elixir
+alias Kadena.Pact.ExecCommand
+
+"~/your_file_path"
+|> ExecCommand.from_yaml()
+|> ExecCommand.build()
+
+{:ok,
+ %Kadena.Types.Command{
+   cmd:
+     "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":2500,\"gasPrice\":0.01,\"sender\":\"k:6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-01-01 00:00:00.000000 UTC\",\"payload\":{\"exec\":{\"code\":\"(+ 1 2)\",\"data\":{\"accounts_admin_keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]}}},\"signers\":[{\"addr\":null,\"clist\":[{\"args\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"}]}",
+   hash: %Kadena.Types.PactTransactionHash{
+     hash: "ZOsqP9Wkfj5NnY9WS_XMnO9KfYv0GvK_8QMPTX6BfaA"
+   },
+   sigs: [
+     %Kadena.Types.Signature{
+       sig:
+         "5b0635c2376949103d8ce8243a1fd34a1a8964900d69eebb1ff4d38ffde437a317f887f864fa9c1b27a97e8d9e57eef8dd58b054edf30b4e6fe89d0208290f02"
+     }
+   ]
+ }}
+
 ```
 
 ### Building a Continuation Command
@@ -1742,7 +1839,7 @@ Chainweb.Peer.new()
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.18`
+The latest updated branch to target a PR is `v0.19`
 
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 
