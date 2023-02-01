@@ -20,26 +20,98 @@ defmodule Kadena.Pact.ContCommandTest do
 
   describe "create ContCommand with YAMl file" do
     setup do
-      path = ""
+      path = "test/support/yaml_tests_files/for_test_cont.yaml"
+      path2 = "test/support/yaml_tests_files/for_test_commands_1.yaml"
+      path3 = "test/support/yaml_tests_files/for_test_commands_2.yaml"
+      path4 = "test/support/yaml_tests_files/for_test_commands_3.yaml"
+      path5 = "test/support/yaml_tests_files/for_test_commands_4.yaml"
+      path6 = "test/support/yaml_tests_files/for_test_commands_5.yaml"
+      path7 = "test/support/yaml_tests_files/for_test_commands_6.yaml"
+      path8 = "test/support/yaml_tests_files/for_test_commands_7.yaml"
+      bad_path = "test/support/yaml_tests_files/no_existent.yaml"
 
       %{
-        path: path
+        path: path,
+        path2: path2,
+        path3: path3,
+        path4: path4,
+        path5: path5,
+        path6: path6,
+        path7: path7,
+        path8: path8,
+        bad_path: bad_path
       }
     end
 
     test "with a valid YAML file", %{path: path} do
-      %Kadena.Pact.ContCommand{
-        data: nil,
-        keypairs: [],
-        meta_data: nil,
-        network_id: nil,
-        nonce: nil,
-        pact_tx_hash: nil,
-        proof: nil,
-        rollback: nil,
-        signers: [],
-        step: nil
-      } = ContCommand.from_yaml(path)
+      {:ok,
+       %Kadena.Types.Command{
+         cmd:
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":1667249173,\"gasLimit\":1000,\"gasPrice\":1.0e-6,\"sender\":\"k:554754f48b16df24b552f6832dda090642ed9658559fef9f3ee1bb4637ea7c94\",\"ttl\":28800},\"networkId\":\"testnet04\",\"nonce\":\"2023-06-13 17:45:18.211131 UTC\",\"payload\":{\"cont\":{\"data\":{\"accounts-admin-keyset\":[\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\"]},\"pactId\":\"yxM0umrtdcvSUZDc_GSjwadH6ELYFCjOqI59Jzqapi4\",\"proof\":null,\"rollback\":true,\"step\":1}},\"signers\":[{\"addr\":null,\"clist\":[],\"pubKey\":\"6ffea3fabe4e7fe6a89f88fc6d662c764ed1359fbc03a28afdac3935415347d7\",\"scheme\":\"ED25519\"},{\"addr\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"clist\":[{\"args\":[\"8693e641ae2bbe9ea802c736f42027b03f86afe63cae315e7169c9c496c17332\"],\"name\":\"coin.GAS\"}],\"pubKey\":\"cc30ae980161eba5da95a0d27dbdef29f185a23406942059c16cb120f6dc9dea\",\"scheme\":\"ED25519\"}]}",
+         hash: %Kadena.Types.PactTransactionHash{
+           hash: "fcR4cObX0BegUNvQu3CeMn8FhMlufY6CYHxQa39eJuY"
+         },
+         sigs: [
+           %Kadena.Types.Signature{
+             sig:
+               "eef27b61796cd1668e73078af4de4cb028796291c99e54a12be5f98ba0121b4bb631b322fdd583458e5ae30d962039452676a3f3c83a1f3b4b1be2e74b188a0d"
+           }
+         ]
+       }} =
+        path
+        |> ContCommand.from_yaml()
+        |> ContCommand.build()
+    end
+
+    test "without metadata, signers and keypairs", %{path2: path2} do
+      {:ok,
+       %Kadena.Types.Command{
+         cmd:
+           "{\"meta\":{\"chainId\":\"0\",\"creationTime\":0,\"gasLimit\":0,\"gasPrice\":0,\"sender\":\"\",\"ttl\":0},\"networkId\":\"testnet04\",\"nonce\":\"step01\",\"payload\":{\"cont\":{\"data\":{\"accounts-admin-keyset\":[\"ba54b224d1924dd98403f5c751abdd10de6cd81b0121800bf7bdbdcfaec7388d\"]},\"pactId\":\"\",\"proof\":null,\"rollback\":true,\"step\":0}},\"signers\":[]}",
+         hash: %Kadena.Types.PactTransactionHash{
+           hash: "njHWk39wmyfWDKFF5GJRRlfBcdj57oTUZYKiKY3Ru4I"
+         },
+         sigs: []
+       }} =
+        path2
+        |> ContCommand.from_yaml()
+        |> ContCommand.build()
+    end
+
+    test "with an invalid path" do
+      {:error, [path: :invalid]} = ContCommand.from_yaml(123)
+    end
+
+    test "with a non existing YAML file", %{bad_path: bad_path} do
+      {:error,
+       %YamlElixir.FileNotFoundError{
+         message:
+           "Failed to open file \"test/support/yaml_tests_files/no_existent.yaml\": no such file or directory"
+       }} = ContCommand.from_yaml(bad_path)
+    end
+
+    test "with an invalid meta_data", %{path3: path3} do
+      {:error, [metadata: :invalid]} = ContCommand.from_yaml(path3)
+    end
+
+    test "with an invalid meta_data args", %{path4: path4} do
+      {:error, [meta_data: :invalid, gas_price: :invalid]} = ContCommand.from_yaml(path4)
+    end
+
+    test "with an invalid keypair", %{path5: path5} do
+      {:error, [keypair: :invalid]} = ContCommand.from_yaml(path5)
+    end
+
+    test "with an invalid keypair args", %{path6: path6} do
+      {:error, [keypair: :invalid, pub_key: :invalid]} = ContCommand.from_yaml(path6)
+    end
+
+    test "with an invalid signers", %{path7: path7} do
+      {:error, [signers: :invalid]} = ContCommand.from_yaml(path7)
+    end
+
+    test "with an invalid signers args", %{path8: path8} do
+      {:error, [signers: :invalid, scheme: :invalid]} = ContCommand.from_yaml(path8)
     end
   end
 
