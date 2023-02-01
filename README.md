@@ -27,7 +27,7 @@ Add `kadena` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:kadena, "~> 0.18.0"}
+    {:kadena, "~> 0.19.0"}
   ]
 end
 ```
@@ -1944,13 +1944,7 @@ Chainweb.Peer.new()
 
 ## Roadmap
 
-The latest updated branch to target a PR is `v0.19`
-
 You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
-
-### What we're working on now 🎉
-
-- [Accept request commands as YAML files](https://github.com/kommitters/kadena.ex/milestone/2)
 
 ### Done - What we've already developed! 🚀
 
@@ -1978,6 +1972,7 @@ You can see a big picture of the roadmap here: [**ROADMAP**][roadmap]
 - [Pact Commands Builder](https://github.com/kommitters/kadena.ex/issues/131)
 - [Chainweb](https://github.com/kommitters/kadena.ex/issues/57)
 - [Chainweb P2P API](https://github.com/kommitters/kadena.ex/milestone/1)
+- [Accept request commands as YAML files](https://github.com/kommitters/kadena.ex/milestone/2)
 
 </details>
 
