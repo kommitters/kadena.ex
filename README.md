@@ -350,17 +350,17 @@ env_data = %{accounts_admin_keyset: [keypair.pub_key]}
  }}
 ```
 
-#### With a `YAML` file
+#### From a `YAML` file
 
 YAML struct:
 
 - `networkId`: [NetworkID](#networkid) value.
 - `code`: there are two ways to set the code from the `YAML` file:
   - `code`: [Code](#code) value.
-  - `codeFile`: The name of a `pact` file in the same directory as the `YAML` file, ex: `code.pact`.
+  - `codeFile`: The name of a `pact` file in the same directory as the `YAML` file. For example, `code.pact`.
 - `data`: there are two ways to set the data from the `YAML` file:
   - `data`: [EnvData](#envdata) value.
-  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file, ex: `data.json`.
+  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file. For example, `data.json`.
 - `nonce`:  [Nonce](#nonce) value.
 - `publicMeta`: [Metadata](#metadata) value.
 - `keyPairs`: [KeyPairs](#keypairs) values.
@@ -422,7 +422,7 @@ keyPairs:
 ```elixir
 alias Kadena.Pact.ExecCommand
 
-"~/your_file_path"
+"~/example.yaml"
 |> ExecCommand.from_yaml()
 |> ExecCommand.build()
 
@@ -512,14 +512,14 @@ rollback = true
  }}
 ```
 
-#### With a `YAML` file
+#### From a `YAML` file
 
 YAML struct:
 
 - `networkId`: [NetworkID](#networkid) value.
 - `data`: there are two ways to set the data from the `YAML` file:
   - `data`: [EnvData](#envdata) value.
-  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file, ex: `"data.json"`.
+  - `dataFile`: The name of a `json` file in the same directory as the `YAML` file. For example, `data.json`. 
 - `nonce`:  [Nonce](#nonce) value.
 - `publicMeta`: [Metadata](#metadata) value.
 - `keyPairs`: [KeyPairs](#keypairs) values.
@@ -592,7 +592,7 @@ rollback: true
 ```elixir
 alias Kadena.Pact.ContCommand
 
-"~/your_file_path"
+"~/example.yaml"
 |> ContCommand.from_yaml()
 |> ContCommand.build()
 
