@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.19.1 (25.04.2024)
+
+- Add stale issues policy. See [PR #279](https://github.com/kommitters/kadena.ex/pull/279)
+
 ## 0.19.0 (01.02.2023)
 
 - Added [YAML Continuation command](https://github.com/kommitters/kadena.ex/issues/209)
