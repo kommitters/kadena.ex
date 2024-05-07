@@ -32,6 +32,7 @@ jobs:
             coveralls.io:443
             github.com:443
             repo.hex.pm:443
+            builds.hex.pm:443
 
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - uses: erlef/setup-beam@e3f6ffe2878180f57318bf13febd3933ee81f664 # v1.15.2
